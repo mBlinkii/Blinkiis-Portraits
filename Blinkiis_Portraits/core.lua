@@ -27,6 +27,8 @@ local function OnEvent(self, event, addOnName)
 		self:InitializeOptions()
 	elseif event == "PLAYER_LOGOUT" then
 		BlinkiisPortraitsDB = BLINKIISPORTRAITS.DB
+	else
+		BLINKIISPORTRAITS:Initialize()
 	end
 end
 
@@ -201,7 +203,7 @@ function BLINKIISPORTRAITS:Initialize()
 	end
 
 	if unitframes then
-		if not BPP.player then
+		if not BPP.player and _G[unitframes.player] then
 			BPP.player = CreateFrame("Button", "BP_Portrait_" .. "Player", _G[unitframes.player], "SecureUnitButtonTemplate")
 			BPP.player.parentFrame = _G[unitframes.player]
 			BPP.player.unit = _G[unitframes.player].unit
@@ -245,7 +247,7 @@ function BLINKIISPORTRAITS:Initialize()
 			BPP.player.portrait:AddMaskTexture(BPP.player.mask)
 		end
 
-		if not BPP.target then
+		if not BPP.target and _G[unitframes.target] then
 			BPP.target = CreateFrame("Button", "BP_Portrait_" .. "Target", _G[unitframes.target], "SecureUnitButtonTemplate")
 			BPP.target.parentFrame = _G[unitframes.target]
 			BPP.target.unit = _G[unitframes.target].unit
