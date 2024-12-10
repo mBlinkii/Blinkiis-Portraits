@@ -185,110 +185,83 @@ local unitframesDB = {
 local function UpdatePortrait(frame, event, c, d, e, f)
 	BLINKIISPORTRAITS:Print(frame, event, c, d, e, f)
 	BLINKIISPORTRAITS:Print("Typ", frame.typ, "Condition", (frame.typ == "target" and event == "PLAYER_TARGET_CHANGED"))
-	if event == "UNIT_PORTRAIT_UPDATE" or event == "PORTRAITS_UPDATED" or (frame.typ == "target" and event == "PLAYER_TARGET_CHANGED") then
+	if
+		event == "UNIT_PORTRAIT_UPDATE"
+		or event == "PORTRAITS_UPDATED"
+		or (frame.typ == "target" and event == "PLAYER_TARGET_CHANGED")
+	then
 		BLINKIISPORTRAITS:Print(frame.unit)
 		SetPortraitTexture(frame.portrait, frame.unit, true)
+
+		if not InCombatLockdown() and frame:GetAttribute("unit") ~= frame.unit then frame:SetAttribute("unit", unit) end
+	end
+end
+
+-- portraits
+local function CreatePortrait(unitType, unitframes, events)
+	local unitFrame = _G[unitframes[unitType]]
+	local BPP = BLINKIISPORTRAITS.Portraits
+
+	if not BPP[unitType] and unitFrame then
+		local portrait = CreateFrame("Button", "BP_Portrait_" .. unitType, unitFrame, "SecureUnitButtonTemplate")
+		portrait.parentFrame = unitFrame
+		portrait.unit = unitFrame.unit
+		portrait.typ = unitType
+
+		for _, event in ipairs(events) do
+			portrait:RegisterEvent(event)
+		end
+
+		portrait:SetScript("OnEvent", UpdatePortrait)
+
+		if not InCombatLockdown() then
+			portrait:SetSize(64, 64)
+			portrait:ClearAllPoints()
+			portrait:SetPoint("LEFT", portrait.parentFrame, "RIGHT", 0, 0)
+		end
+
+		portrait.texture = portrait:CreateTexture("BP_texture-" .. unitType, "OVERLAY", nil, 4)
+		portrait.texture:SetAllPoints(portrait)
+		portrait.texture:SetTexture("Interface\\Addons\\Blinkiis_Portraits\\texture.tga", "CLAMP", "CLAMP", "TRILINEAR")
+
+		portrait.portrait = portrait:CreateTexture("BP_portrait-" .. unitType, "OVERLAY", nil, 1)
+		portrait.portrait:SetAllPoints(portrait)
+		SetPortraitTexture(portrait.portrait, portrait.parentFrame.unit, true)
+
+		portrait.mask = portrait:CreateMaskTexture()
+		portrait.mask:SetAllPoints(portrait)
+		portrait.mask:SetTexture(
+			"Interface\\Addons\\Blinkiis_Portraits\\mask.tga",
+			"CLAMPTOBLACKADDITIVE",
+			"CLAMPTOBLACKADDITIVE"
+		)
+		portrait.portrait:AddMaskTexture(portrait.mask)
+
+		-- scripts to interact with mouse
+		portrait:SetAttribute("unit", portrait.unit)
+		portrait:SetAttribute("*type1", "target")
+		portrait:SetAttribute("*type2", "togglemenu")
+		portrait:SetAttribute("type3", "focus")
+		portrait:SetAttribute("toggleForVehicle", true)
+		portrait:SetAttribute("ping-receiver", true)
+		portrait:RegisterForClicks("AnyUp")
+
+		BPP[unitType] = portrait
 	end
 end
 function BLINKIISPORTRAITS:Initialize()
 	local unitframes = nil
 	local events = {
 		player = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED" },
-		target = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "PLAYER_TARGET_CHANGED"},
+		target = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "PLAYER_TARGET_CHANGED" },
 	}
-	local BPP = BLINKIISPORTRAITS.Portraits
 
 	if IsAddOnLoaded("ShadowedUnitFrames") then
 		unitframes = unitframesDB.suf
 	end
 
 	if unitframes then
-		if not BPP.player and _G[unitframes.player] then
-			BPP.player = CreateFrame("Button", "BP_Portrait_" .. "Player", _G[unitframes.player], "SecureUnitButtonTemplate")
-			BPP.player.parentFrame = _G[unitframes.player]
-			BPP.player.unit = _G[unitframes.player].unit
-			BPP.player.typ = "player"
-
-			BPP.player:RegisterEvent("UNIT_PORTRAIT_UPDATE")
-			BPP.player:RegisterEvent("PORTRAITS_UPDATED")
-
-			BPP.player:SetScript("OnEvent", UpdatePortrait)
-
-			for _, event in ipairs(events.player) do
-				BPP.player:RegisterEvent(event)
-			end
-
-			if not InCombatLockdown() then
-				BPP.player:SetSize(64, 64)
-				BPP.player:ClearAllPoints()
-				BPP.player:SetPoint("LEFT", BPP.player.parentFrame, "RIGHT", 0, 0)
-			end
-
-			BPP.player.texture = BPP.player:CreateTexture("BP_" .. "texture" .. "-" .. "Player", "OVERLAY", nil, 4)
-			BPP.player.texture:SetAllPoints(BPP.player)
-			BPP.player.texture:SetTexture(
-				"Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
-				"CLAMP",
-				"CLAMP",
-				"TRILINEAR"
-			)
-
-			BPP.player.portrait = BPP.player:CreateTexture("BP_" .. "portrait" .. "-" .. "Player", "OVERLAY", nil, 1)
-			BPP.player.portrait:SetAllPoints(BPP.player)
-			SetPortraitTexture(BPP.player.portrait, BPP.player.parentFrame.unit, true)
-
-			BPP.player.mask = BPP.player:CreateMaskTexture()
-			BPP.player.mask:SetAllPoints(BPP.player)
-			BPP.player.mask:SetTexture(
-				"Interface\\Addons\\Blinkiis_Portraits\\mask.tga",
-				"CLAMPTOBLACKADDITIVE",
-				"CLAMPTOBLACKADDITIVE"
-			)
-			BPP.player.portrait:AddMaskTexture(BPP.player.mask)
-		end
-
-		if not BPP.target and _G[unitframes.target] then
-			BPP.target = CreateFrame("Button", "BP_Portrait_" .. "Target", _G[unitframes.target], "SecureUnitButtonTemplate")
-			BPP.target.parentFrame = _G[unitframes.target]
-			BPP.target.unit = _G[unitframes.target].unit
-			BPP.target.typ = "target"
-
-			BPP.target:RegisterEvent("UNIT_PORTRAIT_UPDATE")
-			BPP.target:RegisterEvent("PORTRAITS_UPDATED")
-
-			BPP.target:SetScript("OnEvent", UpdatePortrait)
-
-			for _, event in ipairs(events.target) do
-				BPP.target:RegisterEvent(event)
-			end
-
-			if not InCombatLockdown() then
-				BPP.target:SetSize(64, 64)
-				BPP.target:ClearAllPoints()
-				BPP.target:SetPoint("LEFT", BPP.target.parentFrame, "RIGHT", 0, 0)
-			end
-
-			BPP.target.texture = BPP.target:CreateTexture("BP_" .. "texture" .. "-" .. "Target", "OVERLAY", nil, 4)
-			BPP.target.texture:SetAllPoints(BPP.target)
-			BPP.target.texture:SetTexture(
-				"Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
-				"CLAMP",
-				"CLAMP",
-				"TRILINEAR"
-			)
-
-			BPP.target.portrait = BPP.target:CreateTexture("BP_" .. "portrait" .. "-" .. "Target", "OVERLAY", nil, 1)
-			BPP.target.portrait:SetAllPoints(BPP.target)
-			SetPortraitTexture(BPP.target.portrait, BPP.target.parentFrame.unit, true)
-
-			BPP.target.mask = BPP.target:CreateMaskTexture()
-			BPP.target.mask:SetAllPoints(BPP.target)
-			BPP.target.mask:SetTexture(
-				"Interface\\Addons\\Blinkiis_Portraits\\mask.tga",
-				"CLAMPTOBLACKADDITIVE",
-				"CLAMPTOBLACKADDITIVE"
-			)
-			BPP.target.portrait:AddMaskTexture(BPP.target.mask)
-		end
+		CreatePortrait("player", unitframes, events.player)
+		CreatePortrait("target", unitframes, events.target)
 	end
 end
