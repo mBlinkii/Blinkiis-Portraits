@@ -1,5 +1,6 @@
 -- options
 local category, layout
+local _G = _G
 function BLINKIISPORTRAITS:InitializeOptions()
 	self.Options = CreateFrame("Frame")
 	self.Options.name = BLINKIISPORTRAITS.Name
@@ -21,9 +22,9 @@ function BLINKIISPORTRAITS:InitializeOptions()
 		print("You clicked me!")
 	end)
 
-	category, layout = Settings.RegisterCanvasLayoutCategory(self.Options, self.Options.name, self.Options.name)
+	category, layout = _G.Settings.RegisterCanvasLayoutCategory(self.Options, self.Options.name, self.Options.name)
 	category.ID = self.Options.name
-	Settings.RegisterAddOnCategory(category)
+	_G.Settings.RegisterAddOnCategory(category)
 end
 
 function BLINKIISPORTRAITS:ToggleOptions()
