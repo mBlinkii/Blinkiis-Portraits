@@ -88,6 +88,17 @@ local defaults = {
 		strata = "AUTO",
 		texture = "drop",
 	},
+	arena = {
+		cast = false,
+		enable = true,
+		flip = false,
+		level = 20,
+		mirror = false,
+		point = { point = "LEFT", relativePoint = "RIGHT", x = 0, y = 0 },
+		size = 90,
+		strata = "AUTO",
+		texture = "drop",
+	},
 }
 
 -- main function/ db loader
@@ -227,7 +238,7 @@ local unitframesDB = {
 		focus = "ElvUF_Focus",
 		party = "ElvUF_PartyGroup1UnitButton",
 		boss = "ElvUF_Boss",
-		arena = "Arena",
+		arena = "ElvUF_Arena",
 	},
 	suf = {
 		player = "SUFUnitplayer",
@@ -294,12 +305,21 @@ local function UpdateBossPortrait(frame, event, eventUnit)
 	if not InCombatLockdown() and frame:GetAttribute("unit") ~= unit then frame:SetAttribute("unit", unit) end
 end
 
+local function UpdateArenaPortrait(frame, event, eventUnit)
+	local unit = frame.unit == "arena" and "player" or frame.unit
+	BLINKIISPORTRAITS:Print("|cffffb3f5Arena EVENT|r", frame.unit, frame.type, frame, event, eventUnit)
+	SetPortraitTexture(frame.portrait, unit, true)
+
+	if not InCombatLockdown() and frame:GetAttribute("unit") ~= unit then frame:SetAttribute("unit", unit) end
+end
+
 -- portraits
 local function CreatePortrait(unitType, parent, events, frameType)
 	local BPP = BLINKIISPORTRAITS.Portraits
 
+	BLINKIISPORTRAITS:Print("|cff96e1ffCREATE|r", parent, unitType)
+
 	if not BPP[unitType] and parent then
-		BLINKIISPORTRAITS:Print("|cff96e1ffCREATE|r", parent, unitType)
 		local portrait = CreateFrame("Button", "BP_Portrait_" .. unitType, parent, "SecureUnitButtonTemplate")
 
 		local settings = BLINKIISPORTRAITS.db[frameType or unitType]
@@ -327,6 +347,8 @@ local function CreatePortrait(unitType, parent, events, frameType)
 			portrait:SetScript("OnEvent", UpdatePartyPortrait)
 		elseif portrait.type == "boss" then
 			portrait:SetScript("OnEvent", UpdateBossPortrait)
+		elseif portrait.type == "arena" then
+			portrait:SetScript("OnEvent", UpdateArenaPortrait)
 		else
 			portrait:SetScript("OnEvent", UpdatePortrait)
 		end
@@ -384,6 +406,7 @@ function BLINKIISPORTRAITS:Initialize()
 		pet = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_PET", "UNIT_EXITED_VEHICLE", "PET_UI_UPDATE" },
 		party = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_NAME_UPDATE", "UPDATE_ACTIVE_BATTLEFIELD", "GROUP_ROSTER_UPDATE", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE" },
 		boss = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "INSTANCE_ENCOUNTER_ENGAGE_UNIT" },
+		arena = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "ARENA_OPPONENT_UPDATE", "ARENA_PREP_OPPONENT_SPECIALIZATIONS", "PVP_MATCH_STATE_CHANGED" },
 	}
 
 	if IsAddOnLoaded("ShadowedUnitFrames") then
@@ -405,6 +428,10 @@ function BLINKIISPORTRAITS:Initialize()
 
 		for i = 1, 8 do
 			CreatePortrait("boss" .. i, _G[unitframes.boss .. i], events.boss, "boss")
+		end
+
+		for i = 1, 5 do
+			CreatePortrait("arena" .. i, _G[unitframes.arena .. i], events.arena, "arena")
 		end
 	end
 end
