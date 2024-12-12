@@ -77,6 +77,17 @@ local defaults = {
 		strata = "AUTO",
 		texture = "drop",
 	},
+	boss = {
+		cast = false,
+		enable = true,
+		flip = false,
+		level = 20,
+		mirror = false,
+		point = { point = "LEFT", relativePoint = "RIGHT", x = 0, y = 0 },
+		size = 90,
+		strata = "AUTO",
+		texture = "drop",
+	},
 }
 
 -- main function/ db loader
@@ -117,7 +128,6 @@ SLASH_BLINKII1 = "/bp"
 
 SlashCmdList.BLINKII = function(msg, editBox)
 	msg = strlower(msg)
-	BLINKIISPORTRAITS:Print(msg, editBox)
 
 	if msg == "debug" then
 		BLINKIISPORTRAITS:DebugPrintTable(BLINKIISPORTRAITS.db)
@@ -232,25 +242,24 @@ local unitframesDB = {
 	6,
 }
 
-local function UpdatePortrait(frame, event, c, d, e, f)
-	BLINKIISPORTRAITS:Print("|cfff5b062OTHER|r",frame, event, c, d, e, f)
+local function UpdatePortrait(frame, event, eventUnit)
+	BLINKIISPORTRAITS:Print("|cfff5b062OTHER|r", frame.unit, frame.type, frame, event, eventUnit)
 
 	if
 		event == "UNIT_PORTRAIT_UPDATE"
 		or event == "PORTRAITS_UPDATED"
-		or (frame.typ == "target" and event == "PLAYER_TARGET_CHANGED")
-		or (frame.typ == "focus" and event == "PLAYER_FOCUS_CHANGED")
-		or ((frame.typ == "focus" or frame.typ == "targettarget") and event == "GROUP_ROSTER_UPDATE")
-		or (frame.typ == "targettarget" and event == "UNIT_TARGET")
+		or (frame.type == "target" and event == "PLAYER_TARGET_CHANGED")
+		or (frame.type == "focus" and event == "PLAYER_FOCUS_CHANGED")
+		or ((frame.type == "focus" or frame.type == "targettarget") and event == "GROUP_ROSTER_UPDATE")
+		or (frame.type == "targettarget" and event == "UNIT_TARGET")
 	then
-		BLINKIISPORTRAITS:Print(frame.unit, event)
 		SetPortraitTexture(frame.portrait, frame.unit, true)
 
 		if not InCombatLockdown() and frame:GetAttribute("unit") ~= frame.unit then frame:SetAttribute("unit", frame.unit) end
 	end
 end
 
-local function UpdatePetPortrait(frame, event, c, d, e, f)
+local function UpdatePetPortrait(frame, event, eventUnit)
 	local unit = frame.unit
 
 	if event == "UNIT_PET" or event == "UNIT_EXITED_VEHICLE" or event == "PET_UI_UPDATE" then
@@ -260,21 +269,29 @@ local function UpdatePetPortrait(frame, event, c, d, e, f)
 	frame.unit = unit
 
 	--if event == "UNIT_PORTRAIT_UPDATE" or event == "PORTRAITS_UPDATED" or event == "UNIT_PET" or event == "UNIT_EXITED_VEHICLE" or event == "PET_UI_UPDATE" then
-	BLINKIISPORTRAITS:Print("|cffd56ef5PET|r", frame.unit, event)
+	BLINKIISPORTRAITS:Print("|cffd56ef5PET|r", frame.unit, frame.type, frame, event, eventUnit)
 	SetPortraitTexture(frame.portrait, frame.unit, true)
 
 	if not InCombatLockdown() and frame:GetAttribute("unit") ~= frame.unit then frame:SetAttribute("unit", frame.unit) end
 	--end
 end
 
-local function UpdatePartyPortrait(frame, event, a, d, e, f)
+local function UpdatePartyPortrait(frame, event, eventUnit)
 	--if event == "UNIT_PORTRAIT_UPDATE" or event == "PORTRAITS_UPDATED" or event == "UNIT_PET" or event == "UNIT_EXITED_VEHICLE" or event == "PET_UI_UPDATE" then
 	local unit = frame.unit == "party" and "player" or frame.unit
-	BLINKIISPORTRAITS:Print("|cff60ffc3PARTY EVENT|r", unit, event, a, d, e, f)
+	BLINKIISPORTRAITS:Print("|cff60ffc3PARTY EVENT|r", frame.unit, frame.type, frame, event, eventUnit)
 	SetPortraitTexture(frame.portrait, unit, true)
 
 	if not InCombatLockdown() and frame:GetAttribute("unit") ~= unit then frame:SetAttribute("unit", unit) end
 	--end
+end
+
+local function UpdateBossPortrait(frame, event, eventUnit)
+	local unit = frame.unit == "boss" and "player" or frame.unit
+	BLINKIISPORTRAITS:Print("|cffb5b3f5BOSS EVENT|r", frame.unit, frame.type, frame, event, eventUnit)
+	SetPortraitTexture(frame.portrait, unit, true)
+
+	if not InCombatLockdown() and frame:GetAttribute("unit") ~= unit then frame:SetAttribute("unit", unit) end
 end
 
 -- portraits
@@ -283,13 +300,13 @@ local function CreatePortrait(unitType, parent, events, frameType)
 
 	if not BPP[unitType] and parent then
 		BLINKIISPORTRAITS:Print("|cff96e1ffCREATE|r", parent, unitType)
-		local portrait = CreateFrame("Button", "BP_Portrait_" .. unitType , parent, "SecureUnitButtonTemplate")
+		local portrait = CreateFrame("Button", "BP_Portrait_" .. unitType, parent, "SecureUnitButtonTemplate")
 
 		local settings = BLINKIISPORTRAITS.db[frameType or unitType]
 		portrait.Settings = settings
 		portrait.parentFrame = parent
 		portrait.unit = parent.unit
-		portrait.typ = frameType or unitType
+		portrait.type = frameType or unitType
 		portrait.size = settings.size
 		portrait.point = settings.point
 		portrait.textureFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
@@ -304,10 +321,12 @@ local function CreatePortrait(unitType, parent, events, frameType)
 			portrait:RegisterEvent(event)
 		end
 
-		if portrait.typ == "pet" then
+		if portrait.type == "pet" then
 			portrait:SetScript("OnEvent", UpdatePetPortrait)
-		elseif portrait.typ == "party" then
+		elseif portrait.type == "party" then
 			portrait:SetScript("OnEvent", UpdatePartyPortrait)
+		elseif portrait.type == "boss" then
+			portrait:SetScript("OnEvent", UpdateBossPortrait)
 		else
 			portrait:SetScript("OnEvent", UpdatePortrait)
 		end
@@ -333,7 +352,6 @@ local function CreatePortrait(unitType, parent, events, frameType)
 		portrait.portrait:SetAllPoints(portrait)
 		portrait.portrait:AddMaskTexture(portrait.mask)
 		local unit = parent.unit == "party" and "player" or parent.unit
-		BLINKIISPORTRAITS:Print(UnitExists(parent.unit), unit)
 		SetPortraitTexture(portrait.portrait, unit, true)
 
 		-- bg
@@ -365,6 +383,7 @@ function BLINKIISPORTRAITS:Initialize()
 		targettarget = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_TARGET", "GROUP_ROSTER_UPDATE" },
 		pet = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_PET", "UNIT_EXITED_VEHICLE", "PET_UI_UPDATE" },
 		party = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_NAME_UPDATE", "UPDATE_ACTIVE_BATTLEFIELD", "GROUP_ROSTER_UPDATE", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE" },
+		boss = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "INSTANCE_ENCOUNTER_ENGAGE_UNIT" },
 	}
 
 	if IsAddOnLoaded("ShadowedUnitFrames") then
@@ -381,7 +400,11 @@ function BLINKIISPORTRAITS:Initialize()
 		CreatePortrait("pet", _G[unitframes.pet], events.pet)
 
 		for i = 1, 5 do
-			CreatePortrait("party" .. i, _G[unitframes.party..i], events.party, "party")
+			CreatePortrait("party" .. i, _G[unitframes.party .. i], events.party, "party")
+		end
+
+		for i = 1, 8 do
+			CreatePortrait("boss" .. i, _G[unitframes.boss .. i], events.boss, "boss")
 		end
 	end
 end
