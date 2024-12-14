@@ -99,6 +99,111 @@ local defaults = {
 		strata = "AUTO",
 		texture = "drop",
 	},
+	colors = {
+		border = {
+			default = { r = 0, g = 0, b = 0, a = 1 },
+			rare = { r = 1, g = 1, b = 1, a = 1 },
+			elite = { r = 1, g = 1, b = 1, a = 1 },
+			rareelite = { r = 1, g = 1, b = 1, a = 1 },
+			boss = { r = 1, g = 0, b = 0, a = 1 },
+		},
+		misc = {
+			death = {
+				a = { r = 0.89, g = 0.61, b = 0.29, a = 1 },
+				b = { r = 0.89, g = 0.42, b = 0.16, a = 1 },
+			},
+			default = {
+				a = { r = 0.89, g = 0.61, b = 0.29, a = 1 },
+				b = { r = 0.89, g = 0.42, b = 0.16, a = 1 },
+			},
+		},
+		class = {
+			DEATHKNIGHT = {
+				a = { r = 0.81, g = 0.17, b = 0.17, a = 1 },
+				b = { r = 0.96, g = 0.14, b = 0.31, a = 1 },
+			},
+			DEMONHUNTER = {
+				a = { r = 0.70, g = 0, b = 0.54, a = 1 },
+				b = { r = 0.72, g = 0, b = 0.96, a = 1 },
+			},
+			DRUID = {
+				a = { r = 1.00, g = 0.36, b = 0.04, a = 1 },
+				b = { r = 1, g = 0.50, b = 0.03, a = 1 },
+			},
+			EVOKER = {
+				a = { r = 0.20, g = 0.58, b = 0.50, a = 1 },
+				b = { r = 0.2, g = 1, b = 0.97, a = 1 },
+			},
+			HUNTER = {
+				a = { r = 0.6, g = 0.8, b = 0.32, a = 1 },
+				b = { r = 0.67, g = 0.92, b = 0.3, a = 1 },
+			},
+			MAGE = {
+				a = { r = 0, g = 0.60, b = 0.81, a = 1 },
+				b = { r = 0.2, g = 0.78, b = 0.98, a = 1 },
+			},
+			MONK = {
+				a = { r = 0, g = 0.78, b = 0.53, a = 1 },
+				b = { r = 0, g = 1, b = 0.52, a = 1 },
+			},
+			PALADIN = {
+				a = { r = 1, g = 0.25, b = 0.65, a = 1 },
+				b = { r = 0.96, g = 0.52, b = 0.84, a = 1 },
+			},
+			PRIEST = {
+				a = { r = 0.74, g = 0.74, b = 0.74, a = 1 },
+				b = { r = 1, g = 1, b = 1, a = 1 },
+			},
+			ROGUE = {
+				a = { r = 1, g = 0.74, b = 0.23, a = 1 },
+				b = { r = 1, g = 0.92, b = 0.25, a = 1 },
+			},
+			SHAMAN = {
+				a = { r = 0.00, g = 0.38, b = 0.92, a = 1 },
+				b = { r = 0.03, g = 0.5, b = 0.92, a = 1 },
+			},
+			WARLOCK = {
+				a = { r = 0.38, g = 0.28, b = 0.67, a = 1 },
+				b = { r = 0.52, g = 0.38, b = 0.92, a = 1 },
+			},
+			WARRIOR = {
+				a = { r = 0.78, g = 0.54, b = 0.28, a = 1 },
+				b = { r = 0.87, g = 0.63, b = 0.38, a = 1 },
+			},
+		},
+		classification = {
+			rare = {
+				a = { r = 0, g = 0.46, b = 1, a = 1 },
+				b = { r = 0, g = 0.27, b = 0.59, a = 1 },
+			},
+			rareelite = {
+				a = { r = 0.63, g = 0, b = 1, a = 1 },
+				b = { r = 0.44, g = 0, b = 0.70, a = 1 },
+			},
+			elite = {
+				a = { r = 1, g = 0, b = 0.90, a = 1 },
+				b = { r = 0.62, g = 0, b = 0.36, a = 1 },
+			},
+			boss = {
+				a = { r = 0.78, g = 0.12, b = 0.12, a = 1 },
+				b = { r = 0.85, g = 0.25, b = 0.25, a = 1 },
+			},
+		},
+		reaction = {
+			enemy = {
+				a = { r = 0.78, g = 0.12, b = 0.12, a = 1 },
+				b = { r = 0.85, g = 0.25, b = 0.25, a = 1 },
+			},
+			neutral = {
+				a = { r = 1.00, g = 0.70, b = 0, a = 1 },
+				b = { r = 0.77, g = 0.45, b = 0, a = 1 },
+			},
+			friendly = {
+				a = { r = 0.17, g = 0.75, b = 0, a = 1 },
+				b = { r = 0, g = 1, b = 0.22, a = 1 },
+			},
+		},
+	},
 }
 
 -- main function/ db loader
@@ -128,7 +233,7 @@ BLINKIISPORTRAITS:SetScript("OnEvent", OnEvent)
 
 -- settings
 BLINKIISPORTRAITS.Version = GetAddOnMetadata(addonName, "Version")
-BLINKIISPORTRAITS.Name = "Blinkiis Portraits"
+BLINKIISPORTRAITS.Name = "|CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits"
 BLINKIISPORTRAITS.Icon = "|TInterface\\Addons\\ElvUI_mMediaTag\\media\\logo\\mmt_icon_round.tga:14:14|t"
 BLINKIISPORTRAITS.Media = {}
 BLINKIISPORTRAITS.Config = {}
@@ -229,30 +334,6 @@ function BLINKIISPORTRAITS:TEST(...)
 	BLINKIISPORTRAITS:Initialize()
 end
 
-local unitframesDB = {
-	elvui = {
-		player = "ElvUF_Player",
-		target = "ElvUF_Target",
-		pet = "ElvUF_Pet",
-		targettarget = "ElvUF_TargetTarget",
-		focus = "ElvUF_Focus",
-		party = "ElvUF_PartyGroup1UnitButton",
-		boss = "ElvUF_Boss",
-		arena = "ElvUF_Arena",
-	},
-	suf = {
-		player = "SUFUnitplayer",
-		target = "SUFUnittarget",
-		pet = "SUFUnitpet",
-		targettarget = "SUFUnittargettarget",
-		focus = "SUFUnitocus",
-		party = "SUFHeaderpartyUnitButton",
-		boss = "SUFHeaderboss",
-		arena = "SUFHeaderArena",
-	},
-	6,
-}
-
 local function UpdatePortrait(frame, event, eventUnit)
 	BLINKIISPORTRAITS:Print("|cfff5b062OTHER|r", frame.unit, frame.type, frame, event, eventUnit)
 
@@ -313,125 +394,6 @@ local function UpdateArenaPortrait(frame, event, eventUnit)
 	if not InCombatLockdown() and frame:GetAttribute("unit") ~= unit then frame:SetAttribute("unit", unit) end
 end
 
--- portraits
-local function CreatePortrait(unitType, parent, events, frameType)
-	local BPP = BLINKIISPORTRAITS.Portraits
-
-	BLINKIISPORTRAITS:Print("|cff96e1ffCREATE|r", parent, unitType)
-
-	if not BPP[unitType] and parent then
-		local portrait = CreateFrame("Button", "BP_Portrait_" .. unitType, parent, "SecureUnitButtonTemplate")
-
-		local settings = BLINKIISPORTRAITS.db[frameType or unitType]
-		portrait.Settings = settings
-		portrait.parentFrame = parent
-		portrait.unit = parent.unit
-		portrait.type = frameType or unitType
-		portrait.size = settings.size
-		portrait.point = settings.point
-		portrait.textureFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
-		portrait.bgFile = "Interface\\Addons\\Blinkiis_Portraits\\blank.tga"
-		portrait.maskFile = "Interface\\Addons\\Blinkiis_Portraits\\mask.tga"
-		portrait.rareFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
-		portrait.eliteFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
-		portrait.rareeliteFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
-		portrait.bossFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
-
-		for _, event in ipairs(events) do
-			portrait:RegisterEvent(event)
-		end
-
-		if portrait.type == "pet" then
-			portrait:SetScript("OnEvent", UpdatePetPortrait)
-		elseif portrait.type == "party" then
-			portrait:SetScript("OnEvent", UpdatePartyPortrait)
-		elseif portrait.type == "boss" then
-			portrait:SetScript("OnEvent", UpdateBossPortrait)
-		elseif portrait.type == "arena" then
-			portrait:SetScript("OnEvent", UpdateArenaPortrait)
-		else
-			portrait:SetScript("OnEvent", UpdatePortrait)
-		end
-
-		if not InCombatLockdown() then
-			portrait:SetSize(portrait.size, portrait.size)
-			portrait:ClearAllPoints()
-			portrait:SetPoint(portrait.point.point, portrait.parentFrame, portrait.point.relativePoint, portrait.point.x, portrait.point.y)
-		end
-
-		-- texture
-		portrait.texture = portrait:CreateTexture("BP_texture-" .. unitType, "OVERLAY", nil, 4)
-		portrait.texture:SetAllPoints(portrait)
-		portrait.texture:SetTexture(portrait.textureFile, "CLAMP", "CLAMP", "TRILINEAR")
-
-		-- mask
-		portrait.mask = portrait:CreateMaskTexture()
-		portrait.mask:SetAllPoints(portrait)
-		portrait.mask:SetTexture(portrait.maskFile, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-
-		-- portrait
-		portrait.portrait = portrait:CreateTexture("BP_portrait-" .. unitType, "OVERLAY", nil, 2)
-		portrait.portrait:SetAllPoints(portrait)
-		portrait.portrait:AddMaskTexture(portrait.mask)
-		local unit = parent.unit == "party" and "player" or parent.unit
-		SetPortraitTexture(portrait.portrait, unit, true)
-
-		-- bg
-		portrait.bg = portrait:CreateTexture("BP_bg-" .. unitType, "OVERLAY", nil, 1)
-		portrait.bg:SetAllPoints(portrait)
-		portrait.bg:AddMaskTexture(portrait.mask)
-		portrait.bg:SetTexture(portrait.bgFile, "CLAMP", "CLAMP", "TRILINEAR")
-		portrait.bg:SetVertexColor(0, 0, 0, 1)
-
-		-- scripts to interact with mouse
-		portrait:SetAttribute("unit", portrait.unit)
-		portrait:SetAttribute("*type1", "target")
-		portrait:SetAttribute("*type2", "togglemenu")
-		portrait:SetAttribute("type3", "focus")
-		portrait:SetAttribute("toggleForVehicle", true)
-		portrait:SetAttribute("ping-receiver", true)
-		portrait:RegisterForClicks("AnyUp")
-
-		BPP[unitType] = portrait
-	end
-end
-
 function BLINKIISPORTRAITS:Initialize()
-	local unitframes = nil
-	local events = {
-		player = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED" },
-		target = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "PLAYER_TARGET_CHANGED" },
-		focus = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "PLAYER_FOCUS_CHANGED", "GROUP_ROSTER_UPDATE" },
-		targettarget = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_TARGET", "GROUP_ROSTER_UPDATE" },
-		pet = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_PET", "UNIT_EXITED_VEHICLE", "PET_UI_UPDATE" },
-		party = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_NAME_UPDATE", "UPDATE_ACTIVE_BATTLEFIELD", "GROUP_ROSTER_UPDATE", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE" },
-		boss = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "INSTANCE_ENCOUNTER_ENGAGE_UNIT" },
-		arena = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "ARENA_OPPONENT_UPDATE", "ARENA_PREP_OPPONENT_SPECIALIZATIONS", "PVP_MATCH_STATE_CHANGED" },
-	}
-
-	if IsAddOnLoaded("ShadowedUnitFrames") then
-		unitframes = unitframesDB.suf
-	elseif IsAddOnLoaded("ElvUI") then
-		unitframes = unitframesDB.elvui
-	end
-
-	if unitframes then
-		CreatePortrait("player", _G[unitframes.player], events.player)
-		CreatePortrait("target", _G[unitframes.target], events.target)
-		CreatePortrait("focus", _G[unitframes.focus], events.focus)
-		CreatePortrait("targettarget", _G[unitframes.targettarget], events.targettarget)
-		CreatePortrait("pet", _G[unitframes.pet], events.pet)
-
-		for i = 1, 5 do
-			CreatePortrait("party" .. i, _G[unitframes.party .. i], events.party, "party")
-		end
-
-		for i = 1, 8 do
-			CreatePortrait("boss" .. i, _G[unitframes.boss .. i], events.boss, "boss")
-		end
-
-		for i = 1, 5 do
-			CreatePortrait("arena" .. i, _G[unitframes.arena .. i], events.arena, "arena")
-		end
-	end
+	BLINKIISPORTRAITS:InitializePortraits()
 end

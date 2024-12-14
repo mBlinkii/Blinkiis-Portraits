@@ -7,3 +7,4 @@
 
 core.lua
 options.lua
+portraits\load_portraits.xml

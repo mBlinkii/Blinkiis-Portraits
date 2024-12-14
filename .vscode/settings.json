@@ -138,7 +138,8 @@
         "ObjectiveTrackerModuleMixin",
         "Delve",
         "MinimapCluster",
-        "NUM_CHAT_WINDOWS"
+        "NUM_CHAT_WINDOWS",
+        "PlayerFrame_UpdateArt"
     ],
     "Lua.runtime.version": "Lua 5.1",
     "Lua.runtime.builtin": {
@@ -165,6 +166,7 @@
         "Castbar",
         "Cata",
         "cffabff",
+        "CFFF",
         "cffff",
         "CLAMPTOBLACKADDITIVE",
         "classicons",
@@ -175,6 +177,8 @@
         "datatexts",
         "Datatexts",
         "deathcolor",
+        "DEATHKNIGHT",
+        "DEMONHUNTER",
         "desaturation",
         "dockdatatext",
         "dont",
