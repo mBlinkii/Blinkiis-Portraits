@@ -3,6 +3,7 @@ local UnitIsPlayer = UnitIsPlayer
 local UnitClass = UnitClass
 local UnitReaction = UnitReaction
 local UnitInPartyIsAI = UnitInPartyIsAI
+local UnitClassification = UnitClassification
 local ipairs = ipairs
 
 function BLINKIISPORTRAITS:RegisterEvents(frame, events)
@@ -58,7 +59,6 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(frame)
 	-- (rareIDS[npcID] and "rare") or (eliteIDS[npcID] and "elite") or (rareeliteIDS[npcID] and "rareelite") or
 	local c = UnitClassification(unit) -- "worldboss", "rareelite", "elite", "rare", "normal", "trivial", or "minus"
 	local color = colorClassification[c]
-	print(c)
 
 	if color then
 		print(frame[c .. "File"])
