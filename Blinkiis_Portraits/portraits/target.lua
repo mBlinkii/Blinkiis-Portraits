@@ -7,6 +7,7 @@ local function OnEvent(frame, event, eventUnit)
 	if color then frame.texture:SetVertexColor(color.a.r, color.a.g, color.a.b, color.a.a or 1) end
 
 	SetPortraitTexture(frame.portrait, frame.unit, true)
+	BLINKIISPORTRAITS:UpdateExtraTexture(frame)
 
 	if not InCombatLockdown() and frame:GetAttribute("unit") ~= frame.unit then frame:SetAttribute("unit", frame.unit) end
 end
@@ -22,9 +23,10 @@ function BLINKIISPORTRAITS:InitTargetPortrait(parentFrame)
 			textureFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
 			bgFile = "Interface\\Addons\\Blinkiis_Portraits\\blank.tga",
 			maskFile = "Interface\\Addons\\Blinkiis_Portraits\\mask.tga",
-			rareFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
-			eliteFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
-			rareeliteFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
+			extraMaskFile = "Interface\\Addons\\Blinkiis_Portraits\\extramask.tga",
+			rareFile = "Interface\\Addons\\Blinkiis_Portraits\\rare.tga",
+			eliteFile = "Interface\\Addons\\Blinkiis_Portraits\\elite.tga",
+			rareeliteFile = "Interface\\Addons\\Blinkiis_Portraits\\rareelite.tga",
 			bossFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
 		}
 

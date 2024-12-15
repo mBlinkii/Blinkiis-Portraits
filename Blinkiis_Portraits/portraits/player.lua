@@ -29,9 +29,10 @@ function BLINKIISPORTRAITS:InitPlayerPortrait(parentFrame)
 			textureFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
 			bgFile = "Interface\\Addons\\Blinkiis_Portraits\\blank.tga",
 			maskFile = "Interface\\Addons\\Blinkiis_Portraits\\mask.tga",
-			rareFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
-			eliteFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
-			rareeliteFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
+			extraMaskFile = "Interface\\Addons\\Blinkiis_Portraits\\extramask.tga",
+			rareFile = "Interface\\Addons\\Blinkiis_Portraits\\rare.tga",
+			eliteFile = "Interface\\Addons\\Blinkiis_Portraits\\elite.tga",
+			rareeliteFile = "Interface\\Addons\\Blinkiis_Portraits\\rareelite.tga",
 			bossFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
 		}
 
