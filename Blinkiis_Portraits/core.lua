@@ -11,15 +11,24 @@ local addonName, _ = ...
 local defaults = {
 	test = true,
 	test_tbl = { a = "aaaa", b = "bbb" },
+	misc = {
+		rare = "drop",
+		elite = "drop",
+		rareelite = "drop",
+		boss = "drop",
+		player = "drop",
+	},
 	player = {
 		cast = false,
-		enable = true,
 		flip = false,
 		level = 20,
-		mirror = false,
-		point = { point = "RIGHT", relativePoint = "LEFT", x = 0, y = 0 },
-		size = 90,
 		strata = "AUTO",
+		mirror = false,
+
+		point = { point = "RIGHT", relativePoint = "LEFT", x = 0, y = 0 },
+		extra = false,
+		enable = true,
+		size = 90,
 		texture = "drop",
 	},
 	target = {
@@ -32,6 +41,7 @@ local defaults = {
 		size = 90,
 		strata = "AUTO",
 		texture = "drop",
+		extra = true,
 	},
 	focus = {
 		cast = false,
@@ -43,6 +53,7 @@ local defaults = {
 		size = 90,
 		strata = "AUTO",
 		texture = "drop",
+		extra = false,
 	},
 	targettarget = {
 		cast = false,
@@ -54,6 +65,7 @@ local defaults = {
 		size = 90,
 		strata = "AUTO",
 		texture = "drop",
+		extra = false,
 	},
 	pet = {
 		cast = false,
@@ -65,6 +77,7 @@ local defaults = {
 		size = 90,
 		strata = "AUTO",
 		texture = "drop",
+		extra = false,
 	},
 	party = {
 		cast = false,
@@ -76,6 +89,7 @@ local defaults = {
 		size = 90,
 		strata = "AUTO",
 		texture = "drop",
+		extra = false,
 	},
 	boss = {
 		cast = false,
@@ -87,6 +101,7 @@ local defaults = {
 		size = 90,
 		strata = "AUTO",
 		texture = "drop",
+		extra = true,
 	},
 	arena = {
 		cast = false,
@@ -98,110 +113,46 @@ local defaults = {
 		size = 90,
 		strata = "AUTO",
 		texture = "drop",
+		extra = false,
 	},
 	colors = {
 		border = {
-			default = { r = 0, g = 0, b = 0, a = 1 },
-			rare = { r = 1, g = 1, b = 1, a = 1 },
-			elite = { r = 1, g = 1, b = 1, a = 1 },
-			rareelite = { r = 1, g = 1, b = 1, a = 1 },
 			boss = { r = 1, g = 0, b = 0, a = 1 },
+			default = { r = 0, g = 0, b = 0, a = 1 },
+			elite = { r = 1, g = 1, b = 1, a = 1 },
+			rare = { r = 1, g = 1, b = 1, a = 1 },
+			rareelite = { r = 1, g = 1, b = 1, a = 1 },
 		},
 		misc = {
-			death = {
-				a = { r = 0.89, g = 0.61, b = 0.29, a = 1 },
-				b = { r = 0.89, g = 0.42, b = 0.16, a = 1 },
-			},
-			default = {
-				a = { r = 0.89, g = 0.61, b = 0.29, a = 1 },
-				b = { r = 0.89, g = 0.42, b = 0.16, a = 1 },
-			},
+			death = { r = 0.89, g = 0.61, b = 0.29, a = 1 },
+			default = { r = 0.89, g = 0.61, b = 0.29, a = 1 },
 		},
 		class = {
-			DEATHKNIGHT = {
-				a = { r = 0.81, g = 0.17, b = 0.17, a = 1 },
-				b = { r = 0.96, g = 0.14, b = 0.31, a = 1 },
-			},
-			DEMONHUNTER = {
-				a = { r = 0.70, g = 0, b = 0.54, a = 1 },
-				b = { r = 0.72, g = 0, b = 0.96, a = 1 },
-			},
-			DRUID = {
-				a = { r = 1.00, g = 0.36, b = 0.04, a = 1 },
-				b = { r = 1, g = 0.50, b = 0.03, a = 1 },
-			},
-			EVOKER = {
-				a = { r = 0.20, g = 0.58, b = 0.50, a = 1 },
-				b = { r = 0.2, g = 1, b = 0.97, a = 1 },
-			},
-			HUNTER = {
-				a = { r = 0.6, g = 0.8, b = 0.32, a = 1 },
-				b = { r = 0.67, g = 0.92, b = 0.3, a = 1 },
-			},
-			MAGE = {
-				a = { r = 0, g = 0.60, b = 0.81, a = 1 },
-				b = { r = 0.2, g = 0.78, b = 0.98, a = 1 },
-			},
-			MONK = {
-				a = { r = 0, g = 0.78, b = 0.53, a = 1 },
-				b = { r = 0, g = 1, b = 0.52, a = 1 },
-			},
-			PALADIN = {
-				a = { r = 1, g = 0.25, b = 0.65, a = 1 },
-				b = { r = 0.96, g = 0.52, b = 0.84, a = 1 },
-			},
-			PRIEST = {
-				a = { r = 0.74, g = 0.74, b = 0.74, a = 1 },
-				b = { r = 1, g = 1, b = 1, a = 1 },
-			},
-			ROGUE = {
-				a = { r = 1, g = 0.74, b = 0.23, a = 1 },
-				b = { r = 1, g = 0.92, b = 0.25, a = 1 },
-			},
-			SHAMAN = {
-				a = { r = 0.00, g = 0.38, b = 0.92, a = 1 },
-				b = { r = 0.03, g = 0.5, b = 0.92, a = 1 },
-			},
-			WARLOCK = {
-				a = { r = 0.38, g = 0.28, b = 0.67, a = 1 },
-				b = { r = 0.52, g = 0.38, b = 0.92, a = 1 },
-			},
-			WARRIOR = {
-				a = { r = 0.78, g = 0.54, b = 0.28, a = 1 },
-				b = { r = 0.87, g = 0.63, b = 0.38, a = 1 },
-			},
+			DEATHKNIGHT = { r = 0.81, g = 0.17, b = 0.17, a = 1 },
+			DEMONHUNTER = { r = 0.70, g = 0, b = 0.54, a = 1 },
+			DRUID = { r = 1.00, g = 0.36, b = 0.04, a = 1 },
+			EVOKER = { r = 0.20, g = 0.58, b = 0.50, a = 1 },
+			HUNTER = { r = 0.6, g = 0.8, b = 0.32, a = 1 },
+			MAGE = { r = 0, g = 0.60, b = 0.81, a = 1 },
+			MONK = { r = 0, g = 0.78, b = 0.53, a = 1 },
+			PALADIN = { r = 1, g = 0.25, b = 0.65, a = 1 },
+			PRIEST = { r = 0.74, g = 0.74, b = 0.74, a = 1 },
+			ROGUE = { r = 1, g = 0.74, b = 0.23, a = 1 },
+			SHAMAN = { r = 0.00, g = 0.38, b = 0.92, a = 1 },
+			WARLOCK = { r = 0.38, g = 0.28, b = 0.67, a = 1 },
+			WARRIOR = { r = 0.78, g = 0.54, b = 0.28, a = 1 },
 		},
 		classification = {
-			rare = {
-				a = { r = 0, g = 0.46, b = 1, a = 1 },
-				b = { r = 0, g = 0.27, b = 0.59, a = 1 },
-			},
-			rareelite = {
-				a = { r = 0.63, g = 0, b = 1, a = 1 },
-				b = { r = 0.44, g = 0, b = 0.70, a = 1 },
-			},
-			elite = {
-				a = { r = 1, g = 0, b = 0.90, a = 1 },
-				b = { r = 0.62, g = 0, b = 0.36, a = 1 },
-			},
-			boss = {
-				a = { r = 0.78, g = 0.12, b = 0.12, a = 1 },
-				b = { r = 0.85, g = 0.25, b = 0.25, a = 1 },
-			},
+			boss = { r = 0.78, g = 0.12, b = 0.12, a = 1 },
+			elite = { r = 1, g = 0, b = 0.90, a = 1 },
+			rare = { r = 0, g = 0.46, b = 1, a = 1 },
+			rareelite = { r = 0.63, g = 0, b = 1, a = 1 },
+			player = { r = 0.2, g = 1, b = 0.2, a = 1 },
 		},
 		reaction = {
-			enemy = {
-				a = { r = 0.78, g = 0.12, b = 0.12, a = 1 },
-				b = { r = 0.85, g = 0.25, b = 0.25, a = 1 },
-			},
-			neutral = {
-				a = { r = 1.00, g = 0.70, b = 0, a = 1 },
-				b = { r = 0.77, g = 0.45, b = 0, a = 1 },
-			},
-			friendly = {
-				a = { r = 0.17, g = 0.75, b = 0, a = 1 },
-				b = { r = 0, g = 1, b = 0.22, a = 1 },
-			},
+			enemy = { r = 0.78, g = 0.12, b = 0.12, a = 1 },
+			friendly = { r = 0.17, g = 0.75, b = 0, a = 1 },
+			neutral = { r = 1.00, g = 0.70, b = 0, a = 1 },
 		},
 	},
 }
@@ -249,6 +200,8 @@ SlashCmdList.BLINKII = function(msg, editBox)
 		BLINKIISPORTRAITS:DebugPrintTable(BLINKIISPORTRAITS.db)
 	elseif msg == "test" then
 		BLINKIISPORTRAITS:TEST()
+	elseif msg == "reset" then
+		BLINKIISPORTRAITS.db = nil
 	else
 		BLINKIISPORTRAITS:ToggleOptions()
 	end

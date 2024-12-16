@@ -34,7 +34,7 @@ function BLINKIISPORTRAITS:UpdateTextures(frame)
 	frame.bg:SetTexture(frame.bgFile, "CLAMP", "CLAMP", "TRILINEAR")
 end
 
-function BLINKIISPORTRAITS:UpdateExtraTexture(frame)
+function BLINKIISPORTRAITS:UpdateExtraTexture(frame, forced)
 	if not frame.extra then return end
 
 	-- test
@@ -52,27 +52,32 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(frame)
 
 	--local guid = UnitGUID(frame.unit)
 	--local npcID = guid and select(6, strsplit("-", guid))
-
+	local color, c
 	local colorClassification = BLINKIISPORTRAITS.db.colors.classification
-	local unit = frame.unit
 
-	-- (rareIDS[npcID] and "rare") or (eliteIDS[npcID] and "elite") or (rareeliteIDS[npcID] and "rareelite") or
-	local c = UnitClassification(unit) -- "worldboss", "rareelite", "elite", "rare", "normal", "trivial", or "minus"
-	local color = colorClassification[c]
+	if forced then
+		color = colorClassification.player
+		c = "player"
+	else
+		local unit = frame.unit
+
+		-- (rareIDS[npcID] and "rare") or (eliteIDS[npcID] and "elite") or (rareeliteIDS[npcID] and "rareelite") or
+		c = UnitClassification(unit) -- "worldboss", "rareelite", "elite", "rare", "normal", "trivial", or "minus"
+		color = colorClassification[c]
+	end
 
 	if color then
-		print(frame[c .. "File"])
 		frame.extra:SetTexture(frame[c .. "File"], "CLAMP", "CLAMP", "TRILINEAR")
-		frame.extra:SetVertexColor(color.a.r, color.a.g, color.a.b, color.a.a or 1)
+		frame.extra:SetVertexColor(color.r, color.g, color.b, color.a or 1)
 		frame.extra:Show()
 	else
 		frame.extra:Hide()
 	end
 end
 
-function BLINKIISPORTRAITS:RemovePortrait(frame, events)
-	if frame and events then
-		for _, event in pairs(events) do
+function BLINKIISPORTRAITS:RemovePortrait(frame)
+	if frame and frame.events then
+		for _, event in pairs(frame.events) do
 			frame:UnregisterEvent(event)
 		end
 	end
@@ -103,14 +108,15 @@ function BLINKIISPORTRAITS:UpdateSettings(frame, parent, frameType, settings)
 	frame.type = frameType or frame.type
 	frame.size = settings.size
 	frame.point = settings.point
-	frame.textureFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
 	frame.bgFile = "Interface\\Addons\\Blinkiis_Portraits\\blank.tga"
-	frame.maskFile = "Interface\\Addons\\Blinkiis_Portraits\\mask.tga"
-	frame.extraMaskFile = "Interface\\Addons\\Blinkiis_Portraits\\extramask.tga"
-	frame.rareFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
-	frame.eliteFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
-	frame.rareeliteFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
 	frame.bossFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
+	frame.eliteFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
+	frame.extraMaskFile = "Interface\\Addons\\Blinkiis_Portraits\\extramask.tga"
+	frame.maskFile = "Interface\\Addons\\Blinkiis_Portraits\\mask.tga"
+	frame.playerFile = "Interface\\Addons\\Blinkiis_Portraits\\rare.tga"
+	frame.rareFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
+	frame.rareeliteFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
+	frame.textureFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
 end
 
 function BLINKIISPORTRAITS:CreatePortrait(unitType, parent, settings, frameType)
@@ -162,6 +168,7 @@ function BLINKIISPORTRAITS:CreatePortrait(unitType, parent, settings, frameType)
 			portrait:SetAttribute("toggleForVehicle", true)
 			portrait:SetAttribute("ping-receiver", true)
 			portrait:RegisterForClicks("AnyUp")
+			portrait:Show()
 			portrait.isBuild = true
 		end
 
@@ -172,6 +179,36 @@ function BLINKIISPORTRAITS:CreatePortrait(unitType, parent, settings, frameType)
 		end
 
 		BPP[unitType] = portrait
+	end
+end
+
+function BLINKIISPORTRAITS:InitPortrait(unitType, parentFrame, settings, events, onEvent)
+	BLINKIISPORTRAITS:CreatePortrait(unitType, parentFrame, settings, unitType)
+
+	local textureFiles = {
+		bgFile = "Interface\\Addons\\Blinkiis_Portraits\\blank.tga",
+		bossFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
+		eliteFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
+		extraMaskFile = "Interface\\Addons\\Blinkiis_Portraits\\extramask.tga",
+		maskFile = "Interface\\Addons\\Blinkiis_Portraits\\mask.tga",
+		playerFile = "Interface\\Addons\\Blinkiis_Portraits\\rare.tga",
+		rareFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
+		rareeliteFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
+		textureFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
+	}
+
+	local portrait = BLINKIISPORTRAITS.Portraits[unitType]
+	if portrait then
+		for key, value in pairs(textureFiles) do
+			portrait[key] = value
+		end
+
+		BLINKIISPORTRAITS:UpdateTextures(portrait)
+		BLINKIISPORTRAITS:RegisterEvents(portrait, events)
+		portrait:SetScript("OnEvent", onEvent)
+		portrait.events = events
+
+		onEvent(portrait)
 	end
 end
 
@@ -257,8 +294,19 @@ function BLINKIISPORTRAITS:InitializePortraits()
 	end
 
 	if unitframes then
-		BLINKIISPORTRAITS:InitPlayerPortrait(_G[unitframes.player])
-		BLINKIISPORTRAITS:InitTargetPortrait(_G[unitframes.target])
+		if BLINKIISPORTRAITS.db.player.enable then
+			BLINKIISPORTRAITS:InitPlayerPortrait(_G[unitframes.player])
+		elseif BLINKIISPORTRAITS.Portraits.player then
+			BLINKIISPORTRAITS:RemovePortrait(BLINKIISPORTRAITS.Portraits.player)
+			BLINKIISPORTRAITS.Portraits.player = nil
+		end
+
+		if BLINKIISPORTRAITS.db.target.enable then
+			BLINKIISPORTRAITS:InitTargetPortrait(_G[unitframes.target])
+		elseif BLINKIISPORTRAITS.Portraits.target then
+			BLINKIISPORTRAITS:RemovePortrait(BLINKIISPORTRAITS.Portraits.target)
+			BLINKIISPORTRAITS.Portraits.target = nil
+		end
 		-- CreatePortrait("player", _G[unitframes.player], events.player)
 		-- CreatePortrait("target", _G[unitframes.target], events.target)
 		-- CreatePortrait("focus", _G[unitframes.focus], events.focus)

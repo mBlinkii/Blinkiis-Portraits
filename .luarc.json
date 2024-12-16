@@ -19515,7 +19515,12 @@
         "LFG_ROLE_NUM_SHORTAGE_TYPES",
         "GREAT_VAULT_REWARDS_WAITING",
         "NUM_CHAT_WINDOWS",
-        "Settings"
+        "Settings",
+        "UIDropDownMenu_SetWidth",
+        "UIDropDownMenu_SetText",
+        "UIDropDownMenu_CreateInfo",
+        "UIDropDownMenu_AddButton",
+        "UIDropDownMenu_Initialize"
   ],
   "diagnostics.disable": ["deprecated", "inject-field", "undefined-field",
         "cast-local-type"]
