@@ -9,14 +9,12 @@ local addonName, _ = ...
 
 -- defaults
 local defaults = {
-	test = true,
-	test_tbl = { a = "aaaa", b = "bbb" },
 	misc = {
-		rare = "drop",
-		elite = "drop",
-		rareelite = "drop",
-		boss = "drop",
-		player = "drop",
+		rare = "extra_a",
+		elite = "extra_a",
+		rareelite = "extra_a",
+		boss = "extra_a",
+		player = "extra_a",
 	},
 	player = {
 		cast = false,
@@ -29,7 +27,7 @@ local defaults = {
 		extra = false,
 		enable = true,
 		size = 90,
-		texture = "drop",
+		texture = "blizz",
 	},
 	target = {
 		cast = false,
@@ -40,7 +38,7 @@ local defaults = {
 		point = { point = "LEFT", relativePoint = "RIGHT", x = 0, y = 0 },
 		size = 90,
 		strata = "AUTO",
-		texture = "drop",
+		texture = "blizz",
 		extra = true,
 	},
 	focus = {
@@ -52,7 +50,7 @@ local defaults = {
 		point = { point = "LEFT", relativePoint = "RIGHT", x = 0, y = 0 },
 		size = 90,
 		strata = "AUTO",
-		texture = "drop",
+		texture = "blizz",
 		extra = false,
 	},
 	targettarget = {
@@ -64,7 +62,7 @@ local defaults = {
 		point = { point = "LEFT", relativePoint = "RIGHT", x = 0, y = 0 },
 		size = 90,
 		strata = "AUTO",
-		texture = "drop",
+		texture = "blizz",
 		extra = false,
 	},
 	pet = {
@@ -76,7 +74,7 @@ local defaults = {
 		point = { point = "RIGHT", relativePoint = "LEFT", x = 0, y = 0 },
 		size = 90,
 		strata = "AUTO",
-		texture = "drop",
+		texture = "blizz",
 		extra = false,
 	},
 	party = {
@@ -88,7 +86,7 @@ local defaults = {
 		point = { point = "RIGHT", relativePoint = "LEFT", x = 0, y = 0 },
 		size = 90,
 		strata = "AUTO",
-		texture = "drop",
+		texture = "blizz",
 		extra = false,
 	},
 	boss = {
@@ -100,7 +98,7 @@ local defaults = {
 		point = { point = "LEFT", relativePoint = "RIGHT", x = 0, y = 0 },
 		size = 90,
 		strata = "AUTO",
-		texture = "drop",
+		texture = "blizz",
 		extra = true,
 	},
 	arena = {
@@ -112,7 +110,7 @@ local defaults = {
 		point = { point = "LEFT", relativePoint = "RIGHT", x = 0, y = 0 },
 		size = 90,
 		strata = "AUTO",
-		texture = "drop",
+		texture = "blizz",
 		extra = false,
 	},
 	colors = {
