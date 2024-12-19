@@ -19,21 +19,6 @@ local extra = {
 	extra_c = "Extra C",
 }
 
-
-local style = {
-	a = "FLAT",
-	b = "SMOOTH",
-	c = "METALLIC",
-}
-
-local extraStyle = {
-	a = "Style A",
-	b = "Style B",
-	c = "Style C",
-	d = "Style D",
-	e = "Style E",
-}
-
 local frameStrata = {
 	BACKGROUND = "BACKGROUND",
 	LOW = "LOW",
