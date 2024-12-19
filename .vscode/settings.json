@@ -144,7 +144,10 @@
         "UIDropDownMenu_SetText",
         "UIDropDownMenu_Initialize",
         "UIDropDownMenu_AddButton",
-        "UIDropDownMenu_CreateInfo"
+        "UIDropDownMenu_CreateInfo",
+        "ColorPickerFrame",
+        "hash_SlashCmdList",
+        "SELECTED_CHAT_FRAME"
     ],
     "Lua.runtime.version": "Lua 5.1",
     "Lua.runtime.builtin": {
@@ -166,6 +169,7 @@
         "BLINKII",
         "Blinkiis",
         "BLINKIISPORTRAITS",
+        "Bliz",
         "blizz",
         "BOTTOMLEFT",
         "BOTTOMRIGHT",
@@ -234,6 +238,7 @@
         "TOPLEFT",
         "Toxi",
         "Trenchy",
+        "unitframe",
         "unitframes",
         "Unitframes",
         "Unitocus",

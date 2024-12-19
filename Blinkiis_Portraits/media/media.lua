@@ -1,4 +1,4 @@
-BLINKIISPORTRAITS.Media = {
+BLINKIISPORTRAITS.media = {
 	portraits = {
 		blizz = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\blizz.tga",

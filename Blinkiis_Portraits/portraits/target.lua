@@ -1,19 +1,52 @@
-local function OnEvent(frame, event, eventUnit)
-	if (event == "PORTRAITS_UPDATED" or event == "UNIT_PORTRAIT_UPDATE") and frame.unit ~= eventUnit then return end
+local function OnEvent(portrait, event, eventUnit)
+	if (event == "PORTRAITS_UPDATED" or event == "UNIT_PORTRAIT_UPDATE") and portrait.unit ~= eventUnit then return end
+
 	-- #F85D0AFF
-	BLINKIISPORTRAITS:DebugPrint(frame, event, eventUnit, "|CFFF85D0A")
+	BLINKIISPORTRAITS:DebugPrint(portrait, event, eventUnit, "|CFFF85D0A")
 
-	local color = BLINKIISPORTRAITS:GetUnitColor(frame.unit)
+	local color = BLINKIISPORTRAITS:GetUnitColor(portrait.unit)
 
-	if color then frame.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
+	if color then portrait.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
 
-	SetPortraitTexture(frame.portrait, frame.unit, true)
-	BLINKIISPORTRAITS:UpdateExtraTexture(frame)
+	SetPortraitTexture(portrait.portrait, portrait.unit, true)
 
-	if not InCombatLockdown() and frame:GetAttribute("unit") ~= frame.unit then frame:SetAttribute("unit", frame.unit) end
+	BLINKIISPORTRAITS:UpdateExtraTexture(portrait)
+
+	if not InCombatLockdown() and portrait:GetAttribute("unit") ~= portrait.unit then portrait:SetAttribute("unit", portrait.unit) end
 end
 
-function BLINKIISPORTRAITS:InitTargetPortrait(parentFrame)
-    local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "PLAYER_TARGET_CHANGED" }
-    BLINKIISPORTRAITS:InitPortrait("target", parentFrame, BLINKIISPORTRAITS.db.target, events, OnEvent)
+function BLINKIISPORTRAITS:InitializeTargetPortrait()
+	if not BLINKIISPORTRAITS.db.profile.target.enable then return end
+
+	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("target")
+	if unitframe then
+		local portraits = BLINKIISPORTRAITS.Portraits
+		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "PLAYER_TARGET_CHANGED" }
+		local parent = _G[unitframe]
+		local unit = "target"
+		local type = "target"
+
+		portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait("target", _G[unitframe])
+
+		portraits[unit].parentFrame = parent
+		portraits[unit].unit = parent.unit
+		portraits[unit].type = "target" -- frameType or frame.type
+		portraits[unit].db = BLINKIISPORTRAITS.db.profile[type]
+		portraits[unit].size = BLINKIISPORTRAITS.db.profile[type].size
+		portraits[unit].db = BLINKIISPORTRAITS.db.profile[type].point
+		portraits[unit].func = OnEvent
+
+		BLINKIISPORTRAITS:UpdateSettings(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
+		BLINKIISPORTRAITS:UpdateTexturesFiles(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
+		BLINKIISPORTRAITS:UpdateSize(portraits[unit])
+
+		BLINKIISPORTRAITS:InitPortrait(portraits[unit], events)
+	end
+end
+
+function BLINKIISPORTRAITS:KillTargetPortrait()
+	if BLINKIISPORTRAITS.Portraits.target then
+		BLINKIISPORTRAITS:RemovePortrait(BLINKIISPORTRAITS.Portraits.target)
+		BLINKIISPORTRAITS.Portraits.target = nil
+	end
 end

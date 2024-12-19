@@ -6,16 +6,51 @@ local UnitInPartyIsAI = UnitInPartyIsAI
 local UnitClassification = UnitClassification
 local ipairs = ipairs
 
+local BPP = BLINKIISPORTRAITS.Portraits
+
+local mediaPortraits = BLINKIISPORTRAITS.media.portraits
+local mediaExtra = BLINKIISPORTRAITS.media.extra
 function BLINKIISPORTRAITS:RegisterEvents(frame, events)
 	for _, event in ipairs(events) do
 		frame:RegisterEvent(event)
 	end
 end
 
+local unitFrames = nil
+function BLINKIISPORTRAITS:GetUnitFrames(unit)
+	if not unitFrames then
+		if IsAddOnLoaded("ShadowedUnitFrames") then
+			unitFrames = {
+				player = "SUFUnitplayer",
+				target = "SUFUnittarget",
+				pet = "SUFUnitpet",
+				targettarget = "SUFUnittargettarget",
+				focus = "SUFUnitocus",
+				party = "SUFHeaderpartyUnitButton",
+				boss = "SUFHeaderboss",
+				arena = "SUFHeaderArena",
+			}
+		elseif IsAddOnLoaded("ElvUI") then
+			unitFrames = {
+				player = "ElvUF_Player",
+				target = "ElvUF_Target",
+				pet = "ElvUF_Pet",
+				targettarget = "ElvUF_TargetTarget",
+				focus = "ElvUF_Focus",
+				party = "ElvUF_PartyGroup1UnitButton",
+				boss = "ElvUF_Boss",
+				arena = "ElvUF_Arena",
+			}
+		end
+	end
+
+	return unitFrames and unitFrames[unit]
+end
+
 function BLINKIISPORTRAITS:GetUnitColor(unit)
-	local colorClass = BLINKIISPORTRAITS.db.colors.class
-	local colorReaction = BLINKIISPORTRAITS.db.colors.reaction
-	local colorMisc = BLINKIISPORTRAITS.db.colors.misc
+	local colorClass = BLINKIISPORTRAITS.db.profile.colors.class
+	local colorReaction = BLINKIISPORTRAITS.db.profile.colors.reaction
+	local colorMisc = BLINKIISPORTRAITS.db.profile.colors.misc
 
 	if UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit)) then
 		local _, class = UnitClass(unit)
@@ -27,15 +62,15 @@ function BLINKIISPORTRAITS:GetUnitColor(unit)
 	end
 end
 
-function BLINKIISPORTRAITS:UpdateTextures(frame)
-	frame.texture:SetTexture(frame.textureFile, "CLAMP", "CLAMP", "TRILINEAR")
-	frame.mask:SetTexture(frame.maskFile, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-	frame.extraMask:SetTexture(frame.extraMaskFile, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-	frame.bg:SetTexture(frame.bgFile, "CLAMP", "CLAMP", "TRILINEAR")
+function BLINKIISPORTRAITS:UpdateTextures(portrait)
+	portrait.texture:SetTexture(portrait.textureFile, "CLAMP", "CLAMP", "TRILINEAR")
+	portrait.mask:SetTexture(portrait.maskFile, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+	portrait.extraMask:SetTexture(portrait.extraMaskFile, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+	portrait.bg:SetTexture(portrait.bgFile, "CLAMP", "CLAMP", "TRILINEAR")
 end
 
-function BLINKIISPORTRAITS:UpdateExtraTexture(frame, forced)
-	if not frame.extra then return end
+function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, forced)
+	if not portrait.extra then return end
 
 	-- test
 	-- local rareIDS = {
@@ -53,13 +88,13 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(frame, forced)
 	--local guid = UnitGUID(frame.unit)
 	--local npcID = guid and select(6, strsplit("-", guid))
 	local color, c
-	local colorClassification = BLINKIISPORTRAITS.db.colors.classification
+	local colorClassification = BLINKIISPORTRAITS.db.profile.colors.classification
 
 	if forced then
 		color = colorClassification.player
 		c = "player"
-	else
-		local unit = frame.unit
+	elseif portrait.db.extra then
+		local unit = portrait.unit
 
 		-- (rareIDS[npcID] and "rare") or (eliteIDS[npcID] and "elite") or (rareeliteIDS[npcID] and "rareelite") or
 		c = UnitClassification(unit) -- "worldboss", "rareelite", "elite", "rare", "normal", "trivial", or "minus"
@@ -67,11 +102,11 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(frame, forced)
 	end
 
 	if color then
-		frame.extra:SetTexture(frame[c .. "File"], "CLAMP", "CLAMP", "TRILINEAR")
-		frame.extra:SetVertexColor(color.r, color.g, color.b, color.a or 1)
-		frame.extra:Show()
+		portrait.extra:SetTexture(portrait[c .. "File"], "CLAMP", "CLAMP", "TRILINEAR")
+		portrait.extra:SetVertexColor(color.r, color.g, color.b, color.a or 1)
+		portrait.extra:Show()
 	else
-		frame.extra:Hide()
+		portrait.extra:Hide()
 	end
 end
 
@@ -100,120 +135,97 @@ function BLINKIISPORTRAITS:DebugPrint(frame, event, eventUnit, color)
 	)
 end
 
-function BLINKIISPORTRAITS:UpdateSettings(frame, parent, frameType, settings)
-	-- local settings = BLINKIISPORTRAITS.db[frameType or unitType]
-	frame.Settings = settings
-	frame.parentFrame = parent
-	frame.unit = parent.unit
-	frame.type = frameType or frame.type
-	frame.size = settings.size
-	frame.point = settings.point
-	frame.bgFile = "Interface\\Addons\\Blinkiis_Portraits\\blank.tga"
-	frame.bossFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
-	frame.eliteFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
-	frame.extraMaskFile = "Interface\\Addons\\Blinkiis_Portraits\\extramask.tga"
-	frame.maskFile = "Interface\\Addons\\Blinkiis_Portraits\\mask.tga"
-	frame.playerFile = "Interface\\Addons\\Blinkiis_Portraits\\rare.tga"
-	frame.rareFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
-	frame.rareeliteFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
-	frame.textureFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga"
+function BLINKIISPORTRAITS:UpdateSettings(portrait, settings)
+	portrait.size = settings.size
+	portrait.point = settings.point
 end
 
-function BLINKIISPORTRAITS:CreatePortrait(unitType, parent, settings, frameType)
-	local BPP = BLINKIISPORTRAITS.Portraits
+function BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, settings)
+	portrait.bgFile = "Interface\\Addons\\Blinkiis_Portraits\\media\\blank.tga"
+	portrait.bossFile = mediaExtra[BLINKIISPORTRAITS.db.profile.misc.boss]
+	portrait.eliteFile = mediaExtra[BLINKIISPORTRAITS.db.profile.misc.elite]
+	portrait.extraMaskFile = mediaPortraits[settings.texture].extra
+	portrait.maskFile = mediaPortraits[settings.texture].mask
+	portrait.playerFile = mediaExtra[BLINKIISPORTRAITS.db.profile.misc.player]
+	portrait.rareFile = mediaExtra[BLINKIISPORTRAITS.db.profile.misc.rare]
+	portrait.rareeliteFile = mediaExtra[BLINKIISPORTRAITS.db.profile.misc.rareelite]
+	portrait.textureFile = mediaPortraits[settings.texture].texture
+end
 
-	BLINKIISPORTRAITS:Print("|cff96e1ffCREATE|r", parent, unitType)
+function BLINKIISPORTRAITS:UpdateSize(portrait, size, point)
+	if not InCombatLockdown() then
+		size = size or portrait.size
+		point = point or portrait.point
+		portrait:SetSize(size, size)
+		portrait:ClearAllPoints()
+		portrait:SetPoint(point.point, portrait.parentFrame, point.relativePoint, point.x, point.y)
+	end
+end
+
+function BLINKIISPORTRAITS:CreatePortrait(name, parent)
+	BLINKIISPORTRAITS:Print("|cff96e1ffCREATE|r", name, parent)
 
 	if parent then
-		local portrait = BPP[unitType] or CreateFrame("Button", "BP_Portrait_" .. unitType, parent, "SecureUnitButtonTemplate")
+		local portrait = CreateFrame("Button", "BP_Portrait_" .. name, parent, "SecureUnitButtonTemplate")
 
-		BLINKIISPORTRAITS:UpdateSettings(portrait, parent, frameType or unitType, settings)
+		-- texture
+		portrait.texture = portrait:CreateTexture("BP_texture-" .. name, "OVERLAY", nil, 4)
+		portrait.texture:SetAllPoints(portrait)
 
-		if not portrait.isBuild then
-			-- texture
-			portrait.texture = portrait:CreateTexture("BP_texture-" .. unitType, "OVERLAY", nil, 4)
-			portrait.texture:SetAllPoints(portrait)
+		-- mask
+		portrait.mask = portrait:CreateMaskTexture()
+		portrait.mask:SetAllPoints(portrait)
 
-			-- mask
-			portrait.mask = portrait:CreateMaskTexture()
-			portrait.mask:SetAllPoints(portrait)
+		-- portrait
+		portrait.portrait = portrait:CreateTexture("BP_portrait-" .. name, "OVERLAY", nil, 2)
+		portrait.portrait:SetAllPoints(portrait)
+		portrait.portrait:AddMaskTexture(portrait.mask)
+		local unit = parent.unit == "party" and "player" or parent.unit
+		SetPortraitTexture(portrait.portrait, unit, true)
 
-			-- portrait
-			portrait.portrait = portrait:CreateTexture("BP_portrait-" .. unitType, "OVERLAY", nil, 2)
-			portrait.portrait:SetAllPoints(portrait)
-			portrait.portrait:AddMaskTexture(portrait.mask)
-			local unit = parent.unit == "party" and "player" or parent.unit
-			SetPortraitTexture(portrait.portrait, unit, true)
+		-- extra mask
+		portrait.extraMask = portrait:CreateMaskTexture()
+		portrait.extraMask:SetAllPoints(portrait)
 
-			-- extra mask
-			portrait.extraMask = portrait:CreateMaskTexture()
-			portrait.extraMask:SetAllPoints(portrait)
+		-- rare/elite/boss
+		portrait.extra = portrait:CreateTexture("BP_extra-" .. name, "OVERLAY", nil, 1)
+		portrait.extra:SetAllPoints(portrait)
+		portrait.extra:AddMaskTexture(portrait.extraMask)
 
-			-- rare/elite/boss
-			portrait.extra = portrait:CreateTexture("BP_extra-" .. unitType, "OVERLAY", nil, 1)
-			portrait.extra:SetAllPoints(portrait)
-			portrait.extra:AddMaskTexture(portrait.extraMask)
+		-- bg
+		portrait.bg = portrait:CreateTexture("BP_bg-" .. name, "OVERLAY", nil, 1)
+		portrait.bg:SetAllPoints(portrait)
+		portrait.bg:AddMaskTexture(portrait.mask)
+		portrait.bg:SetVertexColor(0, 0, 0, 1)
 
-			-- bg
-			portrait.bg = portrait:CreateTexture("BP_bg-" .. unitType, "OVERLAY", nil, 1)
-			portrait.bg:SetAllPoints(portrait)
-			portrait.bg:AddMaskTexture(portrait.mask)
-			portrait.bg:SetVertexColor(0, 0, 0, 1)
+		-- scripts to interact with mouse
+		portrait:SetAttribute("unit", portrait.unit)
+		portrait:SetAttribute("*type1", "target")
+		portrait:SetAttribute("*type2", "togglemenu")
+		portrait:SetAttribute("type3", "focus")
+		portrait:SetAttribute("toggleForVehicle", true)
+		portrait:SetAttribute("ping-receiver", true)
+		portrait:RegisterForClicks("AnyUp")
+		portrait:Show()
 
-			-- scripts to interact with mouse
-			portrait:SetAttribute("unit", portrait.unit)
-			portrait:SetAttribute("*type1", "target")
-			portrait:SetAttribute("*type2", "togglemenu")
-			portrait:SetAttribute("type3", "focus")
-			portrait:SetAttribute("toggleForVehicle", true)
-			portrait:SetAttribute("ping-receiver", true)
-			portrait:RegisterForClicks("AnyUp")
-			portrait:Show()
-			portrait.isBuild = true
-		end
-
-		if not InCombatLockdown() then
-			portrait:SetSize(portrait.size, portrait.size)
-			portrait:ClearAllPoints()
-			portrait:SetPoint(portrait.point.point, portrait.parentFrame, portrait.point.relativePoint, portrait.point.x, portrait.point.y)
-		end
-
-		BPP[unitType] = portrait
+		return portrait
 	end
 end
 
-function BLINKIISPORTRAITS:InitPortrait(unitType, parentFrame, settings, events, onEvent)
-	BLINKIISPORTRAITS:CreatePortrait(unitType, parentFrame, settings, unitType)
-
-	local textureFiles = {
-		bgFile = "Interface\\Addons\\Blinkiis_Portraits\\blank.tga",
-		bossFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
-		eliteFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
-		extraMaskFile = "Interface\\Addons\\Blinkiis_Portraits\\extramask.tga",
-		maskFile = "Interface\\Addons\\Blinkiis_Portraits\\mask.tga",
-		playerFile = "Interface\\Addons\\Blinkiis_Portraits\\rare.tga",
-		rareFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
-		rareeliteFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
-		textureFile = "Interface\\Addons\\Blinkiis_Portraits\\texture.tga",
-	}
-
-	local portrait = BLINKIISPORTRAITS.Portraits[unitType]
+function BLINKIISPORTRAITS:InitPortrait(portrait, events)
 	if portrait then
-		for key, value in pairs(textureFiles) do
-			portrait[key] = value
-		end
-
 		BLINKIISPORTRAITS:UpdateTextures(portrait)
 		BLINKIISPORTRAITS:RegisterEvents(portrait, events)
-		portrait:SetScript("OnEvent", onEvent)
+
+		portrait:SetScript("OnEvent", portrait.func)
 		portrait.events = events
 
-		onEvent(portrait)
+		portrait:func(portrait)
 	end
 end
 
-function BLINKIISPORTRAITS:InitializePortraits()
-	local unitframes = nil
+function BLINKIISPORTRAITS:oldInitializePortraits()
+	--BLINKIISPORTRAITS.unitframes = nil
 	local events = {
 		player = {
 			"UNIT_PORTRAIT_UPDATE",
@@ -270,7 +282,7 @@ function BLINKIISPORTRAITS:InitializePortraits()
 	}
 
 	if IsAddOnLoaded("ShadowedUnitFrames") then
-		unitframes = {
+		BLINKIISPORTRAITS.unitframes = {
 			player = "SUFUnitplayer",
 			target = "SUFUnittarget",
 			pet = "SUFUnitpet",
@@ -281,7 +293,7 @@ function BLINKIISPORTRAITS:InitializePortraits()
 			arena = "SUFHeaderArena",
 		}
 	elseif IsAddOnLoaded("ElvUI") then
-		unitframes = {
+		BLINKIISPORTRAITS.unitframes = {
 			player = "ElvUF_Player",
 			target = "ElvUF_Target",
 			pet = "ElvUF_Pet",
@@ -293,36 +305,36 @@ function BLINKIISPORTRAITS:InitializePortraits()
 		}
 	end
 
-	if unitframes then
-		if BLINKIISPORTRAITS.db.player.enable then
-			BLINKIISPORTRAITS:InitPlayerPortrait(_G[unitframes.player])
-		elseif BLINKIISPORTRAITS.Portraits.player then
-			BLINKIISPORTRAITS:RemovePortrait(BLINKIISPORTRAITS.Portraits.player)
-			BLINKIISPORTRAITS.Portraits.player = nil
-		end
+	-- if unitframes then
+	-- 	if BLINKIISPORTRAITS.db.player.enable then
+	-- 		BLINKIISPORTRAITS:InitPlayerPortrait(_G[unitframes.player])
+	-- 	elseif BLINKIISPORTRAITS.Portraits.player then
+	-- 		BLINKIISPORTRAITS:RemovePortrait(BLINKIISPORTRAITS.Portraits.player)
+	-- 		BLINKIISPORTRAITS.Portraits.player = nil
+	-- 	end
 
-		if BLINKIISPORTRAITS.db.target.enable then
-			BLINKIISPORTRAITS:InitTargetPortrait(_G[unitframes.target])
-		elseif BLINKIISPORTRAITS.Portraits.target then
-			BLINKIISPORTRAITS:RemovePortrait(BLINKIISPORTRAITS.Portraits.target)
-			BLINKIISPORTRAITS.Portraits.target = nil
-		end
-		-- CreatePortrait("player", _G[unitframes.player], events.player)
-		-- CreatePortrait("target", _G[unitframes.target], events.target)
-		-- CreatePortrait("focus", _G[unitframes.focus], events.focus)
-		-- CreatePortrait("targettarget", _G[unitframes.targettarget], events.targettarget)
-		-- CreatePortrait("pet", _G[unitframes.pet], events.pet)
+	-- 	if BLINKIISPORTRAITS.db.target.enable then
+	-- 		BLINKIISPORTRAITS:InitTargetPortrait(_G[unitframes.target])
+	-- 	elseif BLINKIISPORTRAITS.Portraits.target then
+	-- 		BLINKIISPORTRAITS:RemovePortrait(BLINKIISPORTRAITS.Portraits.target)
+	-- 		BLINKIISPORTRAITS.Portraits.target = nil
+	-- 	end
+	-- 	-- CreatePortrait("player", _G[unitframes.player], events.player)
+	-- 	-- CreatePortrait("target", _G[unitframes.target], events.target)
+	-- 	-- CreatePortrait("focus", _G[unitframes.focus], events.focus)
+	-- 	-- CreatePortrait("targettarget", _G[unitframes.targettarget], events.targettarget)
+	-- 	-- CreatePortrait("pet", _G[unitframes.pet], events.pet)
 
-		-- for i = 1, 5 do
-		-- 	CreatePortrait("party" .. i, _G[unitframes.party .. i], events.party, "party")
-		-- end
+	-- 	-- for i = 1, 5 do
+	-- 	-- 	CreatePortrait("party" .. i, _G[unitframes.party .. i], events.party, "party")
+	-- 	-- end
 
-		-- for i = 1, 8 do
-		-- 	CreatePortrait("boss" .. i, _G[unitframes.boss .. i], events.boss, "boss")
-		-- end
+	-- 	-- for i = 1, 8 do
+	-- 	-- 	CreatePortrait("boss" .. i, _G[unitframes.boss .. i], events.boss, "boss")
+	-- 	-- end
 
-		-- for i = 1, 5 do
-		-- 	CreatePortrait("arena" .. i, _G[unitframes.arena .. i], events.arena, "arena")
-		-- end
-	end
+	-- 	-- for i = 1, 5 do
+	-- 	-- 	CreatePortrait("arena" .. i, _G[unitframes.arena .. i], events.arena, "arena")
+	-- 	-- end
+	-- end
 end
