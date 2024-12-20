@@ -5,7 +5,7 @@ local UnitReaction = UnitReaction
 local UnitInPartyIsAI = UnitInPartyIsAI
 local UnitClassification = UnitClassification
 local UnitFactionGroup = UnitFactionGroup
-local ipairs, select = ipairs, select
+local ipairs, select, tinsert = ipairs, select, tinsert
 
 local BPP = BLINKIISPORTRAITS.Portraits
 
@@ -48,6 +48,48 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit)
 	return unitFrames and unitFrames[unit]
 end
 
+local castEvents = { "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_STOP" }
+local empowerEvents = { "UNIT_SPELLCAST_EMPOWER_START", "UNIT_SPELLCAST_EMPOWER_STOP" }
+
+local function RegisterEvents(portrait, events)
+	for _, event in pairs(events) do
+		if portrait.type == "party" then
+			portrait:RegisterEvent(event)
+		else
+			portrait:RegisterUnitEvent(event, portrait.unit)
+		end
+		tinsert(portrait.events, event)
+	end
+end
+
+local function UnregisterEvents(portrait, events)
+	for _, event in pairs(events) do
+		portrait:UnregisterEvent(event)
+	end
+end
+
+function BLINKIISPORTRAITS:RegisterCastEvents(portrait)
+	RegisterEvents(portrait, castEvents)
+
+	if BLINKIISPORTRAITS.Retail then RegisterEvents(portrait, empowerEvents) end
+end
+
+function BLINKIISPORTRAITS:UnregisterCastEvents(portrait)
+	UnregisterEvents(portrait, castEvents)
+
+	if BLINKIISPORTRAITS.Retail then UnregisterEvents(portrait, empowerEvents) end
+end
+
+function BLINKIISPORTRAITS:UpdateCastSettings(portrait)
+	if portrait.db.cast then
+		BLINKIISPORTRAITS:RegisterCastEvents(portrait)
+		portrait.cast = true
+	elseif portrait.cast then
+		BLINKIISPORTRAITS:UnregisterCastEvents(portrait)
+		portrait.cast = false
+	end
+end
+
 function BLINKIISPORTRAITS:Mirror(texture, mirror)
 	texture:SetTexCoord(mirror and 1 or 0, mirror and 0 or 1, 0, 1)
 end
@@ -74,7 +116,7 @@ local playerFaction
 function BLINKIISPORTRAITS:GetUnitColor(unit)
 	local colors = BLINKIISPORTRAITS.db.profile.colors
 
-	if UnitIsDead(unit) then return colors.misc.death end
+	if UnitIsDead(unit) then return colors.misc.death, nil, true end
 	if BLINKIISPORTRAITS.db.profile.misc.force_default then return colors.misc.default end
 
 	if UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit)) then
@@ -92,6 +134,18 @@ function BLINKIISPORTRAITS:GetUnitColor(unit)
 		local reaction = UnitReaction(unit, "player")
 		local reactionType = reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly") or "enemy"
 		return colors.reaction[reactionType], false
+	end
+end
+
+function BLINKIISPORTRAITS:UpdateDesaturated(portrait, isDead)
+	if isDead then
+		if not portrait.isDesaturated then
+			portrait.portrait:SetDesaturated(true)
+			portrait.isDesaturated = true
+		end
+	elseif portrait.isDesaturated then
+		portrait.portrait:SetDesaturated(false)
+		portrait.isDesaturated = false
 	end
 end
 

@@ -4,16 +4,17 @@ local function OnEvent(portrait, event, eventUnit)
 	-- #F85D0AFF
 	BLINKIISPORTRAITS:DebugPrint(portrait, event, eventUnit, "|CFFF85D0A")
 
-	local color, isPlayer = BLINKIISPORTRAITS:GetUnitColor(portrait.unit)
+	local color, isPlayer, isDead = BLINKIISPORTRAITS:GetUnitColor(portrait.unit)
 
 	portrait.isPlayer = isPlayer
 
 	if color then portrait.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
 
 	SetPortraitTexture(portrait.portrait, portrait.unit, true)
-	BLINKIISPORTRAITS:Mirror(portrait.portrait, isPlayer and portrait.db.mirror)
 
+	BLINKIISPORTRAITS:UpdateDesaturated(portrait, isDead)
 	BLINKIISPORTRAITS:UpdateExtraTexture(portrait)
+	BLINKIISPORTRAITS:Mirror(portrait.portrait, isPlayer and portrait.db.mirror)
 
 	if not InCombatLockdown() and portrait:GetAttribute("unit") ~= portrait.unit then portrait:SetAttribute("unit", portrait.unit) end
 end
@@ -42,6 +43,7 @@ function BLINKIISPORTRAITS:InitializeTargetPortrait()
 		BLINKIISPORTRAITS:UpdateSettings(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
 		BLINKIISPORTRAITS:UpdateTexturesFiles(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
 		BLINKIISPORTRAITS:UpdateSize(portraits[unit])
+		BLINKIISPORTRAITS:UpdateCastSettings(portraits[unit])
 
 		BLINKIISPORTRAITS:InitPortrait(portraits[unit], events)
 	end
