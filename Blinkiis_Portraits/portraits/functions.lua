@@ -11,9 +11,15 @@ local BPP = BLINKIISPORTRAITS.Portraits
 
 local mediaPortraits = BLINKIISPORTRAITS.media.portraits
 local mediaExtra = BLINKIISPORTRAITS.media.extra
-function BLINKIISPORTRAITS:RegisterEvents(frame, events)
-	for _, event in ipairs(events) do
-		frame:RegisterEvent(event)
+function BLINKIISPORTRAITS:RegisterEvents(portrait, events, cast)
+	for _, event in pairs(events) do
+		if cast and portrait.type ~= "party" then
+			portrait:RegisterUnitEvent(event, portrait.unit)
+		else
+			portrait:RegisterEvent(event)
+		end
+		print(event, portrait.events)
+		tinsert(portrait.events, event)
 	end
 end
 
@@ -46,48 +52,6 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit)
 	end
 
 	return unitFrames and unitFrames[unit]
-end
-
-local castEvents = { "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_STOP" }
-local empowerEvents = { "UNIT_SPELLCAST_EMPOWER_START", "UNIT_SPELLCAST_EMPOWER_STOP" }
-
-local function RegisterEvents(portrait, events)
-	for _, event in pairs(events) do
-		if portrait.type == "party" then
-			portrait:RegisterEvent(event)
-		else
-			portrait:RegisterUnitEvent(event, portrait.unit)
-		end
-		tinsert(portrait.events, event)
-	end
-end
-
-local function UnregisterEvents(portrait, events)
-	for _, event in pairs(events) do
-		portrait:UnregisterEvent(event)
-	end
-end
-
-function BLINKIISPORTRAITS:RegisterCastEvents(portrait)
-	RegisterEvents(portrait, castEvents)
-
-	if BLINKIISPORTRAITS.Retail then RegisterEvents(portrait, empowerEvents) end
-end
-
-function BLINKIISPORTRAITS:UnregisterCastEvents(portrait)
-	UnregisterEvents(portrait, castEvents)
-
-	if BLINKIISPORTRAITS.Retail then UnregisterEvents(portrait, empowerEvents) end
-end
-
-function BLINKIISPORTRAITS:UpdateCastSettings(portrait)
-	if portrait.db.cast then
-		BLINKIISPORTRAITS:RegisterCastEvents(portrait)
-		portrait.cast = true
-	elseif portrait.cast then
-		BLINKIISPORTRAITS:UnregisterCastEvents(portrait)
-		portrait.cast = false
-	end
 end
 
 function BLINKIISPORTRAITS:Mirror(texture, mirror)
@@ -139,10 +103,8 @@ end
 
 function BLINKIISPORTRAITS:UpdateDesaturated(portrait, isDead)
 	if isDead then
-		if not portrait.isDesaturated then
-			portrait.portrait:SetDesaturated(true)
-			portrait.isDesaturated = true
-		end
+		portrait.portrait:SetDesaturated(true)
+		portrait.isDesaturated = true
 	elseif portrait.isDesaturated then
 		portrait.portrait:SetDesaturated(false)
 		portrait.isDesaturated = false
@@ -294,9 +256,79 @@ function BLINKIISPORTRAITS:InitPortrait(portrait, events)
 		BLINKIISPORTRAITS:RegisterEvents(portrait, events)
 
 		portrait:SetScript("OnEvent", portrait.func)
-		portrait.events = events
-
 		portrait:func(portrait)
+	end
+end
+
+-- cast functions
+local castStartEvents = {
+	UNIT_SPELLCAST_START = true,
+	UNIT_SPELLCAST_CHANNEL_START = true,
+	UNIT_SPELLCAST_EMPOWER_START = true,
+}
+
+local castStopEvents = {
+	UNIT_SPELLCAST_INTERRUPTED = true,
+	UNIT_SPELLCAST_STOP = true,
+	UNIT_SPELLCAST_CHANNEL_STOP = true,
+	UNIT_SPELLCAST_EMPOWER_STOP = true,
+}
+
+local function GetCastIcon(unit)
+	return select(3, UnitCastingInfo(unit)) or select(3, UnitChannelInfo(unit))
+end
+
+function BLINKIISPORTRAITS:UpdateCastIcon(portrait, event, addCastIcon)
+	if not addCastIcon then return false end
+
+	portrait.castStarted = castStartEvents[event] or false
+	portrait.castStopped = castStopEvents[event] or false
+
+	if portrait.castStarted or (portrait.isCasting and not portrait.castStopped) then
+		portrait.isCasting = true
+		portrait.empowering = (event == "UNIT_SPELLCAST_EMPOWER_START") or false
+		local texture = GetCastIcon(portrait.unit)
+		if texture then
+			portrait.portrait:SetTexture(texture)
+			return true
+		end
+		return false
+	elseif portrait.castStopped or (portrait.isCasting and not GetCastIcon(portrait.unit)) then
+		portrait.isCasting = false
+		return false
+	end
+
+	return false
+end
+
+local castEvents = { "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_STOP" }
+local empowerEvents = { "UNIT_SPELLCAST_EMPOWER_START", "UNIT_SPELLCAST_EMPOWER_STOP" }
+
+local function UnregisterEvents(portrait, events)
+	for _, event in pairs(events) do
+		portrait:UnregisterEvent(event)
+	end
+end
+
+function BLINKIISPORTRAITS:RegisterCastEvents(portrait)
+	BLINKIISPORTRAITS:RegisterEvents(portrait, castEvents, true)
+
+	if BLINKIISPORTRAITS.Retail then BLINKIISPORTRAITS:RegisterEvents(portrait, empowerEvents, true) end
+end
+
+function BLINKIISPORTRAITS:UnregisterCastEvents(portrait)
+	UnregisterEvents(portrait, castEvents)
+
+	if BLINKIISPORTRAITS.Retail then UnregisterEvents(portrait, empowerEvents) end
+end
+
+function BLINKIISPORTRAITS:UpdateCastSettings(portrait)
+	if portrait.db.cast then
+		BLINKIISPORTRAITS:RegisterCastEvents(portrait)
+		portrait.cast = true
+	elseif portrait.cast then
+		BLINKIISPORTRAITS:UnregisterCastEvents(portrait)
+		portrait.cast = false
 	end
 end
 

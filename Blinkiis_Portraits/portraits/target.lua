@@ -10,7 +10,12 @@ local function OnEvent(portrait, event, eventUnit)
 
 	if color then portrait.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
 
-	SetPortraitTexture(portrait.portrait, portrait.unit, true)
+	local showCastIcon = BLINKIISPORTRAITS:UpdateCastIcon(portrait, event, portrait.db.cast)
+
+	if not showCastIcon then
+		SetPortraitTexture(portrait.portrait, portrait.unit, true)
+		BLINKIISPORTRAITS:UpdateDesaturated(portrait, isDead)
+	end
 
 	BLINKIISPORTRAITS:UpdateDesaturated(portrait, isDead)
 	BLINKIISPORTRAITS:UpdateExtraTexture(portrait)
@@ -32,6 +37,7 @@ function BLINKIISPORTRAITS:InitializeTargetPortrait()
 
 		portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait("target", _G[unitframe])
 
+		portraits[unit].events = {}
 		portraits[unit].parentFrame = parent
 		portraits[unit].unit = parent.unit
 		portraits[unit].type = "target" -- frameType or frame.type
