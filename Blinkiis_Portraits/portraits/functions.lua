@@ -54,19 +54,33 @@ function BLINKIISPORTRAITS:GetUnitColor(unit)
 
 	if UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit)) then
 		local _, class = UnitClass(unit)
-		return colorClass[class]
+		return colorClass[class], true
 	else
 		local reaction = UnitReaction(unit, "player")
 		local reactionType = reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly") or "enemy"
-		return colorReaction[reactionType]
+		return colorReaction[reactionType], false
 	end
 end
 
+ function BLINKIISPORTRAITS:Mirror(texture, mirror)
+	texture:SetTexCoord(mirror and 1 or 0, mirror and 0 or 1, 0, 1)
+end
+
+local function SetTexture(texture, file, wrapMode)
+	texture:SetTexture(file, wrapMode, wrapMode, "TRILINEAR")
+end
+
 function BLINKIISPORTRAITS:UpdateTextures(portrait)
-	portrait.texture:SetTexture(portrait.textureFile, "CLAMP", "CLAMP", "TRILINEAR")
-	portrait.mask:SetTexture(portrait.maskFile, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-	portrait.extraMask:SetTexture(portrait.extraMaskFile, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-	portrait.bg:SetTexture(portrait.bgFile, "CLAMP", "CLAMP", "TRILINEAR")
+	local mirror = portrait.db.mirror
+
+	SetTexture(portrait.texture, portrait.textureFile, "CLAMP")
+	SetTexture(portrait.mask, portrait.maskFile, "CLAMPTOBLACKADDITIVE")
+	SetTexture(portrait.extraMask, portrait.extraMaskFile, "CLAMPTOBLACKADDITIVE")
+	SetTexture(portrait.bg, portrait.bgFile, "CLAMP")
+
+	BLINKIISPORTRAITS:Mirror(portrait.texture, mirror)
+	BLINKIISPORTRAITS:Mirror(portrait.mask, mirror)
+	BLINKIISPORTRAITS:Mirror(portrait.extraMask, mirror)
 end
 
 function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, forced)
@@ -141,15 +155,18 @@ function BLINKIISPORTRAITS:UpdateSettings(portrait, settings)
 end
 
 function BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, settings)
+	local dbMisc = BLINKIISPORTRAITS.db.profile.misc
+	local media = mediaPortraits[settings.texture]
+
 	portrait.bgFile = "Interface\\Addons\\Blinkiis_Portraits\\media\\blank.tga"
-	portrait.bossFile = mediaExtra[BLINKIISPORTRAITS.db.profile.misc.boss]
-	portrait.eliteFile = mediaExtra[BLINKIISPORTRAITS.db.profile.misc.elite]
-	portrait.extraMaskFile = mediaPortraits[settings.texture].extra
-	portrait.maskFile = mediaPortraits[settings.texture].mask
-	portrait.playerFile = mediaExtra[BLINKIISPORTRAITS.db.profile.misc.player]
-	portrait.rareFile = mediaExtra[BLINKIISPORTRAITS.db.profile.misc.rare]
-	portrait.rareeliteFile = mediaExtra[BLINKIISPORTRAITS.db.profile.misc.rareelite]
-	portrait.textureFile = mediaPortraits[settings.texture].texture
+	portrait.bossFile = mediaExtra[dbMisc.boss]
+	portrait.eliteFile = mediaExtra[dbMisc.elite]
+	portrait.extraMaskFile = (settings.mirror and media.extra_mirror) and media.extra_mirror or media.extra
+	portrait.maskFile = (settings.mirror and media.mask_mirror) and media.mask_mirror or media.mask
+	portrait.playerFile = mediaExtra[dbMisc.player]
+	portrait.rareFile = mediaExtra[dbMisc.rare]
+	portrait.rareeliteFile = mediaExtra[dbMisc.rareelite]
+	portrait.textureFile = media.texture
 end
 
 function BLINKIISPORTRAITS:UpdateSize(portrait, size, point)
@@ -159,6 +176,9 @@ function BLINKIISPORTRAITS:UpdateSize(portrait, size, point)
 		portrait:SetSize(size, size)
 		portrait:ClearAllPoints()
 		portrait:SetPoint(point.point, portrait.parentFrame, point.relativePoint, point.x, point.y)
+
+		if portrait.db.strata ~= "AUTO" then portrait:SetFrameStrata(portrait.db.strata) end
+		portrait:SetFrameLevel(portrait.db.level)
 	end
 end
 

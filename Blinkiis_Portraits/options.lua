@@ -1624,5 +1624,5 @@ local options = {
 	},
 }
 
-LibStub("AceConfig-3.0"):RegisterOptionsTable("BLINKIISPORTRAITS", options, nil)
+LibStub("AceConfig-3.0"):RegisterOptionsTable("BLINKIISPORTRAITS", options)
 LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BLINKIISPORTRAITS", BLINKIISPORTRAITS.Name)
