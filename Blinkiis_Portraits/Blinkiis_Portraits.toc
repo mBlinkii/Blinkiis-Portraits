@@ -1,5 +1,5 @@
 ## Interface: 110005
-## Version: 1.0.0
+## Version: 0.4 Beta
 ## Title: Blinkiis Portraits
 ## Notes: Custom Portraits for Blizzard Unit frames.
 ## Author: Blinkii
