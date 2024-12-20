@@ -39,23 +39,28 @@ function BLINKIISPORTRAITS:InitializeArenaPortrait()
 			local unit = "arena" .. i
 			local type = "arena"
 
-			portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait("arena" .. i, _G[unitframe .. i])
+			portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait(unit, _G[unitframe .. i])
 
-			portraits[unit].events = {}
-			portraits[unit].parentFrame = parent
-			portraits[unit].unit = parent.unit
-			portraits[unit].type = type
-			portraits[unit].db = BLINKIISPORTRAITS.db.profile[type]
-			portraits[unit].size = BLINKIISPORTRAITS.db.profile[type].size
-			portraits[unit].point = BLINKIISPORTRAITS.db.profile[type].point
-			portraits[unit].func = OnEvent
+			if portraits[unit] then
+				portraits[unit].events = {}
+				portraits[unit].parentFrame = parent
+				portraits[unit].unit = parent.unit
+				portraits[unit].type = type
+				portraits[unit].db = BLINKIISPORTRAITS.db.profile[type]
+				portraits[unit].size = BLINKIISPORTRAITS.db.profile[type].size
+				portraits[unit].point = BLINKIISPORTRAITS.db.profile[type].point
+				portraits[unit].func = OnEvent
 
-			BLINKIISPORTRAITS:UpdateSettings(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
-			BLINKIISPORTRAITS:UpdateTexturesFiles(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
-			BLINKIISPORTRAITS:UpdateSize(portraits[unit])
-			BLINKIISPORTRAITS:UpdateCastSettings(portraits[unit])
+				BLINKIISPORTRAITS:UpdateSettings(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
+				BLINKIISPORTRAITS:UpdateTexturesFiles(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
+				BLINKIISPORTRAITS:UpdateSize(portraits[unit])
+				BLINKIISPORTRAITS:UpdateCastSettings(portraits[unit])
 
-			BLINKIISPORTRAITS:InitPortrait(portraits[unit], events)
+				BLINKIISPORTRAITS:InitPortrait(portraits[unit], events)
+			else
+				-- #F90505FF
+				BLINKIISPORTRAITS:Print("|CFFF90505ERROR|r", "CANT CREATE", unit)
+			end
 		end
 	end
 end

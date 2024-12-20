@@ -29,33 +29,38 @@ end
 function BLINKIISPORTRAITS:InitializePartyPortrait()
 	if not BLINKIISPORTRAITS.db.profile.party.enable then return end
 
-	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("party")
+	local unitframe, isBlizzard = BLINKIISPORTRAITS:GetUnitFrames("party")
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits
 		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_NAME_UPDATE", "UPDATE_ACTIVE_BATTLEFIELD", "GROUP_ROSTER_UPDATE", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE" }
 
 		for i = 1, 5 do
-			local parent = _G[unitframe .. i]
+			local parent = isBlizzard and _G.PartyFrame[unitframe .. i] or _G[unitframe .. i]
 			local unit = "party" .. i
 			local type = "party"
 
-			portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait("party" .. i, _G[unitframe .. i])
+			portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait(unit, parent)
 
-			portraits[unit].events = {}
-			portraits[unit].parentFrame = parent
-			portraits[unit].unit = parent.unit
-			portraits[unit].type = type
-			portraits[unit].db = BLINKIISPORTRAITS.db.profile[type]
-			portraits[unit].size = BLINKIISPORTRAITS.db.profile[type].size
-			portraits[unit].point = BLINKIISPORTRAITS.db.profile[type].point
-			portraits[unit].func = OnEvent
+			if portraits[unit] then
+				portraits[unit].events = {}
+				portraits[unit].parentFrame = parent
+				portraits[unit].unit = parent.unit
+				portraits[unit].type = type
+				portraits[unit].db = BLINKIISPORTRAITS.db.profile[type]
+				portraits[unit].size = BLINKIISPORTRAITS.db.profile[type].size
+				portraits[unit].point = BLINKIISPORTRAITS.db.profile[type].point
+				portraits[unit].func = OnEvent
 
-			BLINKIISPORTRAITS:UpdateSettings(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
-			BLINKIISPORTRAITS:UpdateTexturesFiles(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
-			BLINKIISPORTRAITS:UpdateSize(portraits[unit])
-			BLINKIISPORTRAITS:UpdateCastSettings(portraits[unit])
+				BLINKIISPORTRAITS:UpdateSettings(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
+				BLINKIISPORTRAITS:UpdateTexturesFiles(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
+				BLINKIISPORTRAITS:UpdateSize(portraits[unit])
+				BLINKIISPORTRAITS:UpdateCastSettings(portraits[unit])
 
-			BLINKIISPORTRAITS:InitPortrait(portraits[unit], events)
+				BLINKIISPORTRAITS:InitPortrait(portraits[unit], events)
+			else
+				-- #F90505FF
+				BLINKIISPORTRAITS:Print("|CFFF90505ERROR|r", "CANT CREATE", unit)
+			end
 		end
 	end
 end

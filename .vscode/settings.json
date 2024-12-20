@@ -147,7 +147,8 @@
         "UIDropDownMenu_CreateInfo",
         "ColorPickerFrame",
         "hash_SlashCmdList",
-        "SELECTED_CHAT_FRAME"
+        "SELECTED_CHAT_FRAME",
+        "TargetFrame"
     ],
     "Lua.runtime.version": "Lua 5.1",
     "Lua.runtime.builtin": {
