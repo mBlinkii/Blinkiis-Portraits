@@ -17,8 +17,7 @@ local function OnEvent(portrait, event, eventUnit)
 		BLINKIISPORTRAITS:UpdateDesaturated(portrait, isDead)
 	end
 
-	BLINKIISPORTRAITS:UpdateDesaturated(portrait, isDead)
-	BLINKIISPORTRAITS:UpdateExtraTexture(portrait)
+	BLINKIISPORTRAITS:UpdateExtraTexture(portrait, portrait.db.unitcolor and color)
 	BLINKIISPORTRAITS:Mirror(portrait.portrait, isPlayer and portrait.db.mirror)
 
 	if not InCombatLockdown() and portrait:GetAttribute("unit") ~= portrait.unit then portrait:SetAttribute("unit", portrait.unit) end
@@ -40,7 +39,7 @@ function BLINKIISPORTRAITS:InitializeTargetPortrait()
 		portraits[unit].events = {}
 		portraits[unit].parentFrame = parent
 		portraits[unit].unit = parent.unit
-		portraits[unit].type = "target" -- frameType or frame.type
+		portraits[unit].type = type
 		portraits[unit].db = BLINKIISPORTRAITS.db.profile[type]
 		portraits[unit].size = BLINKIISPORTRAITS.db.profile[type].size
 		portraits[unit].point = BLINKIISPORTRAITS.db.profile[type].point

@@ -12,106 +12,106 @@ BLINKIISPORTRAITS.defaults.misc = {
 
 BLINKIISPORTRAITS.defaults.player = {
     cast = false,
-    level = 20,
-    strata = "AUTO",
-    mirror = false,
-    unitcolor = false,
-    point = { point = "RIGHT", relativePoint = "LEFT", x = 0, y = 0 },
-    extra = false,
     enable = true,
+    extra = false,
+    level = 20,
+    mirror = false,
+    point = { point = "RIGHT", relativePoint = "LEFT", x = 0, y = 0 },
     size = 90,
+    strata = "AUTO",
     texture = "blizz",
+    unitcolor = false,
 }
 
 BLINKIISPORTRAITS.defaults.target = {
     cast = false,
     enable = true,
-    unitcolor = false,
+    extra = true,
     level = 20,
-    mirror = false,
+    mirror = true,
     point = { point = "LEFT", relativePoint = "RIGHT", x = 0, y = 0 },
     size = 90,
     strata = "AUTO",
     texture = "blizz",
-    extra = true,
+    unitcolor = false,
 }
 
 BLINKIISPORTRAITS.defaults.focus = {
     cast = false,
     enable = true,
+    extra = false,
     level = 20,
-    mirror = false,
-    unitcolor = false,
+    mirror = true,
     point = { point = "LEFT", relativePoint = "RIGHT", x = 0, y = 0 },
     size = 90,
     strata = "AUTO",
     texture = "blizz",
-    extra = false,
+    unitcolor = false,
 }
 
 BLINKIISPORTRAITS.defaults.targettarget = {
     cast = false,
     enable = true,
+    extra = false,
     level = 20,
-    mirror = false,
-    unitcolor = false,
+    mirror = true,
     point = { point = "LEFT", relativePoint = "RIGHT", x = 0, y = 0 },
     size = 90,
     strata = "AUTO",
     texture = "blizz",
-    extra = false,
+    unitcolor = false,
 }
 
 BLINKIISPORTRAITS.defaults.pet = {
     cast = false,
     enable = true,
+    extra = false,
     level = 20,
     mirror = false,
-    unitcolor = false,
     point = { point = "RIGHT", relativePoint = "LEFT", x = 0, y = 0 },
     size = 90,
     strata = "AUTO",
     texture = "blizz",
-    extra = false,
+    unitcolor = false,
 }
 
 BLINKIISPORTRAITS.defaults.party = {
     cast = false,
     enable = true,
+    extra = false,
     level = 20,
     mirror = false,
-    unitcolor = false,
     point = { point = "RIGHT", relativePoint = "LEFT", x = 0, y = 0 },
     size = 90,
     strata = "AUTO",
     texture = "blizz",
-    extra = false,
+    unitcolor = false,
 }
 
 BLINKIISPORTRAITS.defaults.boss = {
     cast = false,
     enable = true,
+    extra = true,
     level = 20,
-    mirror = false,
-    unitcolor = false,
+    mirror = true,
     point = { point = "LEFT", relativePoint = "RIGHT", x = 0, y = 0 },
     size = 90,
     strata = "AUTO",
     texture = "blizz",
-    extra = true,
+    unitcolor = false,
 }
 
 BLINKIISPORTRAITS.defaults.arena = {
     cast = false,
     enable = true,
+    extra = false,
     level = 20,
-    mirror = false,
-    unitcolor = false,
+    mirror = true,
     point = { point = "LEFT", relativePoint = "RIGHT", x = 0, y = 0 },
     size = 90,
     strata = "AUTO",
     texture = "blizz",
-    extra = false,
+    unitcolor = false,
 }
 
 BLINKIISPORTRAITS.defaults.colors = {

@@ -91,8 +91,14 @@ function BLINKIISPORTRAITS:LoadDB()
 end
 
 function BLINKIISPORTRAITS:LoadPortraits()
+	BLINKIISPORTRAITS:InitializeArenaPortrait()
+	BLINKIISPORTRAITS:InitializeBossPortrait()
+	BLINKIISPORTRAITS:InitializeFocusPortrait()
+	BLINKIISPORTRAITS:InitializePartyPortrait()
+	BLINKIISPORTRAITS:InitializePetPortrait()
 	BLINKIISPORTRAITS:InitializePlayerPortrait()
 	BLINKIISPORTRAITS:InitializeTargetPortrait()
+	BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
 end
 
 function BLINKIISPORTRAITS:PLAYER_ENTERING_WORLD(event)

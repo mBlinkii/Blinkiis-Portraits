@@ -5,9 +5,7 @@ local UnitReaction = UnitReaction
 local UnitInPartyIsAI = UnitInPartyIsAI
 local UnitClassification = UnitClassification
 local UnitFactionGroup = UnitFactionGroup
-local ipairs, select, tinsert = ipairs, select, tinsert
-
-local BPP = BLINKIISPORTRAITS.Portraits
+local select, tinsert = select, tinsert
 
 local mediaPortraits = BLINKIISPORTRAITS.media.portraits
 local mediaExtra = BLINKIISPORTRAITS.media.extra
@@ -114,7 +112,7 @@ end
 function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, player)
 	if not portrait.extra then return end
 
-	local c = player and "player" or UnitClassification(portrait.unit)
+	local c = player and "player" or (portrait.type == "boss" and "boss" or UnitClassification(portrait.unit))
 
 	if not color then
 		if BLINKIISPORTRAITS.db.profile.misc.force_reaction then
@@ -253,9 +251,13 @@ end
 function BLINKIISPORTRAITS:InitPortrait(portrait, events)
 	if portrait then
 		BLINKIISPORTRAITS:UpdateTextures(portrait)
-		BLINKIISPORTRAITS:RegisterEvents(portrait, events)
 
-		portrait:SetScript("OnEvent", portrait.func)
+		if not portrait.eventsSet then
+			BLINKIISPORTRAITS:RegisterEvents(portrait, events)
+
+			portrait:SetScript("OnEvent", portrait.func)
+			portrait.eventsSet = true
+		end
 		portrait:func(portrait)
 	end
 end
@@ -311,15 +313,19 @@ local function UnregisterEvents(portrait, events)
 end
 
 function BLINKIISPORTRAITS:RegisterCastEvents(portrait)
-	BLINKIISPORTRAITS:RegisterEvents(portrait, castEvents, true)
+	if not portrait.castEventsSet then
+		BLINKIISPORTRAITS:RegisterEvents(portrait, castEvents, true)
 
-	if BLINKIISPORTRAITS.Retail then BLINKIISPORTRAITS:RegisterEvents(portrait, empowerEvents, true) end
+		if BLINKIISPORTRAITS.Retail then BLINKIISPORTRAITS:RegisterEvents(portrait, empowerEvents, true) end
+		portrait.castEventsSet = true
+	end
 end
 
 function BLINKIISPORTRAITS:UnregisterCastEvents(portrait)
 	UnregisterEvents(portrait, castEvents)
 
 	if BLINKIISPORTRAITS.Retail then UnregisterEvents(portrait, empowerEvents) end
+	portrait.castEventsSet = false
 end
 
 function BLINKIISPORTRAITS:UpdateCastSettings(portrait)
