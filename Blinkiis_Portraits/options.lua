@@ -1,3 +1,5 @@
+local CopyTable = CopyTable
+
 local form = {
 	blizz = "Blizz",
 	blizz_up = "Blizz Up",
@@ -27,6 +29,40 @@ local frameStrata = {
 	DIALOG = "DIALOG",
 	TOOLTIP = "TOOLTIP",
 	AUTO = "Auto",
+}
+
+local defaults = {
+	misc = {
+		death = { r = 0.89, g = 0.61, b = 0.29, a = 1 },
+		default = { r = 0.89, g = 0.61, b = 0.29, a = 1 },
+	},
+	class = {
+		DEATHKNIGHT = { r = 0.81, g = 0.17, b = 0.17, a = 1 },
+		DEMONHUNTER = { r = 0.70, g = 0, b = 0.54, a = 1 },
+		DRUID = { r = 1.00, g = 0.36, b = 0.04, a = 1 },
+		EVOKER = { r = 0.20, g = 0.58, b = 0.50, a = 1 },
+		HUNTER = { r = 0.6, g = 0.8, b = 0.32, a = 1 },
+		MAGE = { r = 0, g = 0.60, b = 0.81, a = 1 },
+		MONK = { r = 0, g = 0.78, b = 0.53, a = 1 },
+		PALADIN = { r = 1, g = 0.25, b = 0.65, a = 1 },
+		PRIEST = { r = 0.74, g = 0.74, b = 0.74, a = 1 },
+		ROGUE = { r = 1, g = 0.74, b = 0.23, a = 1 },
+		SHAMAN = { r = 0.00, g = 0.38, b = 0.92, a = 1 },
+		WARLOCK = { r = 0.38, g = 0.28, b = 0.67, a = 1 },
+		WARRIOR = { r = 0.78, g = 0.54, b = 0.28, a = 1 },
+	},
+	classification = {
+		boss = { r = 0.78, g = 0.12, b = 0.12, a = 1 },
+		elite = { r = 1, g = 0, b = 0.90, a = 1 },
+		player = { r = 0.2, g = 1, b = 0.2, a = 1 },
+		rare = { r = 0, g = 0.46, b = 1, a = 1 },
+		rareelite = { r = 0.63, g = 0, b = 1, a = 1 },
+	},
+	reaction = {
+		enemy = { r = 0.78, g = 0.12, b = 0.12, a = 1 },
+		friendly = { r = 0.17, g = 0.75, b = 0, a = 1 },
+		neutral = { r = 1.00, g = 0.70, b = 0, a = 1 },
+	},
 }
 
 local options = {
@@ -95,8 +131,21 @@ local options = {
 								BLINKIISPORTRAITS:InitializePlayerPortrait()
 							end,
 						},
-						extra_toggle = {
+						cast_toggle = {
 							order = 3,
+							type = "toggle",
+							name = "Cast Icon",
+							desc = "Enable Cast Icons.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.player.cast
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.player.cast = value
+								BLINKIISPORTRAITS:InitializePlayerPortrait()
+							end,
+						},
+						extra_toggle = {
+							order = 4,
 							type = "toggle",
 							name = "Enable Extra Texture",
 							desc = "Shows the Extra Texture (rare/elite) for the Player Portrait.",
@@ -108,16 +157,16 @@ local options = {
 								BLINKIISPORTRAITS:InitializePlayerPortrait()
 							end,
 						},
-						cast_toggle = {
-							order = 4,
+						unitcolor_toggle = {
+							order = 5,
 							type = "toggle",
-							name = "Cast Icon",
-							desc = "Enable Cast Icons.",
+							name = "Unitcolor for Extra",
+							desc = "Use the unit color for the Extra (Rare/Elite) Texture.",
 							get = function(info)
-								return BLINKIISPORTRAITS.db.profile.player.cast
+								return BLINKIISPORTRAITS.db.profile.player.unitcolor
 							end,
 							set = function(info, value)
-								BLINKIISPORTRAITS.db.profile.player.cast = value
+								BLINKIISPORTRAITS.db.profile.player.unitcolor = value
 								BLINKIISPORTRAITS:InitializePlayerPortrait()
 							end,
 						},
@@ -293,8 +342,21 @@ local options = {
 								BLINKIISPORTRAITS:InitializeTargetPortrait()
 							end,
 						},
-						extra_toggle = {
+						cast_toggle = {
 							order = 3,
+							type = "toggle",
+							name = "Cast Icon",
+							desc = "Enable Cast Icons.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.target.cast
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.target.cast = value
+								BLINKIISPORTRAITS:InitializeTargetPortrait()
+							end,
+						},
+						extra_toggle = {
+							order = 4,
 							type = "toggle",
 							name = "Enable Extra Texture",
 							desc = "Shows the Extra Texture (rare/elite) for the Target Portrait.",
@@ -306,16 +368,16 @@ local options = {
 								BLINKIISPORTRAITS:InitializeTargetPortrait()
 							end,
 						},
-						cast_toggle = {
-							order = 4,
+						unitcolor_toggle = {
+							order = 5,
 							type = "toggle",
-							name = "Cast Icon",
-							desc = "Enable Cast Icons.",
+							name = "Unitcolor for Extra",
+							desc = "Use the unit color for the Extra (Rare/Elite) Texture.",
 							get = function(info)
-								return BLINKIISPORTRAITS.db.profile.target.cast
+								return BLINKIISPORTRAITS.db.profile.target.unitcolor
 							end,
 							set = function(info, value)
-								BLINKIISPORTRAITS.db.profile.target.cast = value
+								BLINKIISPORTRAITS.db.profile.target.unitcolor = value
 								BLINKIISPORTRAITS:InitializeTargetPortrait()
 							end,
 						},
@@ -491,8 +553,21 @@ local options = {
 								BLINKIISPORTRAITS:InitializeFocusPortrait()
 							end,
 						},
-						extra_toggle = {
+						cast_toggle = {
 							order = 3,
+							type = "toggle",
+							name = "Cast Icon",
+							desc = "Enable Cast Icons.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.focus.cast
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.focus.cast = value
+								BLINKIISPORTRAITS:InitializeFocusPortrait()
+							end,
+						},
+						extra_toggle = {
+							order = 4,
 							type = "toggle",
 							name = "Enable Extra Texture",
 							desc = "Shows the Extra Texture (rare/elite) for the Focus Portrait.",
@@ -504,16 +579,16 @@ local options = {
 								BLINKIISPORTRAITS:InitializeFocusPortrait()
 							end,
 						},
-						cast_toggle = {
-							order = 4,
+						unitcolor_toggle = {
+							order = 5,
 							type = "toggle",
-							name = "Cast Icon",
-							desc = "Enable Cast Icons.",
+							name = "Unitcolor for Extra",
+							desc = "Use the unit color for the Extra (Rare/Elite) Texture.",
 							get = function(info)
-								return BLINKIISPORTRAITS.db.profile.focus.cast
+								return BLINKIISPORTRAITS.db.profile.focus.unitcolor
 							end,
 							set = function(info, value)
-								BLINKIISPORTRAITS.db.profile.focus.cast = value
+								BLINKIISPORTRAITS.db.profile.focus.unitcolor = value
 								BLINKIISPORTRAITS:InitializeFocusPortrait()
 							end,
 						},
@@ -689,8 +764,21 @@ local options = {
 								BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
 							end,
 						},
-						extra_toggle = {
+						cast_toggle = {
 							order = 3,
+							type = "toggle",
+							name = "Cast Icon",
+							desc = "Enable Cast Icons.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.targettarget.cast
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.targettarget.cast = value
+								BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
+							end,
+						},
+						extra_toggle = {
+							order = 4,
 							type = "toggle",
 							name = "Enable Extra Texture",
 							desc = "Shows the Extra Texture (rare/elite) for the Target of Target Portrait.",
@@ -702,16 +790,16 @@ local options = {
 								BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
 							end,
 						},
-						cast_toggle = {
-							order = 4,
+						unitcolor_toggle = {
+							order = 5,
 							type = "toggle",
-							name = "Cast Icon",
-							desc = "Enable Cast Icons.",
+							name = "Unitcolor for Extra",
+							desc = "Use the unit color for the Extra (Rare/Elite) Texture.",
 							get = function(info)
-								return BLINKIISPORTRAITS.db.profile.targettarget.cast
+								return BLINKIISPORTRAITS.db.profile.targettarget.unitcolor
 							end,
 							set = function(info, value)
-								BLINKIISPORTRAITS.db.profile.targettarget.cast = value
+								BLINKIISPORTRAITS.db.profile.targettarget.unitcolor = value
 								BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
 							end,
 						},
@@ -887,8 +975,21 @@ local options = {
 								BLINKIISPORTRAITS:InitializePetPortrait()
 							end,
 						},
-						extra_toggle = {
+						cast_toggle = {
 							order = 3,
+							type = "toggle",
+							name = "Cast Icon",
+							desc = "Enable Cast Icons.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.pet.cast
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.pet.cast = value
+								BLINKIISPORTRAITS:InitializePetPortrait()
+							end,
+						},
+						extra_toggle = {
+							order = 4,
 							type = "toggle",
 							name = "Enable Extra Texture",
 							desc = "Shows the Extra Texture (rare/elite) for the Pet Portrait.",
@@ -900,16 +1001,16 @@ local options = {
 								BLINKIISPORTRAITS:InitializePetPortrait()
 							end,
 						},
-						cast_toggle = {
-							order = 4,
+						unitcolor_toggle = {
+							order = 5,
 							type = "toggle",
-							name = "Cast Icon",
-							desc = "Enable Cast Icons.",
+							name = "Unitcolor for Extra",
+							desc = "Use the unit color for the Extra (Rare/Elite) Texture.",
 							get = function(info)
-								return BLINKIISPORTRAITS.db.profile.pet.cast
+								return BLINKIISPORTRAITS.db.profile.pet.unitcolor
 							end,
 							set = function(info, value)
-								BLINKIISPORTRAITS.db.profile.pet.cast = value
+								BLINKIISPORTRAITS.db.profile.pet.unitcolor = value
 								BLINKIISPORTRAITS:InitializePetPortrait()
 							end,
 						},
@@ -1085,8 +1186,21 @@ local options = {
 								BLINKIISPORTRAITS:InitializePartyPortrait()
 							end,
 						},
-						extra_toggle = {
+						cast_toggle = {
 							order = 3,
+							type = "toggle",
+							name = "Cast Icon",
+							desc = "Enable Cast Icons.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.party.cast
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.party.cast = value
+								BLINKIISPORTRAITS:InitializePartyPortrait()
+							end,
+						},
+						extra_toggle = {
+							order = 4,
 							type = "toggle",
 							name = "Enable Extra Texture",
 							desc = "Shows the Extra Texture (rare/elite) for the Party Portrait.",
@@ -1098,16 +1212,16 @@ local options = {
 								BLINKIISPORTRAITS:InitializePartyPortrait()
 							end,
 						},
-						cast_toggle = {
-							order = 4,
+						unitcolor_toggle = {
+							order = 5,
 							type = "toggle",
-							name = "Cast Icon",
-							desc = "Enable Cast Icons.",
+							name = "Unitcolor for Extra",
+							desc = "Use the unit color for the Extra (Rare/Elite) Texture.",
 							get = function(info)
-								return BLINKIISPORTRAITS.db.profile.party.cast
+								return BLINKIISPORTRAITS.db.profile.party.unitcolor
 							end,
 							set = function(info, value)
-								BLINKIISPORTRAITS.db.profile.party.cast = value
+								BLINKIISPORTRAITS.db.profile.party.unitcolor = value
 								BLINKIISPORTRAITS:InitializePartyPortrait()
 							end,
 						},
@@ -1283,8 +1397,21 @@ local options = {
 								BLINKIISPORTRAITS:InitializeBossPortrait()
 							end,
 						},
-						extra_toggle = {
+						cast_toggle = {
 							order = 3,
+							type = "toggle",
+							name = "Cast Icon",
+							desc = "Enable Cast Icons.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.boss.cast
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.boss.cast = value
+								BLINKIISPORTRAITS:InitializeBossPortrait()
+							end,
+						},
+						extra_toggle = {
+							order = 4,
 							type = "toggle",
 							name = "Enable Extra Texture",
 							desc = "Shows the Extra Texture (rare/elite) for the Boss Portrait.",
@@ -1296,16 +1423,16 @@ local options = {
 								BLINKIISPORTRAITS:InitializeBossPortrait()
 							end,
 						},
-						cast_toggle = {
-							order = 4,
+						unitcolor_toggle = {
+							order = 5,
 							type = "toggle",
-							name = "Cast Icon",
-							desc = "Enable Cast Icons.",
+							name = "Unitcolor for Extra",
+							desc = "Use the unit color for the Extra (Rare/Elite) Texture.",
 							get = function(info)
-								return BLINKIISPORTRAITS.db.profile.boss.cast
+								return BLINKIISPORTRAITS.db.profile.boss.unitcolor
 							end,
 							set = function(info, value)
-								BLINKIISPORTRAITS.db.profile.boss.cast = value
+								BLINKIISPORTRAITS.db.profile.boss.unitcolor = value
 								BLINKIISPORTRAITS:InitializeBossPortrait()
 							end,
 						},
@@ -1481,8 +1608,21 @@ local options = {
 								BLINKIISPORTRAITS:InitializeArenaPortrait()
 							end,
 						},
-						extra_toggle = {
+						cast_toggle = {
 							order = 3,
+							type = "toggle",
+							name = "Cast Icon",
+							desc = "Enable Cast Icons.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.arena.cast
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.arena.cast = value
+								BLINKIISPORTRAITS:InitializeArenaPortrait()
+							end,
+						},
+						extra_toggle = {
+							order = 4,
 							type = "toggle",
 							name = "Enable Extra Texture",
 							desc = "Shows the Extra Texture (rare/elite) for the Arena Portrait.",
@@ -1494,16 +1634,16 @@ local options = {
 								BLINKIISPORTRAITS:InitializeArenaPortrait()
 							end,
 						},
-						cast_toggle = {
-							order = 4,
+						unitcolor_toggle = {
+							order = 5,
 							type = "toggle",
-							name = "Cast Icon",
-							desc = "Enable Cast Icons.",
+							name = "Unitcolor for Extra",
+							desc = "Use the unit color for the Extra (Rare/Elite) Texture.",
 							get = function(info)
-								return BLINKIISPORTRAITS.db.profile.arena.cast
+								return BLINKIISPORTRAITS.db.profile.arena.unitcolor
 							end,
 							set = function(info, value)
-								BLINKIISPORTRAITS.db.profile.arena.cast = value
+								BLINKIISPORTRAITS.db.profile.arena.unitcolor = value
 								BLINKIISPORTRAITS:InitializeArenaPortrait()
 							end,
 						},
@@ -1619,8 +1759,498 @@ local options = {
 				},
 			},
 		},
-
-
+		extra_group = {
+			order = 9,
+			type = "group",
+			name = "Extra",
+			desc = "Texture Style settings for Extra texture (Rare/Elite/Boss/player).",
+			args = {
+				texture_group = {
+					order = 1,
+					type = "group",
+					inline = true,
+					name = "Texture Styles",
+					args = {
+						rare_select = {
+							order = 1,
+							type = "select",
+							name = "Rare",
+							desc = "Select a extra texture style for rare units.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.misc.rare
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.misc.rare = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+							values = extra,
+						},
+						elite_select = {
+							order = 2,
+							type = "select",
+							name = "Elite",
+							desc = "Select a extra texture style for elite units.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.misc.elite
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.misc.elite = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+							values = extra,
+						},
+						rareelite_select = {
+							order = 3,
+							type = "select",
+							name = "Rare Elite",
+							desc = "Select a extra texture style for rare elite units.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.misc.rareelite
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.misc.rareelite = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+							values = extra,
+						},
+						boss_select = {
+							order = 4,
+							type = "select",
+							name = "Boss",
+							desc = "Select a extra texture style for boss units.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.misc.boss
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.misc.boss = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+							values = extra,
+						},
+						player_select = {
+							order = 5,
+							type = "select",
+							name = "Player",
+							desc = "Select a extra texture style for player.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.misc.player
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.misc.player = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+							values = extra,
+						},
+					},
+				},
+			},
+		},
+		color_group = {
+			order = 10,
+			type = "group",
+			name = "Color",
+			args = {
+				apply_execute = {
+					order = 1,
+					type = "execute",
+					name = "Apply",
+					func = function()
+						BLINKIISPORTRAITS:LoadPortraits()
+					end,
+				},
+				reset_class_execute = {
+					order = 2,
+					type = "execute",
+					name = "Reset class colors",
+					func = function()
+						BLINKIISPORTRAITS.db.profile.colors.class = CopyTable(BLINKIISPORTRAITS.defaults.colors.class)
+					end,
+				},
+				reset_colors_execute = {
+					order = 3,
+					type = "execute",
+					name = "Reset all colors",
+					func = function()
+						BLINKIISPORTRAITS.db.profile.colors = CopyTable(BLINKIISPORTRAITS.defaults.colors)
+					end,
+				},
+				settings_group = {
+					order = 4,
+					type = "group",
+					inline = true,
+					name = "Settings",
+					args = {
+						default_toggle = {
+							order = 1,
+							type = "toggle",
+							name = "Use Default color",
+							desc = "Forces the default color for all texture.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.misc.force_default
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.misc.force_default = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+						},
+					},
+				},
+				misc_group = {
+					order = 5,
+					type = "group",
+					inline = true,
+					name = "Misc",
+					args = {
+						default_color = {
+							type = "color",
+							order = 1,
+							name = "Default",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.misc.default
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.misc.default
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						death_color = {
+							type = "color",
+							order = 2,
+							name = "Death",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.misc.death
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.misc.death
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+					},
+				},
+				class_group = {
+					order = 6,
+					type = "group",
+					inline = true,
+					name = "Class",
+					args = {
+						DEATHKNIGHT_color = {
+							type = "color",
+							order = 1,
+							name = "Death Knight",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.DEATHKNIGHT
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.DEATHKNIGHT
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						DEMONHUNTER_color = {
+							type = "color",
+							order = 2,
+							name = "Demon Hunter",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.DEMONHUNTER
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.DEMONHUNTER
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						DRUID_color = {
+							type = "color",
+							order = 3,
+							name = "Druid",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.DRUID
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.DRUID
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						EVOKER_color = {
+							type = "color",
+							order = 4,
+							name = "Evoker",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.EVOKER
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.EVOKER
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						HUNTER_color = {
+							type = "color",
+							order = 5,
+							name = "Hunter",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.HUNTER
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.HUNTER
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						MAGE_color = {
+							type = "color",
+							order = 6,
+							name = "Mage",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.MAGE
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.MAGE
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						MONK_color = {
+							type = "color",
+							order = 7,
+							name = "Monk",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.MONK
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.MONK
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						PALADIN_color = {
+							type = "color",
+							order = 8,
+							name = "Paladin",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.PALADIN
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.PALADIN
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						PRIEST_color = {
+							type = "color",
+							order = 9,
+							name = "Priest",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.PRIEST
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.PRIEST
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						ROGUE_color = {
+							type = "color",
+							order = 10,
+							name = "Rouge",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.ROGUE
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.ROGUE
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						SHAMAN_color = {
+							type = "color",
+							order = 11,
+							name = "Shaman",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.SHAMAN
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.SHAMAN
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						WARLOCK_color = {
+							type = "color",
+							order = 12,
+							name = "Warlock",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.WARLOCK
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.WARLOCK
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						WARRIOR_color = {
+							type = "color",
+							order = 13,
+							name = "Warrior",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.WARRIOR
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.class.WARRIOR
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+					},
+				},
+				classification_group = {
+					order = 7,
+					type = "group",
+					inline = true,
+					name = "Classification",
+					args = {
+						rare_color = {
+							type = "color",
+							order = 1,
+							name = "Rare",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.classification.rare
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.classification.rare
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						elite_color = {
+							type = "color",
+							order = 2,
+							name = "Elite",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.classification.elite
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.classification.elite
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						rareelite_color = {
+							type = "color",
+							order = 3,
+							name = "Rare Elite",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.classification.rareelite
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.classification.rareelite
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						boss_color = {
+							type = "color",
+							order = 4,
+							name = "Boss",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.classification.boss
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.classification.boss
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						player_color = {
+							type = "color",
+							order = 5,
+							name = "Player",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.classification.player
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.classification.player
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+					},
+				},
+				reaction_group = {
+					order = 8,
+					type = "group",
+					inline = true,
+					name = "Reaction",
+					args = {
+						enemy_color = {
+							type = "color",
+							order = 1,
+							name = "Enemy",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.reaction.enemy
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.reaction.enemy
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						neutral_color = {
+							type = "color",
+							order = 2,
+							name = "Neutral",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.reaction.neutral
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.reaction.neutral
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						friendly_color = {
+							type = "color",
+							order = 3,
+							name = "Friendly",
+							hasAlpha = true,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.reaction.friendly
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = BLINKIISPORTRAITS.db.profile.colors.reaction.friendly
+								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+					},
+				},
+			},
+		},
 	},
 }
 

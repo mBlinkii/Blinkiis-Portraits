@@ -1,6 +1,8 @@
 
 
 BLINKIISPORTRAITS.defaults.misc = {
+    force_reaction = false,
+    force_default = false,
     rare = "extra_a",
     elite = "extra_a",
     rareelite = "extra_a",
@@ -10,11 +12,10 @@ BLINKIISPORTRAITS.defaults.misc = {
 
 BLINKIISPORTRAITS.defaults.player = {
     cast = false,
-    flip = false,
     level = 20,
     strata = "AUTO",
     mirror = false,
-
+    unitcolor = false,
     point = { point = "RIGHT", relativePoint = "LEFT", x = 0, y = 0 },
     extra = false,
     enable = true,
@@ -25,7 +26,7 @@ BLINKIISPORTRAITS.defaults.player = {
 BLINKIISPORTRAITS.defaults.target = {
     cast = false,
     enable = true,
-    flip = false,
+    unitcolor = false,
     level = 20,
     mirror = false,
     point = { point = "LEFT", relativePoint = "RIGHT", x = 0, y = 0 },
@@ -38,9 +39,9 @@ BLINKIISPORTRAITS.defaults.target = {
 BLINKIISPORTRAITS.defaults.focus = {
     cast = false,
     enable = true,
-    flip = false,
     level = 20,
     mirror = false,
+    unitcolor = false,
     point = { point = "LEFT", relativePoint = "RIGHT", x = 0, y = 0 },
     size = 90,
     strata = "AUTO",
@@ -51,9 +52,9 @@ BLINKIISPORTRAITS.defaults.focus = {
 BLINKIISPORTRAITS.defaults.targettarget = {
     cast = false,
     enable = true,
-    flip = false,
     level = 20,
     mirror = false,
+    unitcolor = false,
     point = { point = "LEFT", relativePoint = "RIGHT", x = 0, y = 0 },
     size = 90,
     strata = "AUTO",
@@ -64,9 +65,9 @@ BLINKIISPORTRAITS.defaults.targettarget = {
 BLINKIISPORTRAITS.defaults.pet = {
     cast = false,
     enable = true,
-    flip = false,
     level = 20,
     mirror = false,
+    unitcolor = false,
     point = { point = "RIGHT", relativePoint = "LEFT", x = 0, y = 0 },
     size = 90,
     strata = "AUTO",
@@ -77,9 +78,9 @@ BLINKIISPORTRAITS.defaults.pet = {
 BLINKIISPORTRAITS.defaults.party = {
     cast = false,
     enable = true,
-    flip = false,
     level = 20,
     mirror = false,
+    unitcolor = false,
     point = { point = "RIGHT", relativePoint = "LEFT", x = 0, y = 0 },
     size = 90,
     strata = "AUTO",
@@ -90,9 +91,9 @@ BLINKIISPORTRAITS.defaults.party = {
 BLINKIISPORTRAITS.defaults.boss = {
     cast = false,
     enable = true,
-    flip = false,
     level = 20,
     mirror = false,
+    unitcolor = false,
     point = { point = "LEFT", relativePoint = "RIGHT", x = 0, y = 0 },
     size = 90,
     strata = "AUTO",
@@ -103,9 +104,9 @@ BLINKIISPORTRAITS.defaults.boss = {
 BLINKIISPORTRAITS.defaults.arena = {
     cast = false,
     enable = true,
-    flip = false,
     level = 20,
     mirror = false,
+    unitcolor = false,
     point = { point = "LEFT", relativePoint = "RIGHT", x = 0, y = 0 },
     size = 90,
     strata = "AUTO",
@@ -114,13 +115,6 @@ BLINKIISPORTRAITS.defaults.arena = {
 }
 
 BLINKIISPORTRAITS.defaults.colors = {
-    border = {
-        boss = { r = 1, g = 0, b = 0, a = 1 },
-        default = { r = 0, g = 0, b = 0, a = 1 },
-        elite = { r = 1, g = 1, b = 1, a = 1 },
-        rare = { r = 1, g = 1, b = 1, a = 1 },
-        rareelite = { r = 1, g = 1, b = 1, a = 1 },
-    },
     misc = {
         death = { r = 0.89, g = 0.61, b = 0.29, a = 1 },
         default = { r = 0.89, g = 0.61, b = 0.29, a = 1 },
@@ -143,9 +137,9 @@ BLINKIISPORTRAITS.defaults.colors = {
     classification = {
         boss = { r = 0.78, g = 0.12, b = 0.12, a = 1 },
         elite = { r = 1, g = 0, b = 0.90, a = 1 },
+        player = { r = 0.2, g = 1, b = 0.2, a = 1 },
         rare = { r = 0, g = 0.46, b = 1, a = 1 },
         rareelite = { r = 0.63, g = 0, b = 1, a = 1 },
-        player = { r = 0.2, g = 1, b = 0.2, a = 1 },
     },
     reaction = {
         enemy = { r = 0.78, g = 0.12, b = 0.12, a = 1 },

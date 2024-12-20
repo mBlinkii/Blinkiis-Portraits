@@ -3,6 +3,7 @@ local GetAddOnMetadata = _G.C_AddOns and _G.C_AddOns.GetAddOnMetadata or _G.GetA
 local IsAddOnLoaded = _G.C_AddOns and _G.C_AddOns.IsAddOnLoaded or IsAddOnLoaded
 local ReloadUI = ReloadUI
 local strlower = strlower
+local CopyTable = CopyTable
 
 -- addon name and namespace
 local addonName, _ = ...
@@ -19,7 +20,6 @@ BLINKIISPORTRAITS.defaults = {}
 
 -- portraits
 BLINKIISPORTRAITS.Portraits = {}
-
 
 -- debug/ default functions
 function GetTableLng(tbl)
@@ -76,7 +76,10 @@ function BLINKIISPORTRAITS:LoadDB()
 	self.db = LibStub("AceDB-3.0"):New("BlinkiisPortraitsDB")
 
 	for k, v in pairs(BLINKIISPORTRAITS.defaults) do
-		if self.db.profile[k] == nil then self.db.profile[k] = v end
+		if self.db.profile[k] == nil then
+			local value = v
+			self.db.profile[k] = value
+		end
 	end
 end
 

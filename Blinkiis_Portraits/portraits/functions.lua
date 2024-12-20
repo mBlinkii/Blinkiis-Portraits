@@ -4,7 +4,8 @@ local UnitClass = UnitClass
 local UnitReaction = UnitReaction
 local UnitInPartyIsAI = UnitInPartyIsAI
 local UnitClassification = UnitClassification
-local ipairs = ipairs
+local UnitFactionGroup = UnitFactionGroup
+local ipairs, select = ipairs, select
 
 local BPP = BLINKIISPORTRAITS.Portraits
 
@@ -47,22 +48,7 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit)
 	return unitFrames and unitFrames[unit]
 end
 
-function BLINKIISPORTRAITS:GetUnitColor(unit)
-	local colorClass = BLINKIISPORTRAITS.db.profile.colors.class
-	local colorReaction = BLINKIISPORTRAITS.db.profile.colors.reaction
-	local colorMisc = BLINKIISPORTRAITS.db.profile.colors.misc
-
-	if UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit)) then
-		local _, class = UnitClass(unit)
-		return colorClass[class], true
-	else
-		local reaction = UnitReaction(unit, "player")
-		local reactionType = reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly") or "enemy"
-		return colorReaction[reactionType], false
-	end
-end
-
- function BLINKIISPORTRAITS:Mirror(texture, mirror)
+function BLINKIISPORTRAITS:Mirror(texture, mirror)
 	texture:SetTexCoord(mirror and 1 or 0, mirror and 0 or 1, 0, 1)
 end
 
@@ -83,36 +69,52 @@ function BLINKIISPORTRAITS:UpdateTextures(portrait)
 	BLINKIISPORTRAITS:Mirror(portrait.extraMask, mirror)
 end
 
-function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, forced)
+local playerFaction
+
+function BLINKIISPORTRAITS:GetUnitColor(unit)
+	local colors = BLINKIISPORTRAITS.db.profile.colors
+
+	if UnitIsDead(unit) then return colors.misc.death end
+	if BLINKIISPORTRAITS.db.profile.misc.force_default then return colors.misc.default end
+
+	if UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit)) then
+		if BLINKIISPORTRAITS.db.profile.misc.force_reaction then
+			local unitFaction = select(1, UnitFactionGroup(unit))
+			playerFaction = playerFaction or select(1, UnitFactionGroup("player"))
+
+			local reactionType = (playerFaction == unitFaction) and "friendly" or "enemy"
+			return colors.reaction[reactionType], true
+		else
+			local _, class = UnitClass(unit)
+			return colors.class[class], true
+		end
+	else
+		local reaction = UnitReaction(unit, "player")
+		local reactionType = reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly") or "enemy"
+		return colors.reaction[reactionType], false
+	end
+end
+
+function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, player)
 	if not portrait.extra then return end
 
-	-- test
-	-- local rareIDS = {
-	-- 	["42859"] = true,
-	-- }
+	local c = player and "player" or UnitClassification(portrait.unit)
 
-	-- local eliteIDS = {
-	-- 	["3127"] = true,
-	-- }
+	if not color then
+		if BLINKIISPORTRAITS.db.profile.misc.force_reaction then
+			local colorReaction = BLINKIISPORTRAITS.db.profile.colors.reaction
+			local reaction = UnitReaction(portrait.unit, "player")
+			local reactionType = reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly") or "enemy"
+			color = colorReaction[reactionType]
+		else
+			local colorClassification = BLINKIISPORTRAITS.db.profile.colors.classification
 
-	-- local rareeliteIDS = {
-	-- 	["3116"] = true,
-	-- }
-
-	--local guid = UnitGUID(frame.unit)
-	--local npcID = guid and select(6, strsplit("-", guid))
-	local color, c
-	local colorClassification = BLINKIISPORTRAITS.db.profile.colors.classification
-
-	if forced then
-		color = colorClassification.player
-		c = "player"
-	elseif portrait.db.extra then
-		local unit = portrait.unit
-
-		-- (rareIDS[npcID] and "rare") or (eliteIDS[npcID] and "elite") or (rareeliteIDS[npcID] and "rareelite") or
-		c = UnitClassification(unit) -- "worldboss", "rareelite", "elite", "rare", "normal", "trivial", or "minus"
-		color = colorClassification[c]
+			if player then
+				color = colorClassification.player
+			elseif portrait.db.extra then
+				color = colorClassification[c]
+			end
+		end
 	end
 
 	if color then

@@ -18,7 +18,7 @@ local function OnEvent(portrait, event, eventUnit)
 	SetPortraitTexture(portrait.portrait, portrait.unit, true)
 	BLINKIISPORTRAITS:Mirror(portrait.portrait, isPlayer and portrait.db.mirror)
 
-	BLINKIISPORTRAITS:UpdateExtraTexture(portrait, BLINKIISPORTRAITS.db.profile.player.extra)
+	BLINKIISPORTRAITS:UpdateExtraTexture(portrait, portrait.db.unitcolor and color, portrait.db.extra)
 
 	if not InCombatLockdown() and portrait:GetAttribute("unit") ~= portrait.unit then portrait:SetAttribute("unit", portrait.unit) end
 end
