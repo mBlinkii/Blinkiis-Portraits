@@ -59,7 +59,7 @@ function BLINKIISPORTRAITS:InitializeBossPortrait()
 				BLINKIISPORTRAITS:InitPortrait(portraits[unit], events)
 			else
 				-- #F90505FF
-				BLINKIISPORTRAITS:Print("|CFFF90505ERROR|r", "CANT CREATE", unit)
+				BLINKIISPORTRAITS:Print("|CFFF90505ERROR|r", "CANT CREATE", unit, parent)
 			end
 		end
 	end

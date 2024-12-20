@@ -29,7 +29,7 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit)
 				target = "SUFUnittarget",
 				pet = "SUFUnitpet",
 				targettarget = "SUFUnittargettarget",
-				focus = "SUFUnitocus",
+				focus = "SUFUnitfocus",
 				party = "SUFHeaderpartyUnitButton",
 				boss = "SUFHeaderboss",
 				arena = "SUFHeaderArena",
