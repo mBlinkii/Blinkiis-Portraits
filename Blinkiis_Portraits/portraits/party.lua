@@ -4,6 +4,8 @@ local function OnEvent(portrait, event, eventUnit)
 	portrait.unit = portrait.parentFrame.unit
 	local unit = portrait.unit == portrait.type and "player" or portrait.unit
 
+	if not unit then return end
+
 	-- #F85D0AFF
 	BLINKIISPORTRAITS:DebugPrint(portrait, event, eventUnit, "|CFFF85D0A")
 
@@ -28,6 +30,14 @@ end
 
 function BLINKIISPORTRAITS:InitializePartyPortrait()
 	if not BLINKIISPORTRAITS.db.profile.party.enable then return end
+
+	if BLINKIISPORTRAITS.SUF and ShadowUF then
+		if not BLINKIISPORTRAITS.SUF_Party_Hook then
+			hooksecurefunc(ShadowUF, "LoadUnits", BLINKIISPORTRAITS.InitializePartyPortrait)
+
+			BLINKIISPORTRAITS.SUF_Party_Hook = true
+		end
+	end
 
 	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("party")
 	if unitframe then

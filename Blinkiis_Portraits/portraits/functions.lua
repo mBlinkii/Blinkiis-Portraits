@@ -34,6 +34,7 @@ local unitFrames = nil
 function BLINKIISPORTRAITS:GetUnitFrames(unit)
 	if not unitFrames then
 		if IsAddOnLoaded("ShadowedUnitFrames") then
+			BLINKIISPORTRAITS.SUF = true
 			unitFrames = {
 				player = "SUFUnitplayer",
 				target = "SUFUnittarget",
@@ -45,6 +46,7 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit)
 				arena = "SUFHeaderArena",
 			}
 		elseif IsAddOnLoaded("ElvUI") then
+			BLINKIISPORTRAITS.ELVUI = true
 			unitFrames = {
 				player = "ElvUF_Player",
 				target = "ElvUF_Target",
@@ -85,6 +87,7 @@ end
 local playerFaction
 
 function BLINKIISPORTRAITS:GetUnitColor(unit)
+	if not unit then return end
 	local colors = BLINKIISPORTRAITS.db.profile.colors
 
 	if UnitIsDead(unit) then return colors.misc.death, nil, true end
@@ -225,7 +228,8 @@ function BLINKIISPORTRAITS:CreatePortrait(name, parent)
 		portrait.portrait = portrait:CreateTexture("BP_portrait-" .. name, "OVERLAY", nil, 2)
 		portrait.portrait:SetAllPoints(portrait)
 		portrait.portrait:AddMaskTexture(portrait.mask)
-		local unit = parent.unit == "party" and "player" or parent.unit
+		local unit = (parent.unit == "party" or not parent.unit)  and "player" or parent.unit
+		print(unit, parent.unit)
 		SetPortraitTexture(portrait.portrait, unit, true)
 
 		-- extra mask

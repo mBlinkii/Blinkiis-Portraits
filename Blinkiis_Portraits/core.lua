@@ -17,6 +17,8 @@ BLINKIISPORTRAITS.Icon = "|TInterface\\Addons\\Blinkiis_Portraits\\media\\icon.t
 BLINKIISPORTRAITS.Logo = "Interface\\Addons\\Blinkiis_Portraits\\media\\logo.tga"
 BLINKIISPORTRAITS.media = {}
 BLINKIISPORTRAITS.defaults = {}
+BLINKIISPORTRAITS.SUF = nil
+BLINKIISPORTRAITS.ELVUI = nil
 
 do
 	BLINKIISPORTRAITS.Cata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
