@@ -29,13 +29,13 @@ end
 function BLINKIISPORTRAITS:InitializeBossPortrait()
 	if not BLINKIISPORTRAITS.db.profile.boss.enable then return end
 
-	local unitframe, isBlizzard = BLINKIISPORTRAITS:GetUnitFrames("boss")
+	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("boss")
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits
 		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "INSTANCE_ENCOUNTER_ENGAGE_UNIT" }
 
 		for i = 1, 5 do
-			local parent = isBlizzard and _G[format(unitframe, i)] or _G[unitframe .. i]
+			local parent = _G[unitframe .. i]
 			local unit = "boss" .. i
 			local type = "boss"
 

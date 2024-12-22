@@ -29,13 +29,13 @@ end
 function BLINKIISPORTRAITS:InitializePartyPortrait()
 	if not BLINKIISPORTRAITS.db.profile.party.enable then return end
 
-	local unitframe, isBlizzard = BLINKIISPORTRAITS:GetUnitFrames("party")
+	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("party")
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits
 		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_NAME_UPDATE", "UPDATE_ACTIVE_BATTLEFIELD", "GROUP_ROSTER_UPDATE", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE" }
 
 		for i = 1, 5 do
-			local parent = isBlizzard and _G.PartyFrame[unitframe .. i] or _G[unitframe .. i]
+			local parent = _G[unitframe .. i]
 			local unit = "party" .. i
 			local type = "party"
 

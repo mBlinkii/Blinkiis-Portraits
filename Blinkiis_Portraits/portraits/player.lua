@@ -31,7 +31,7 @@ end
 function BLINKIISPORTRAITS:InitializePlayerPortrait()
 	if not BLINKIISPORTRAITS.db.profile.player.enable then return end
 
-	local unitframe, isBlizzard = BLINKIISPORTRAITS:GetUnitFrames("player")
+	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("player")
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits
 		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_ENTERED_VEHICLE", "UNIT_EXITING_VEHICLE", "UNIT_EXITED_VEHICLE" }
@@ -44,7 +44,7 @@ function BLINKIISPORTRAITS:InitializePlayerPortrait()
 		portraits[unit].events = {}
 		portraits[unit].parentFrame = parent
 		portraits[unit].unit = parent.unit
-		portraits[unit].isBlizzard = isBlizzard
+
 		portraits[unit].type = type -- frameType or frame.type
 		portraits[unit].db = BLINKIISPORTRAITS.db.profile[type]
 		portraits[unit].size = BLINKIISPORTRAITS.db.profile[type].size
@@ -57,12 +57,6 @@ function BLINKIISPORTRAITS:InitializePlayerPortrait()
 		BLINKIISPORTRAITS:UpdateCastSettings(portraits[unit])
 
 		BLINKIISPORTRAITS:InitPortrait(portraits[unit], events)
-
-
-		if isBlizzard then
-			parent.portrait:Hide()
-			BLINKIISPORTRAITS:DebugPrintTable(parent)
-		end
 	end
 end
 

@@ -45,22 +45,10 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit)
 				boss = "ElvUF_Boss",
 				arena = "ElvUF_Arena",
 			}
-		else
-			unitFrames = {
-				isBlizzard = true,
-				player = "PlayerFrame",
-				target = "TargetFrame",
-				pet = "PetFrame",
-				targettarget = "TargetFrameToT",
-				focus = "FocusFrame",
-				party = "MemberFrame",
-				boss = "Boss%dTargetFrame",
-				arena = "CompactArenaFrameMember",
-			}
 		end
 	end
 
-	return unitFrames and unitFrames[unit], unitFrames.isBlizzard
+	return unitFrames and unitFrames[unit]
 end
 
 function BLINKIISPORTRAITS:Mirror(texture, mirror)
