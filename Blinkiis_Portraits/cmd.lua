@@ -1,17 +1,14 @@
 function BLINKIISPORTRAITS:CMD(msg)
 	msg = strlower(msg)
 
-	if msg == "debug" then
-		BLINKIISPORTRAITS:DebugPrintTable(BLINKIISPORTRAITS.db)
-	elseif msg == "test" then
-		BLINKIISPORTRAITS:TEST()
-	elseif msg == "reset" then
+
+	if msg == "resetdb" then
 		BLINKIISPORTRAITS.db = nil
         BlinkiisPortraitsDB = nil
         BLINKIISPORTRAITS:Print("RESET")
 	else
-        BLINKIISPORTRAITS:Print("uff")
-		--BLINKIISPORTRAITS:ToggleOptions()
+
+		BLINKIISPORTRAITS:ToggleOptions()
 	end
 end
 

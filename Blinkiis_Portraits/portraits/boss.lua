@@ -6,9 +6,6 @@ local function OnEvent(portrait, event, eventUnit)
 
 	if not unit then return end
 
-	-- #F85D0AFF
-	BLINKIISPORTRAITS:DebugPrint(portrait, event, eventUnit, "|CFFF85D0A")
-
 	local color, isPlayer, isDead = BLINKIISPORTRAITS:GetUnitColor(unit)
 
 	portrait.isPlayer = isPlayer
@@ -67,9 +64,6 @@ function BLINKIISPORTRAITS:InitializeBossPortrait()
 				BLINKIISPORTRAITS:UpdateCastSettings(portraits[unit])
 
 				BLINKIISPORTRAITS:InitPortrait(portraits[unit], events)
-			else
-				-- #F90505FF
-				BLINKIISPORTRAITS:Print("|CFFF90505ERROR|r", "CANT CREATE", unit, parent)
 			end
 		end
 	end

@@ -1,9 +1,6 @@
 local function OnEvent(portrait, event, eventUnit)
 	if (event == "PORTRAITS_UPDATED" or event == "UNIT_PORTRAIT_UPDATE") and portrait.unit ~= eventUnit then return end
 
-	-- #F85D0AFF
-	BLINKIISPORTRAITS:DebugPrint(portrait, event, eventUnit, "|CFFF85D0A")
-
 	local color, isPlayer, isDead = BLINKIISPORTRAITS:GetUnitColor(portrait.unit)
 
 	portrait.isPlayer = isPlayer

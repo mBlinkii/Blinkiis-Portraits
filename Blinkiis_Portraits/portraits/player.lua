@@ -6,8 +6,6 @@ local function OnEvent(portrait, event, eventUnit)
 	if event == "UNIT_EXITED_VEHICLE" or event == "PET_UI_UPDATE" then unit = UnitInVehicle("player") and UnitHasVehiclePlayerFrameUI("player") and "pet" or "player" end
 
 	portrait.unit = unit
-	-- #F8A10AFF
-	BLINKIISPORTRAITS:DebugPrint(portrait, event, eventUnit, "|CFFF8A10A")
 
 	local color, isPlayer, isDead = BLINKIISPORTRAITS:GetUnitColor(portrait.unit)
 

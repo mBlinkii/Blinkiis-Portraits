@@ -22,9 +22,7 @@ end
 
 local function UpdateZoom(texture, size)
 	local zoom = BLINKIISPORTRAITS.db.profile.misc.zoom
-	local offset = (size/2) * zoom
-
-	print(zoom, offset)
+	local offset = (size / 2) * zoom
 
 	texture:SetPoint("TOPLEFT", 0 - offset, 0 + offset)
 	texture:SetPoint("BOTTOMRIGHT", 0 + offset, 0 - offset)
@@ -163,20 +161,6 @@ function BLINKIISPORTRAITS:RemovePortrait(frame)
 	frame = nil
 end
 
-function BLINKIISPORTRAITS:DebugPrint(frame, event, eventUnit, color)
-	-- #00F8DFFF #F6FF00FF #00F97CFF
-	BLINKIISPORTRAITS:Print(
-		color .. (event and "Event - " or "") .. frame.type .. ":|r",
-		"|CFF00F8DFUnit|r:",
-		frame.unit,
-		"|CFFF6FF00EventUnit|r:",
-		eventUnit,
-		"|CFF00F97COther|r:",
-		frame.type,
-		event
-	)
-end
-
 function BLINKIISPORTRAITS:UpdateSettings(portrait, settings)
 	portrait.size = settings.size
 	portrait.point = settings.point
@@ -211,8 +195,6 @@ function BLINKIISPORTRAITS:UpdateSize(portrait, size, point)
 end
 
 function BLINKIISPORTRAITS:CreatePortrait(name, parent)
-	BLINKIISPORTRAITS:Print("|cff96e1ffCREATE|r", name, parent)
-
 	if parent then
 		local portrait = CreateFrame("Button", "BP_Portrait_" .. name, parent, "SecureUnitButtonTemplate")
 
@@ -228,8 +210,8 @@ function BLINKIISPORTRAITS:CreatePortrait(name, parent)
 		portrait.portrait = portrait:CreateTexture("BP_portrait-" .. name, "OVERLAY", nil, 2)
 		portrait.portrait:SetAllPoints(portrait)
 		portrait.portrait:AddMaskTexture(portrait.mask)
-		local unit = (parent.unit == "party" or not parent.unit)  and "player" or parent.unit
-		print(unit, parent.unit)
+		local unit = (parent.unit == "party" or not parent.unit) and "player" or parent.unit
+
 		SetPortraitTexture(portrait.portrait, unit, true)
 
 		-- extra mask

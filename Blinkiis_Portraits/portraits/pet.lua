@@ -8,8 +8,6 @@ local function OnEvent(portrait, event, eventUnit)
 	end
 
 	portrait.unit = unit
-	-- #0AF4F8FF
-	BLINKIISPORTRAITS:DebugPrint(portrait, event, eventUnit, "|CFF0AF4F8")
 
 	local color, isPlayer, isDead = BLINKIISPORTRAITS:GetUnitColor(portrait.unit)
 

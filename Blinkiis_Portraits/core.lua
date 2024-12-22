@@ -30,53 +30,7 @@ end
 -- portraits
 BLINKIISPORTRAITS.Portraits = {}
 
--- debug/ default functions
-function GetTableLng(tbl)
-	local getN = 0
-	for n in pairs(tbl) do
-		getN = getN + 1
-	end
-	return getN
-end
-
-local function PrintTable(tbl, indent, simple, noFunctions)
-	--if not indent then indent = "   " end
-	if type(tbl) == "table" then
-		for entry, value in pairs(tbl) do
-			if (type(value) == "table") and not simple then
-				print(indent and indent .. "   " or "", "|cff60ffc3 [" .. entry .. "]|r", value)
-				PrintTable(value, indent and indent .. "   " or "   ", true, noFunctions)
-			else
-				if type(value) == "table" then
-					print(indent and indent .. "   " or "", "|cff60ffc3 [" .. entry .. "]|r", " > ", value)
-				elseif type(value) == "number" then
-					print(indent and indent .. "   " or "", "|cfff5b062 [" .. entry .. "]|r", " = ", value)
-				elseif type(value) == "string" then
-					print(indent and indent .. "   " or "", "|cffd56ef5 [" .. entry .. "]|r", " = ", value)
-				elseif type(value) == "boolean" then
-					print(indent and indent .. "   " or "", "|cff96e1ff[" .. entry .. "]|r", " = ", (value and "|cffabff87true|r" or "|cffff8787false|r"))
-				elseif (type(value) == "function") and not noFunctions then
-					print(indent and indent .. "   " or "", "|cffb5b3f5 [" .. entry .. "]|r", " = ", value)
-				elseif type(value) ~= "function" then
-					print(indent and indent .. "   " or "", "|cfffbd7f9 [" .. entry .. "]|r", " = ", value)
-				end
-			end
-		end
-	else
-		print(tostring(tbl))
-	end
-end
-
-function BLINKIISPORTRAITS:DebugPrintTable(tbl, simple, noFunctions)
-	if type(tbl) == "table" then
-		local tblLength = GetTableLng(tbl)
-		BLINKIISPORTRAITS:Print(": Table Start >>>", tbl, "Entries:", tblLength, "Options:", "Simple:", simple, "Functions:", noFunctions)
-		PrintTable(tbl, nil, (tblLength > 50), noFunctions)
-	else
-		BLINKIISPORTRAITS:Print("Not a Table:", tbl)
-	end
-end
-
+-- default functions
 function BLINKIISPORTRAITS:Print(...)
 	print(BLINKIISPORTRAITS.Name .. ":", ...)
 end
