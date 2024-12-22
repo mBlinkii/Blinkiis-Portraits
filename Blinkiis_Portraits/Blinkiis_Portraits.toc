@@ -4,6 +4,7 @@
 ## Notes: Custom Portraits for Blizzard Unit frames.
 ## Author: Blinkii
 ## SavedVariables: BlinkiisPortraitsDB
+## OptionalDeps: ShadowedUnitFrames, ElvUI
 
 
 libs\Ace3\LibStub\LibStub.lua
