@@ -1,3 +1,6 @@
+local ReloadUI = ReloadUI
+local strlower = strlower
+
 function BLINKIISPORTRAITS:CMD(msg)
 	msg = strlower(msg)
 

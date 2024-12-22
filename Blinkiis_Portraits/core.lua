@@ -1,9 +1,6 @@
 local _G = _G
 local GetAddOnMetadata = _G.C_AddOns and _G.C_AddOns.GetAddOnMetadata or _G.GetAddOnMetadata
 local IsAddOnLoaded = _G.C_AddOns and _G.C_AddOns.IsAddOnLoaded or IsAddOnLoaded
-local ReloadUI = ReloadUI
-local strlower = strlower
-local CopyTable = CopyTable
 
 -- addon name and namespace
 local addonName, _ = ...
