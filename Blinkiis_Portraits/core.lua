@@ -108,4 +108,10 @@ end
 function BLINKIISPORTRAITS:OnInitialize()
 	BLINKIISPORTRAITS:LoadDB()
 	BLINKIISPORTRAITS:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+	if IsAddOnLoaded("ElvUI") then
+		local E, _, _, _, _ = unpack(ElvUI)
+		local EP = E.Libs.EP
+		EP:RegisterPlugin(addonName, BLINKIISPORTRAITS.LoadOptions)
+	end
 end

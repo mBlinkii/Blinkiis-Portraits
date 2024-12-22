@@ -20,6 +20,16 @@ function BLINKIISPORTRAITS:RegisterEvents(portrait, events, cast)
 	end
 end
 
+local function UpdateZoom(texture, size)
+	local zoom = BLINKIISPORTRAITS.db.profile.misc.zoom
+	local offset = (size/2) * zoom
+
+	print(zoom, offset)
+
+	texture:SetPoint("TOPLEFT", 0 - offset, 0 + offset)
+	texture:SetPoint("BOTTOMRIGHT", 0 + offset, 0 - offset)
+end
+
 local unitFrames = nil
 function BLINKIISPORTRAITS:GetUnitFrames(unit)
 	if not unitFrames then
@@ -258,6 +268,8 @@ function BLINKIISPORTRAITS:InitPortrait(portrait, events)
 			portrait.eventsSet = true
 		end
 		portrait:func(portrait)
+
+		UpdateZoom(portrait.portrait, portrait.size)
 	end
 end
 

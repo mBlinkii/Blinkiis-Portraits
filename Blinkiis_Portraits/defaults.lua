@@ -8,6 +8,7 @@ BLINKIISPORTRAITS.defaults.misc = {
     rareelite = "extra_a",
     boss = "extra_a",
     player = "extra_a",
+    zoom = 0
 }
 
 BLINKIISPORTRAITS.defaults.player = {

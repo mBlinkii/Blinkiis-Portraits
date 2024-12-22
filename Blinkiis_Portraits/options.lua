@@ -71,6 +71,36 @@ local options = {
 	type = "group",
 	childGroups = "tab",
 	args = {
+		general_group = {
+			order = 0,
+			type = "group",
+			name = "General",
+			args = {
+				misc_group = {
+					order = 1,
+					type = "group",
+					inline = true,
+					name = "Misc",
+					args = {
+						zoom_range = {
+							order = 1,
+							name = "Zoom/ Offset",
+							type = "range",
+							min = -1,
+							max = 1,
+							step = 0.001,
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.misc.zoom
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.misc.zoom = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+						},
+					},
+				},
+			},
+		},
 		player_group = {
 			order = 1,
 			type = "group",
@@ -2256,3 +2286,8 @@ local options = {
 
 LibStub("AceConfig-3.0"):RegisterOptionsTable("BLINKIISPORTRAITS", options)
 LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BLINKIISPORTRAITS", BLINKIISPORTRAITS.Name)
+
+function BLINKIISPORTRAITS:LoadOptions()
+	local E, _, _, _, _ = unpack(ElvUI)
+	E.Options.args.BLINKIISPORTRAITS = options
+end
