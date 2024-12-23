@@ -78,8 +78,7 @@ function BLINKIISPORTRAITS:UpdateTextures(portrait)
 	SetTexture(portrait.bg, portrait.bgFile, "CLAMP")
 
 	BLINKIISPORTRAITS:Mirror(portrait.texture, mirror)
-	BLINKIISPORTRAITS:Mirror(portrait.mask, mirror)
-	BLINKIISPORTRAITS:Mirror(portrait.extraMask, mirror)
+	BLINKIISPORTRAITS:Mirror(portrait.extra, mirror)
 end
 
 local playerFaction
