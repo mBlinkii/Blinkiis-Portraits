@@ -44,7 +44,7 @@ local frameStrata = {
 	AUTO = "Auto",
 }
 
-local options = {
+BLINKIISPORTRAITS.options = {
 	name = BLINKIISPORTRAITS.Name,
 	handler = BLINKIISPORTRAITS,
 	type = "group",
@@ -2260,13 +2260,11 @@ local options = {
 				},
 			},
 		},
+		profile_group = {},
 	},
 }
 
-LibStub("AceConfig-3.0"):RegisterOptionsTable("BLINKIISPORTRAITS", options)
-LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BLINKIISPORTRAITS", BLINKIISPORTRAITS.Name)
-
 function BLINKIISPORTRAITS:LoadOptions()
 	local E, _, _, _, _ = unpack(ElvUI)
-	E.Options.args.BLINKIISPORTRAITS = options
+	E.Options.args.BLINKIISPORTRAITS = BLINKIISPORTRAITS.options
 end

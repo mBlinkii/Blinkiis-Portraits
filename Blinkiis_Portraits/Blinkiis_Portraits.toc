@@ -28,5 +28,6 @@ core.lua
 options.lua
 cmd.lua
 defaults.lua
+popup.lua
 media\media.lua
 portraits\load_portraits.xml

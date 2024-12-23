@@ -14,6 +14,7 @@ BLINKIISPORTRAITS.Icon = "|TInterface\\Addons\\Blinkiis_Portraits\\media\\icon.t
 BLINKIISPORTRAITS.Logo = "Interface\\Addons\\Blinkiis_Portraits\\media\\logo.tga"
 BLINKIISPORTRAITS.media = {}
 BLINKIISPORTRAITS.defaults = {}
+BLINKIISPORTRAITS.dialogs = {}
 BLINKIISPORTRAITS.SUF = nil
 BLINKIISPORTRAITS.ELVUI = nil
 
@@ -33,14 +34,7 @@ function BLINKIISPORTRAITS:Print(...)
 end
 
 function BLINKIISPORTRAITS:LoadDB()
-	self.db = LibStub("AceDB-3.0"):New("BlinkiisPortraitsDB")
-
-	for k, v in pairs(BLINKIISPORTRAITS.defaults) do
-		if self.db.profile[k] == nil then
-			local value = v
-			self.db.profile[k] = value
-		end
-	end
+	self.db = LibStub("AceDB-3.0"):New("BlinkiisPortraitsDB", BLINKIISPORTRAITS.defaults, true)
 end
 
 function BLINKIISPORTRAITS:LoadPortraits()
@@ -67,4 +61,14 @@ function BLINKIISPORTRAITS:OnInitialize()
 		local EP = E.Libs.EP
 		EP:RegisterPlugin(addonName, BLINKIISPORTRAITS.LoadOptions)
 	end
+
+	-- add options
+	LibStub("AceConfig-3.0"):RegisterOptionsTable("BLINKIISPORTRAITS", BLINKIISPORTRAITS.options)
+	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BLINKIISPORTRAITS", BLINKIISPORTRAITS.Name)
+
+	-- add options profile tab
+	BLINKIISPORTRAITS.options.args.profile_group = LibStub("AceDBOptions-3.0"):GetOptionsTable(BLINKIISPORTRAITS.db)
+
+	-- callback on profile change
+	self.db.RegisterCallback(self, "OnProfileChanged", BLINKIISPORTRAITS.LoadPortraits)
 end
