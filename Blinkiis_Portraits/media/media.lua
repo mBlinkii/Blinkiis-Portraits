@@ -45,6 +45,20 @@ BLINKIISPORTRAITS.media = {
 			mask_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\drop_mask_a.tga",
 			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\drop_extra_a.tga",
 		},
+		drop_side = {
+			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\drop_side.tga",
+			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\drop_side_mask_a.tga",
+			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\drop_side_extra_a.tga",
+			mask_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\drop_side_mask_b.tga",
+			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\drop_side_extra_b.tga",
+		},
+		drop_side_mirror = {
+			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\drop_side_mirror.tga",
+			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\drop_side_mask_b.tga",
+			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\drop_side_extra_b.tga",
+			mask_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\drop_side_mask_a.tga",
+			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\drop_side_extra_a.tga",
+		},
 		egg = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\egg.tga",
 			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\egg_mask.tga",
@@ -54,6 +68,11 @@ BLINKIISPORTRAITS.media = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\hexa.tga",
 			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\hexa_mask.tga",
 			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\hexa_extra.tga",
+		},
+		pad = {
+			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\pad.tga",
+			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\pad_mask.tga",
+			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\pad_extra.tga",
 		},
 		page = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\page.tga",
@@ -84,5 +103,16 @@ BLINKIISPORTRAITS.media = {
         extra_a = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_a.tga",
         extra_b = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_b.tga",
         extra_c = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_c.tga",
+		extra_d = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_d.tga",
+		extra_e = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_e.tga",
+		extra_f = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_f.tga",
+		extra_g = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_g.tga",
+		extra_h = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_h.tga",
+		extra_i = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_i.tga",
+		extra_j = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_j.tga",
+		extra_k = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_k.tga",
+		extra_l = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_l.tga",
+		extra_m = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_m.tga",
+
     }
 }

@@ -11,7 +11,7 @@ function BLINKIISPORTRAITS:CMD(msg)
         BLINKIISPORTRAITS:Print("RESET")
 	else
 
-		BLINKIISPORTRAITS:ToggleOptions()
+		LibStub("AceConfigDialog-3.0"):Open("BLINKIISPORTRAITS")
 	end
 end
 
