@@ -2,17 +2,7 @@ local ReloadUI = ReloadUI
 local strlower = strlower
 
 function BLINKIISPORTRAITS:CMD(msg)
-	msg = strlower(msg)
-
-
-	if msg == "resetdb" then
-		BLINKIISPORTRAITS.db = nil
-        BlinkiisPortraitsDB = nil
-        BLINKIISPORTRAITS:Print("RESET")
-	else
-
-		LibStub("AceConfigDialog-3.0"):Open("BLINKIISPORTRAITS")
-	end
+	LibStub("AceConfigDialog-3.0"):Open("BLINKIISPORTRAITS")
 end
 
 BLINKIISPORTRAITS:RegisterChatCommand("bp", "CMD")
