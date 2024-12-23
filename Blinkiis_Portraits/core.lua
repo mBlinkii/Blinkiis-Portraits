@@ -44,7 +44,6 @@ function BLINKIISPORTRAITS_OnAddonCompartmentOnLeave()
 	GameTooltip:Hide()
 end
 
-
 -- default functions
 function BLINKIISPORTRAITS:Print(...)
 	print(BLINKIISPORTRAITS.Name .. ":", ...)
@@ -78,10 +77,6 @@ function BLINKIISPORTRAITS:OnInitialize()
 		local EP = E.Libs.EP
 		EP:RegisterPlugin(addonName, BLINKIISPORTRAITS.LoadOptions)
 	end
-
-	-- add options
-	LibStub("AceConfig-3.0"):RegisterOptionsTable("BLINKIISPORTRAITS", BLINKIISPORTRAITS.options)
-	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BLINKIISPORTRAITS", BLINKIISPORTRAITS.Name)
 
 	-- add options profile tab
 	BLINKIISPORTRAITS.options.args.profile_group = LibStub("AceDBOptions-3.0"):GetOptionsTable(BLINKIISPORTRAITS.db)
