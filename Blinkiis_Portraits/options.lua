@@ -50,8 +50,16 @@ BLINKIISPORTRAITS.options = {
 	type = "group",
 	childGroups = "tab",
 	args = {
+		-- logo = {
+		-- 	type = "description",
+		-- 	name = "",
+		-- 	order = 1,
+		-- 	image = function()
+		-- 		return "Interface\\Addons\\Blinkiis_Portraits\\media\\logo.tga", 256, 64
+		-- 	end,
+		-- },
 		general_group = {
-			order = 0,
+			order = 2,
 			type = "group",
 			name = "General",
 			args = {
@@ -81,7 +89,7 @@ BLINKIISPORTRAITS.options = {
 			},
 		},
 		player_group = {
-			order = 1,
+			order = 3,
 			type = "group",
 			name = "Player",
 			args = {
@@ -292,7 +300,7 @@ BLINKIISPORTRAITS.options = {
 			},
 		},
 		target_group = {
-			order = 2,
+			order = 4,
 			type = "group",
 			name = "Target",
 			args = {
@@ -503,7 +511,7 @@ BLINKIISPORTRAITS.options = {
 			},
 		},
 		focus_group = {
-			order = 3,
+			order = 5,
 			type = "group",
 			name = "Focus",
 			args = {
@@ -714,7 +722,7 @@ BLINKIISPORTRAITS.options = {
 			},
 		},
 		targettarget_group = {
-			order = 4,
+			order = 6,
 			type = "group",
 			name = "Target of Target",
 			args = {
@@ -925,7 +933,7 @@ BLINKIISPORTRAITS.options = {
 			},
 		},
 		pet_group = {
-			order = 5,
+			order = 7,
 			type = "group",
 			name = "Pet",
 			args = {
@@ -1136,7 +1144,7 @@ BLINKIISPORTRAITS.options = {
 			},
 		},
 		party_group = {
-			order = 6,
+			order = 8,
 			type = "group",
 			name = "Party",
 			args = {
@@ -1347,7 +1355,7 @@ BLINKIISPORTRAITS.options = {
 			},
 		},
 		boss_group = {
-			order = 7,
+			order = 9,
 			type = "group",
 			name = "Boss",
 			args = {
@@ -1558,7 +1566,7 @@ BLINKIISPORTRAITS.options = {
 			},
 		},
 		arena_group = {
-			order = 8,
+			order = 10,
 			type = "group",
 			name = "Arena",
 			args = {
@@ -1769,7 +1777,7 @@ BLINKIISPORTRAITS.options = {
 			},
 		},
 		extra_group = {
-			order = 9,
+			order = 11,
 			type = "group",
 			name = "Extra",
 			desc = "Texture Style settings for Extra texture (Rare/Elite/Boss/player).",
@@ -1855,7 +1863,7 @@ BLINKIISPORTRAITS.options = {
 			},
 		},
 		color_group = {
-			order = 10,
+			order = 12,
 			type = "group",
 			name = "Color",
 			args = {

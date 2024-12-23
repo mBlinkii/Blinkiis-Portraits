@@ -1,8 +1,13 @@
 ## Interface: 110005
-## Version: 0.4 Beta
-## Title: Blinkiis Portraits
-## Notes: Custom Portraits for Blizzard Unit frames.
+## Version: 0.8 beta
+## Title: "|CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits"
 ## Author: Blinkii
+## Notes: Portraits for ElvUI and SUF.
+## Notes-deDE: Portraits für ElvUI und SUF.
+## IconTexture: Interface\AddOns\Blinkiis_Portraits\media\icon
+## AddonCompartmentFunc: BLINKIISPORTRAITS_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: BLINKIISPORTRAITS_OnAddonCompartmentOnEnter
+## AddonCompartmentFuncOnLeave: BLINKIISPORTRAITS_OnAddonCompartmentOnLeave
 ## SavedVariables: BlinkiisPortraitsDB
 ## OptionalDeps: ShadowedUnitFrames, ElvUI
 

@@ -28,6 +28,23 @@ end
 -- portraits
 BLINKIISPORTRAITS.Portraits = {}
 
+-- addonCompartment functions
+function BLINKIISPORTRAITS_OnAddonCompartmentClick()
+	LibStub("AceConfigDialog-3.0"):Open("BLINKIISPORTRAITS")
+end
+
+function BLINKIISPORTRAITS_OnAddonCompartmentOnEnter()
+	GameTooltip:ClearLines()
+	GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR_RIGHT")
+	GameTooltip:AddDoubleLine(BLINKIISPORTRAITS.Name, format("|CFFF7DC6FVer. %s|r", BLINKIISPORTRAITS.Version))
+	GameTooltip:Show()
+end
+
+function BLINKIISPORTRAITS_OnAddonCompartmentOnLeave()
+	GameTooltip:Hide()
+end
+
+
 -- default functions
 function BLINKIISPORTRAITS:Print(...)
 	print(BLINKIISPORTRAITS.Name .. ":", ...)
