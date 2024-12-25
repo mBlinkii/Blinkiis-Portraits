@@ -8,6 +8,7 @@ BLINKIISPORTRAITS.defaults.profile.misc = {
 	rareelite = "extra_i",
 	boss = "extra_h",
 	player = "extra_c",
+	extratop = false,
 	zoom = 0,
 }
 

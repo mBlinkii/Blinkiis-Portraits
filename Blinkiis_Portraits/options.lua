@@ -32,6 +32,33 @@ local extra = {
 	extra_k = "Extra K",
 	extra_l = "Extra L",
 	extra_m = "Extra M",
+
+	animal = "Animal",
+	dragon_a = "Dragon A",
+	dragon_b = "Dragon B",
+	fire = "Fire",
+	leaf = "Leaf",
+	micro = "Micro",
+	misc = "Misc",
+	pen = "Pen",
+	star = "Star",
+
+	egg_dragon = "Egg Dragon",
+	egg_leaf = "Egg Leaf",
+	egg_micro = "Egg Micro",
+
+	pad_animal = "Pad Animal",
+	pad_dragon = "Pad Dragon",
+	pad_dragon_b = "Pad Dragon B",
+	pad_fire = "Pad Fire",
+	pad_leaf = "Pad Leaf",
+	pad_micro = "Pad Micro",
+	pad_misc = "Pad Misc",
+	pad_pen = "Pad Pen",
+	pad_star = "Pad Star",
+
+	page_dragon_a = "Page Dragon A",
+	page_dragon_b = "Page Dragon B",
 }
 
 local frameStrata = {
@@ -1860,6 +1887,27 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
+				settings_group = {
+					order = 4,
+					type = "group",
+					inline = true,
+					name = "Settings",
+					args = {
+						extratop_toggle = {
+							order = 1,
+							type = "toggle",
+							name = "Set Extra on Top",
+							desc = "Shows the extra (rare/elite) texture on a higher layer.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.misc.extratop
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.misc.extratop = value
+								StaticPopup_Show("BLINKIISPORTRAITS_RL")
+							end,
+						},
+					},
+				},
 			},
 		},
 		color_group = {
@@ -2273,9 +2321,9 @@ BLINKIISPORTRAITS.options = {
 }
 
 do
-		-- add options
-		LibStub("AceConfig-3.0"):RegisterOptionsTable("BLINKIISPORTRAITS", BLINKIISPORTRAITS.options)
-		LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BLINKIISPORTRAITS", BLINKIISPORTRAITS.Name)
+	-- add options
+	LibStub("AceConfig-3.0"):RegisterOptionsTable("BLINKIISPORTRAITS", BLINKIISPORTRAITS.options)
+	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BLINKIISPORTRAITS", BLINKIISPORTRAITS.Name)
 end
 
 function BLINKIISPORTRAITS:LoadOptions()

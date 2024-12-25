@@ -74,7 +74,8 @@ function BLINKIISPORTRAITS:UpdateTextures(portrait)
 
 	SetTexture(portrait.texture, portrait.textureFile, "CLAMP")
 	SetTexture(portrait.mask, portrait.maskFile, "CLAMPTOBLACKADDITIVE")
-	SetTexture(portrait.extraMask, portrait.extraMaskFile, "CLAMPTOBLACKADDITIVE")
+
+	if portrait.extraMask then SetTexture(portrait.extraMask, portrait.extraMaskFile, "CLAMPTOBLACKADDITIVE") end
 	SetTexture(portrait.bg, portrait.bgFile, "CLAMP")
 
 	BLINKIISPORTRAITS:Mirror(portrait.texture, mirror)
@@ -198,7 +199,7 @@ function BLINKIISPORTRAITS:CreatePortrait(name, parent)
 		local portrait = CreateFrame("Button", "BP_Portrait_" .. name, parent, "SecureUnitButtonTemplate")
 
 		-- texture
-		portrait.texture = portrait:CreateTexture("BP_texture-" .. name, "OVERLAY", nil, 4)
+		portrait.texture = portrait:CreateTexture("BP_texture-" .. name, "ARTWORK", nil, 4)
 		portrait.texture:SetAllPoints(portrait)
 
 		-- mask
@@ -206,24 +207,29 @@ function BLINKIISPORTRAITS:CreatePortrait(name, parent)
 		portrait.mask:SetAllPoints(portrait)
 
 		-- portrait
-		portrait.portrait = portrait:CreateTexture("BP_portrait-" .. name, "OVERLAY", nil, 2)
+		portrait.portrait = portrait:CreateTexture("BP_portrait-" .. name, "ARTWORK", nil, 2)
 		portrait.portrait:SetAllPoints(portrait)
 		portrait.portrait:AddMaskTexture(portrait.mask)
 		local unit = (parent.unit == "party" or not parent.unit) and "player" or parent.unit
 
 		SetPortraitTexture(portrait.portrait, unit, true)
 
-		-- extra mask
-		portrait.extraMask = portrait:CreateMaskTexture()
-		portrait.extraMask:SetAllPoints(portrait)
-
 		-- rare/elite/boss
-		portrait.extra = portrait:CreateTexture("BP_extra-" .. name, "OVERLAY", nil, 1)
+		local extraOnTop = BLINKIISPORTRAITS.db.profile.misc.extratop
+		print(extraOnTop)
+		portrait.extra = portrait:CreateTexture("BP_extra-" .. name,   "OVERLAY", nil, extraOnTop and 7 or 1)
 		portrait.extra:SetAllPoints(portrait)
-		portrait.extra:AddMaskTexture(portrait.extraMask)
+
+		-- extra mask
+		if not extraOnTop then
+			print("extraOnTop")
+			portrait.extraMask = portrait:CreateMaskTexture()
+			portrait.extraMask:SetAllPoints(portrait)
+			portrait.extra:AddMaskTexture(portrait.extraMask)
+		end
 
 		-- bg
-		portrait.bg = portrait:CreateTexture("BP_bg-" .. name, "OVERLAY", nil, 1)
+		portrait.bg = portrait:CreateTexture("BP_bg-" .. name, "BACKGROUND", nil, 1)
 		portrait.bg:SetAllPoints(portrait)
 		portrait.bg:AddMaskTexture(portrait.mask)
 		portrait.bg:SetVertexColor(0, 0, 0, 1)
