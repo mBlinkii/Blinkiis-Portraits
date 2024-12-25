@@ -12,6 +12,20 @@ BLINKIISPORTRAITS.defaults.profile.misc = {
 	zoom = 0,
 }
 
+BLINKIISPORTRAITS.defaults.profile.custom = {
+	enable = false,
+	extra = false,
+	rare = "",
+	elite = "",
+	rareelite = "",
+	boss = "",
+	player = "",
+	texture = "",
+	mask = "",
+	extra_mask = "",
+
+}
+
 BLINKIISPORTRAITS.defaults.profile.player = {
 	cast = false,
 	enable = true,

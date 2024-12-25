@@ -113,6 +113,178 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
+				custom_textures_group = {
+					order = 2,
+					type = "group",
+					inline = true,
+					name = "Custom Textures",
+					args = {
+						enable_custom_textures_toggle = {
+							order = 1,
+							type = "toggle",
+							name = "Enable",
+							desc = "Enable Custom Textures for Portrait.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.custom.enable
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.custom.enable = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+						},
+						description = {
+							order = 2,
+							type = "description",
+							name = "Put your custom textures in the Addon folder and add the path here (example MyMediaFolder\\MyTexture.tga).",
+						},
+						texture_input = {
+							order = 3,
+							name = "Texture",
+							type = "input",
+							width = "smal",
+							disabled = function()
+								return not BLINKIISPORTRAITS.db.profile.custom.enable
+							end,
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.custom.texture
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.custom.texture = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+						},
+						mask_input = {
+							order = 4,
+							name = "Mask",
+							type = "input",
+							width = "smal",
+							disabled = function()
+								return not BLINKIISPORTRAITS.db.profile.custom.enable
+							end,
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.custom.mask
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.custom.mask = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+						},
+						extra_mask_input = {
+							order = 5,
+							name = "Extra Mask",
+							type = "input",
+							width = "smal",
+							disabled = function()
+								return not  BLINKIISPORTRAITS.db.profile.custom.enable
+							end,
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.custom.extra_mask
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.custom.extra_mask = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+						},
+						space_description = {
+							order = 6,
+							type = "description",
+							name = "\n\n",
+						},
+						enable_custom_extra_toggle = {
+							order = 7,
+							type = "toggle",
+							name = "Custom Extra Texture",
+							desc = "Enable Custom extra Textures for Portrait.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.custom.extra
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.custom.extra = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+						},
+						rare_input = {
+							order = 8,
+							name = "Rare",
+							type = "input",
+							width = "smal",
+							disabled = function()
+								return not (BLINKIISPORTRAITS.db.profile.custom.enable and BLINKIISPORTRAITS.db.profile.custom.extra)
+							end,
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.custom.rare
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.custom.rare = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+						},
+						elite_input = {
+							order = 9,
+							name = "Elite",
+							type = "input",
+							width = "smal",
+							disabled = function()
+								return not (BLINKIISPORTRAITS.db.profile.custom.enable and BLINKIISPORTRAITS.db.profile.custom.extra)
+							end,
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.custom.elite
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.custom.elite = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+						},
+						rareelite_input = {
+							order = 10,
+							name = "Rare Elite",
+							type = "input",
+							width = "smal",
+							disabled = function()
+								return not (BLINKIISPORTRAITS.db.profile.custom.enable and BLINKIISPORTRAITS.db.profile.custom.extra)
+							end,
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.custom.rareelite
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.custom.rareelite = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+						},
+						boss_input = {
+							order = 11,
+							name = "Boss",
+							type = "input",
+							width = "smal",
+							disabled = function()
+								return not (BLINKIISPORTRAITS.db.profile.custom.enable and BLINKIISPORTRAITS.db.profile.custom.extra)
+							end,
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.custom.boss
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.custom.boss = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+						},
+						player_input = {
+							order = 12,
+							name = "Player",
+							type = "input",
+							width = "smal",
+							disabled = function()
+								return not (BLINKIISPORTRAITS.db.profile.custom.enable and BLINKIISPORTRAITS.db.profile.custom.extra)
+							end,
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.custom.player
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.custom.player = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+						},
+					},
+				},
 			},
 		},
 		player_group = {

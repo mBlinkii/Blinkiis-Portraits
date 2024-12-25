@@ -168,17 +168,48 @@ end
 
 function BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, settings)
 	local dbMisc = BLINKIISPORTRAITS.db.profile.misc
+	local dbCustom = BLINKIISPORTRAITS.db.profile.custom
 	local media = mediaPortraits[settings.texture]
 
 	portrait.bgFile = "Interface\\Addons\\Blinkiis_Portraits\\media\\blank.tga"
-	portrait.bossFile = mediaExtra[dbMisc.boss]
-	portrait.eliteFile = mediaExtra[dbMisc.elite]
-	portrait.extraMaskFile = (settings.mirror and media.extra_mirror) and media.extra_mirror or media.extra
-	portrait.maskFile = (settings.mirror and media.mask_mirror) and media.mask_mirror or media.mask
-	portrait.playerFile = mediaExtra[dbMisc.player]
-	portrait.rareFile = mediaExtra[dbMisc.rare]
-	portrait.rareeliteFile = mediaExtra[dbMisc.rareelite]
-	portrait.textureFile = media.texture
+
+	print("ssss", dbCustom.enable)
+	if dbCustom.enable then
+		print("custom")
+		portrait.textureFile = "Interface\\Addons\\" .. dbCustom.texture
+		portrait.maskFile = "Interface\\Addons\\" .. dbCustom.mask
+
+		portrait.extraMaskFile = "Interface\\Addons\\" .. dbCustom.extra_mask
+
+		if dbCustom.extra then
+			print("custom extra")
+			portrait.playerFile = "Interface\\Addons\\" .. dbCustom.player
+
+			portrait.rareFile = "Interface\\Addons\\" .. dbCustom.rare
+			portrait.eliteFile = "Interface\\Addons\\" .. dbCustom.elite
+			portrait.rareeliteFile = "Interface\\Addons\\" .. dbCustom.rareelite
+			portrait.bossFile = "Interface\\Addons\\" .. dbCustom.boss
+		else
+			portrait.playerFile = mediaExtra[dbMisc.player]
+
+			portrait.rareFile = mediaExtra[dbMisc.rare]
+			portrait.eliteFile = mediaExtra[dbMisc.elite]
+			portrait.rareeliteFile = mediaExtra[dbMisc.rareelite]
+			portrait.bossFile = mediaExtra[dbMisc.boss]
+		end
+	else
+		portrait.textureFile = media.texture
+		portrait.maskFile = (settings.mirror and media.mask_mirror) and media.mask_mirror or media.mask
+
+		portrait.extraMaskFile = (settings.mirror and media.extra_mirror) and media.extra_mirror or media.extra
+
+		portrait.playerFile = mediaExtra[dbMisc.player]
+
+		portrait.rareFile = mediaExtra[dbMisc.rare]
+		portrait.eliteFile = mediaExtra[dbMisc.elite]
+		portrait.rareeliteFile = mediaExtra[dbMisc.rareelite]
+		portrait.bossFile = mediaExtra[dbMisc.boss]
+	end
 end
 
 function BLINKIISPORTRAITS:UpdateSize(portrait, size, point)
@@ -217,7 +248,7 @@ function BLINKIISPORTRAITS:CreatePortrait(name, parent)
 		-- rare/elite/boss
 		local extraOnTop = BLINKIISPORTRAITS.db.profile.misc.extratop
 		print(extraOnTop)
-		portrait.extra = portrait:CreateTexture("BP_extra-" .. name,   "OVERLAY", nil, extraOnTop and 7 or 1)
+		portrait.extra = portrait:CreateTexture("BP_extra-" .. name, "OVERLAY", nil, extraOnTop and 7 or 1)
 		portrait.extra:SetAllPoints(portrait)
 
 		-- extra mask
