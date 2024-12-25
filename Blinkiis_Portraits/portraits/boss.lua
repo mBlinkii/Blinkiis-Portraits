@@ -28,14 +28,6 @@ end
 function BLINKIISPORTRAITS:InitializeBossPortrait()
 	if not BLINKIISPORTRAITS.db.profile.boss.enable then return end
 
-	if BLINKIISPORTRAITS.SUF and ShadowUF then
-		if not BLINKIISPORTRAITS.SUF_Boss_Hook then
-			hooksecurefunc(ShadowUF, "LoadUnits", BLINKIISPORTRAITS.InitializeBossPortrait)
-
-			BLINKIISPORTRAITS.SUF_Boss_Hook = true
-		end
-	end
-
 	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("boss")
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits

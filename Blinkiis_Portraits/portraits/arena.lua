@@ -28,14 +28,6 @@ end
 function BLINKIISPORTRAITS:InitializeArenaPortrait()
 	if not BLINKIISPORTRAITS.db.profile.arena.enable then return end
 
-	if BLINKIISPORTRAITS.SUF and ShadowUF then
-		if not BLINKIISPORTRAITS.SUF_Arena_Hook then
-			hooksecurefunc(ShadowUF, "LoadUnits", BLINKIISPORTRAITS.InitializeArenaPortrait)
-
-			BLINKIISPORTRAITS.SUF_Arena_Hook = true
-		end
-	end
-
 	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("arena")
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits

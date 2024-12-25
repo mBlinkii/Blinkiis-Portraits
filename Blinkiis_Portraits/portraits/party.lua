@@ -28,14 +28,6 @@ end
 function BLINKIISPORTRAITS:InitializePartyPortrait()
 	if not BLINKIISPORTRAITS.db.profile.party.enable then return end
 
-	if BLINKIISPORTRAITS.SUF and ShadowUF then
-		if not BLINKIISPORTRAITS.SUF_Party_Hook then
-			hooksecurefunc(ShadowUF, "LoadUnits", BLINKIISPORTRAITS.InitializePartyPortrait)
-
-			BLINKIISPORTRAITS.SUF_Party_Hook = true
-		end
-	end
-
 	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("party")
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits

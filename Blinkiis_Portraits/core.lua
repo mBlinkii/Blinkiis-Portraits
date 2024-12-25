@@ -69,6 +69,9 @@ function BLINKIISPORTRAITS:PLAYER_ENTERING_WORLD(event)
 end
 
 function BLINKIISPORTRAITS:OnInitialize()
+	BLINKIISPORTRAITS.SUF = IsAddOnLoaded("ShadowedUnitFrames")
+	BLINKIISPORTRAITS.ELVUI = IsAddOnLoaded("ElvUI")
+
 	BLINKIISPORTRAITS:LoadDB()
 	BLINKIISPORTRAITS:RegisterEvent("PLAYER_ENTERING_WORLD")
 
@@ -83,4 +86,13 @@ function BLINKIISPORTRAITS:OnInitialize()
 
 	-- callback on profile change
 	self.db.RegisterCallback(self, "OnProfileChanged", BLINKIISPORTRAITS.LoadPortraits)
+
+	-- fix for suf
+	if BLINKIISPORTRAITS.SUF and ShadowUF then
+		if not BLINKIISPORTRAITS.SUF_Hook then
+			hooksecurefunc(ShadowUF, "LoadUnits", BLINKIISPORTRAITS.LoadPortraits)
+
+			BLINKIISPORTRAITS.SUF_Hook = true
+		end
+	end
 end
