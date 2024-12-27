@@ -31,20 +31,7 @@ end
 local unitFrames = nil
 function BLINKIISPORTRAITS:GetUnitFrames(unit)
 	if not unitFrames then
-		if IsAddOnLoaded("ShadowedUnitFrames") then
-			BLINKIISPORTRAITS.SUF = true
-			unitFrames = {
-				player = "SUFUnitplayer",
-				target = "SUFUnittarget",
-				pet = "SUFUnitpet",
-				targettarget = "SUFUnittargettarget",
-				focus = "SUFUnitfocus",
-				party = "SUFHeaderpartyUnitButton",
-				boss = "SUFHeaderboss",
-				arena = "SUFHeaderArena",
-			}
-		elseif IsAddOnLoaded("ElvUI") then
-			BLINKIISPORTRAITS.ELVUI = true
+		if BLINKIISPORTRAITS.ELVUI then
 			unitFrames = {
 				player = "ElvUF_Player",
 				target = "ElvUF_Target",
@@ -55,7 +42,7 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit)
 				boss = "ElvUF_Boss",
 				arena = "ElvUF_Arena",
 			}
-		elseif IsAddOnLoaded("PitBull4") then
+		elseif BLINKIISPORTRAITS.PB4 then
 			local PitBull4 = _G.PitBull4
 			local PB4_SingleUnits = PitBull4.db.profile.units
 			local PB4_GroupUnits = PitBull4.db.profile.groups
@@ -83,7 +70,17 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit)
 			for groupName, value in pairs(PB4_GroupUnits) do
 				if value and validGroupUnits[value.unit_group] then unitFrames[value.unit_group] = format("PitBull4_Groups_%sUnitButton", groupName) end
 			end
-
+		elseif BLINKIISPORTRAITS.SUF then
+			unitFrames = {
+				player = "SUFUnitplayer",
+				target = "SUFUnittarget",
+				pet = "SUFUnitpet",
+				targettarget = "SUFUnittargettarget",
+				focus = "SUFUnitfocus",
+				party = "SUFHeaderpartyUnitButton",
+				boss = "SUFHeaderboss",
+				arena = "SUFHeaderArena",
+			}
 		end
 	end
 

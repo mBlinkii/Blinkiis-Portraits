@@ -9,7 +9,7 @@
 ## AddonCompartmentFuncOnEnter: BLINKIISPORTRAITS_OnAddonCompartmentOnEnter
 ## AddonCompartmentFuncOnLeave: BLINKIISPORTRAITS_OnAddonCompartmentOnLeave
 ## SavedVariables: BlinkiisPortraitsDB
-## OptionalDeps: ShadowedUnitFrames, ElvUI
+## OptionalDeps: ElvUI, PitBull4, ShadowedUnitFrames
 
 
 libs\Ace3\LibStub\LibStub.lua
