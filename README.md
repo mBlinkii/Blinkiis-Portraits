@@ -1,8 +1,8 @@
 <br/>
 <div align="center">
-<img src="https://raw.githubusercontent.com/mBlinkii/mMediaTag/main/Logo/mmt_icon.png" alt="Logo" width="80" height="80">
+<img src="https://raw.githubusercontent.com/mBlinkii/Blinkiis-Portraits/refs/heads/main/icon.png" alt="Logo" width="80" height="80">
 <br/>
-<img src="https://img.shields.io/github/downloads/mBlinkii/mMediaTag/total" alt="Downloads">
+<img src="https://img.shields.io/github/downloads/mBlinkii/blinkiis-portraits/total" alt="Downloads">
 <h3 align="center">Blinkiis Portraits</h3>
 <p align="center">
 Blinkiis Portraits is a small addon for ElvUI and SUF to display additional 2D portraits. There are many different shapes and textures, there should be something for everyone to beautify their interface.
@@ -16,7 +16,7 @@ Blinkiis Portraits is a small addon for ElvUI and SUF to display additional 2D p
 </div> 
 
    ## About The Project
-   ![mMT Logo](https://raw.githubusercontent.com/mBlinkii/mMediaTag/main/Logo/mmt_logo.png)
+   ![mMT Logo](https://raw.githubusercontent.com/mBlinkii/Blinkiis-Portraits/refs/heads/main/logo.png)
 
    Blinkiis Portraits is a small addon for ElvUI and SUF to display additional 2D portraits. There are many different shapes and textures, there should be something for everyone to beautify their interface.
 
