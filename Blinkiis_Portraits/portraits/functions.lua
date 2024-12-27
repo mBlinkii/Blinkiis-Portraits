@@ -32,16 +32,15 @@ local unitFrames = nil
 function BLINKIISPORTRAITS:GetUnitFrames(unit)
 	if not unitFrames then
 		if BLINKIISPORTRAITS.ELVUI then
-			unitFrames = {
-				player = "ElvUF_Player",
-				target = "ElvUF_Target",
-				pet = "ElvUF_Pet",
-				targettarget = "ElvUF_TargetTarget",
-				focus = "ElvUF_Focus",
-				party = "ElvUF_PartyGroup1UnitButton",
-				boss = "ElvUF_Boss",
-				arena = "ElvUF_Arena",
-			}
+			unitFrames = {}
+			unitFrames["player"] = "ElvUF_Player"
+			unitFrames["target"] = "ElvUF_Target"
+			unitFrames["pet"] = "ElvUF_Pet"
+			unitFrames["targettarget"] = "ElvUF_TargetTarget"
+			unitFrames["focus"] = BLINKIISPORTRAITS.Classic and nil or "ElvUF_Focus"
+			unitFrames["party"] = "ElvUF_PartyGroup1UnitButton"
+			unitFrames["boss"] = BLINKIISPORTRAITS.Classic and nil or "ElvUF_Boss"
+			unitFrames["arena"] = BLINKIISPORTRAITS.Classic and nil or "ElvUF_Arena"
 		elseif BLINKIISPORTRAITS.PB4 then
 			local PitBull4 = _G.PitBull4
 			local PB4_SingleUnits = PitBull4.db.profile.units
@@ -52,13 +51,13 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit)
 				target = true,
 				pet = true,
 				targettarget = true,
-				focus = true,
+				focus = BLINKIISPORTRAITS.Classic and nil or true,
 			}
 
 			local validGroupUnits = {
 				party = true,
-				boss = true,
-				arena = true,
+				boss = BLINKIISPORTRAITS.Classic and nil or true,
+				arena = BLINKIISPORTRAITS.Classic and nil or true,
 			}
 
 			unitFrames = {}
@@ -71,16 +70,15 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit)
 				if value and validGroupUnits[value.unit_group] then unitFrames[value.unit_group] = format("PitBull4_Groups_%sUnitButton", groupName) end
 			end
 		elseif BLINKIISPORTRAITS.SUF then
-			unitFrames = {
-				player = "SUFUnitplayer",
-				target = "SUFUnittarget",
-				pet = "SUFUnitpet",
-				targettarget = "SUFUnittargettarget",
-				focus = "SUFUnitfocus",
-				party = "SUFHeaderpartyUnitButton",
-				boss = "SUFHeaderboss",
-				arena = "SUFHeaderArena",
-			}
+			unitFrames = {}
+			unitFrames["player"] = "SUFUnitplayer"
+			unitFrames["target"] = "SUFUnittarget"
+			unitFrames["pet"] = "SUFUnitpet"
+			unitFrames["targettarget"] = "SUFUnittargettarget"
+			unitFrames["focus"] = BLINKIISPORTRAITS.Classic and nil or "SUFUnitfocus"
+			unitFrames["party"] = "SUFHeaderpartyUnitButton"
+			unitFrames["boss"] = BLINKIISPORTRAITS.Classic and nil or "SUFHeaderboss"
+			unitFrames["arena"] = BLINKIISPORTRAITS.Classic and nil or "SUFHeaderArena"
 		end
 	end
 
