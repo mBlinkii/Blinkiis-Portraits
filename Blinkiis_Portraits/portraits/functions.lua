@@ -55,6 +55,35 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit)
 				boss = "ElvUF_Boss",
 				arena = "ElvUF_Arena",
 			}
+		elseif IsAddOnLoaded("PitBull4") then
+			local PitBull4 = _G.PitBull4
+			local PB4_SingleUnits = PitBull4.db.profile.units
+			local PB4_GroupUnits = PitBull4.db.profile.groups
+
+			local validSingleUnits = {
+				player = true,
+				target = true,
+				pet = true,
+				targettarget = true,
+				focus = true,
+			}
+
+			local validGroupUnits = {
+				party = true,
+				boss = true,
+				arena = true,
+			}
+
+			unitFrames = {}
+
+			for singleName, value in pairs(PB4_SingleUnits) do
+				if value and validSingleUnits[value.unit] then unitFrames[value.unit] = "PitBull4_Frames_" .. singleName end
+			end
+
+			for groupName, value in pairs(PB4_GroupUnits) do
+				if value and validGroupUnits[value.unit_group] then unitFrames[value.unit_group] = format("PitBull4_Groups_%sUnitButton", groupName) end
+			end
+
 		end
 	end
 
@@ -244,13 +273,11 @@ function BLINKIISPORTRAITS:CreatePortrait(name, parent)
 
 		-- rare/elite/boss
 		local extraOnTop = BLINKIISPORTRAITS.db.profile.misc.extratop
-		print(extraOnTop)
 		portrait.extra = portrait:CreateTexture("BP_extra-" .. name, "OVERLAY", nil, extraOnTop and 7 or 1)
 		portrait.extra:SetAllPoints(portrait)
 
 		-- extra mask
 		if not extraOnTop then
-			print("extraOnTop")
 			portrait.extraMask = portrait:CreateMaskTexture()
 			portrait.extraMask:SetAllPoints(portrait)
 			portrait.extra:AddMaskTexture(portrait.extraMask)
