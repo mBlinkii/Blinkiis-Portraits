@@ -173,16 +173,13 @@ function BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, settings)
 
 	portrait.bgFile = "Interface\\Addons\\Blinkiis_Portraits\\media\\blank.tga"
 
-	print("ssss", dbCustom.enable)
 	if dbCustom.enable then
-		print("custom")
 		portrait.textureFile = "Interface\\Addons\\" .. dbCustom.texture
 		portrait.maskFile = "Interface\\Addons\\" .. dbCustom.mask
 
 		portrait.extraMaskFile = "Interface\\Addons\\" .. dbCustom.extra_mask
 
 		if dbCustom.extra then
-			print("custom extra")
 			portrait.playerFile = "Interface\\Addons\\" .. dbCustom.player
 
 			portrait.rareFile = "Interface\\Addons\\" .. dbCustom.rare
