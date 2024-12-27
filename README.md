@@ -9,8 +9,8 @@ Blinkiis Portraits is a small addon for ElvUI and SUF to display additional 2D p
 <br/>
 <br/>
 <a href="https://www.curseforge.com/wow/addons/blinkiis-portraits">Curse .</a>  
-<a href="https://github.com/mBlinkii/mMediaTag/issues">Report Bug .</a>
-<a href="https://github.com/mBlinkii/mMediaTag/issues">Request Feature</a>
+<a href="https://github.com/mBlinkii/Blinkiis-Portraits/issues">Report Bug .</a>
+<a href="https://github.com/mBlinkii/Blinkiis-Portraits/issues">Request Feature</a>
 <a href="https://discord.gg/AE9XebMU49">Discord</a> 
 </p>
 </div> 
