@@ -36,4 +36,4 @@ Blinkiis Portraits is a small addon for ElvUI and SUF to display additional 2D p
    Don't forget to give the project a star! Thanks again!
 
    ## License
-   License. See [License](https://github.com/mBlinkii/mMediaTag/blob/main/LICENSE.txt) for more information.
+   License. See [License](https://github.com/mBlinkii/Blinkiis-Portraits/blob/main/LICENSE.txt) for more information.
