@@ -33,7 +33,18 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit)
 	if not unitFrames then
 		unitFrames = {}
 
-		if BLINKIISPORTRAITS.ELVUI then
+		if BLINKIISPORTRAITS.Cell then
+			unitFrames = {
+				player = "CUF_Player",
+				target = "CUF_Target",
+				pet = "CUF_Pet",
+				targettarget = "CUF_TargetTarget",
+				focus = BLINKIISPORTRAITS.Classic and nil or "CUF_Focus",
+				party = "CellPartyFrameHeaderUnitButton",
+				boss = BLINKIISPORTRAITS.Classic and nil or "CUF_Boss",
+				arena = BLINKIISPORTRAITS.Classic and nil or "CUF_Arena",
+			}
+		elseif BLINKIISPORTRAITS.ELVUI then
 			unitFrames = {
 				player = "ElvUF_Player",
 				target = "ElvUF_Target",

@@ -42,7 +42,7 @@ function BLINKIISPORTRAITS:InitializePlayerPortrait()
 		if portraits[unit] then
 			portraits[unit].events = {}
 			portraits[unit].parentFrame = parent
-			portraits[unit].unit = parent.unit
+			portraits[unit].unit = BLINKIISPORTRAITS.Cell and parent._unit or parent.unit
 
 			portraits[unit].type = type -- frameType or frame.type
 			portraits[unit].db = BLINKIISPORTRAITS.db.profile[type]
