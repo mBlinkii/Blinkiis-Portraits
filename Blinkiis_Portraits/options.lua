@@ -59,6 +59,10 @@ local extra = {
 
 	page_dragon_a = "Page Dragon A",
 	page_dragon_b = "Page Dragon B",
+
+	blizz_gold = "Blizzard Gold",
+	blizz_silver = "Blizzard Silver",
+	blizz_boss = "Blizzard Boss",
 }
 
 local frameStrata = {
@@ -2056,6 +2060,11 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:LoadPortraits()
 							end,
 							values = extra,
+						},
+						description = {
+							order = 6,
+							type = "description",
+							name = "TIP: If you use the Blizzard textures and change the classification color to white, you will see the extra texture with the original colors.",
 						},
 					},
 				},

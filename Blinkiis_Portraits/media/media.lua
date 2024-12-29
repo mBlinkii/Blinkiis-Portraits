@@ -138,5 +138,9 @@ BLINKIISPORTRAITS.media = {
 
 		page_dragon_a = "Interface\\Addons\\Blinkiis_Portraits\\media\\page_dragon_a.tga",
 		page_dragon_b = "Interface\\Addons\\Blinkiis_Portraits\\media\\page_dragon_b.tga",
+
+		blizz_gold = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_blizz_gold.tga",
+		blizz_silver = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_blizz_silver.tga",
+		blizz_boss = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_blizz_boss.tga",
 	},
 }

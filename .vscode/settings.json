@@ -148,7 +148,8 @@
         "ColorPickerFrame",
         "hash_SlashCmdList",
         "SELECTED_CHAT_FRAME",
-        "TargetFrame"
+        "TargetFrame",
+        "TextureKitConstants"
     ],
     "Lua.runtime.version": "Lua 5.1",
     "Lua.runtime.builtin": {
