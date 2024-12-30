@@ -48,13 +48,13 @@ function BLINKIISPORTRAITS:UpdatePortrait(portrait, event)
 			portrait.texCoords = portrait.classIcons.texCoords[portrait.unitClass]
 			portrait.portrait:SetTexture(portrait.classIcons.texture, "CLAMP", "CLAMP", "TRILINEAR")
 		else
-			portrait.texCoords = nil
 			SetPortraitTexture(portrait.portrait, portrait.unit, true)
 		end
 
-		BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, portrait.texCoords)
 		BLINKIISPORTRAITS:UpdateDesaturated(portrait, portrait.isDead)
 	end
+
+	BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, (not showCastIcon and portrait.isPlayer) and portrait.texCoords)
 end
 
 function BLINKIISPORTRAITS:UpdateDeathStatus(portrait, unit)
