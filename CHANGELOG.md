@@ -1,10 +1,10 @@
 # Changelog - ElvUI_mMediaTag
 
-## [ver. 1.1] - 27.12.2024
+## [ver. 1.1] - 29.12.2024
 ### UPDATE
 - UPDATE - Add Blizzards (rare/elite/boss) textures
 ### NEW
-- NEW - Add support for Cell & Cell Unitframes (both are required)
+- NEW - Add support for Cell & Cell Unit Frames (both are required)
 
 
 ## [ver. 1.0] - 27.12.2024

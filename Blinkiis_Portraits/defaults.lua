@@ -10,6 +10,7 @@ BLINKIISPORTRAITS.defaults.profile.misc = {
 	player = "extra_c",
 	extratop = false,
 	zoom = 0,
+	class_icon = "none"
 }
 
 BLINKIISPORTRAITS.defaults.profile.custom = {

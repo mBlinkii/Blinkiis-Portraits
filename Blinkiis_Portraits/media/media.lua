@@ -1,3 +1,19 @@
+local texCoords = {
+	WARRIOR = { 0, 0, 0, 0.125, 0.125, 0, 0.125, 0.125 },
+	MAGE = { 0.125, 0, 0.125, 0.125, 0.25, 0, 0.25, 0.125 },
+	ROGUE = { 0.25, 0, 0.25, 0.125, 0.375, 0, 0.375, 0.125 },
+	DRUID = { 0.375, 0, 0.375, 0.125, 0.5, 0, 0.5, 0.125 },
+	EVOKER = { 0.5, 0, 0.5, 0.125, 0.625, 0, 0.625, 0.125 },
+	HUNTER = { 0, 0.125, 0, 0.25, 0.125, 0.125, 0.125, 0.25 },
+	SHAMAN = { 0.125, 0.125, 0.125, 0.25, 0.25, 0.125, 0.25, 0.25 },
+	PRIEST = { 0.25, 0.125, 0.25, 0.25, 0.375, 0.125, 0.375, 0.25 },
+	WARLOCK = { 0.375, 0.125, 0.375, 0.25, 0.5, 0.125, 0.5, 0.25 },
+	PALADIN = { 0, 0.25, 0, 0.375, 0.125, 0.25, 0.125, 0.375 },
+	DEATHKNIGHT = { 0.125, 0.25, 0.125, 0.375, 0.25, 0.25, 0.25, 0.375 },
+	MONK = { 0.25, 0.25, 0.25, 0.375, 0.375, 0.25, 0.375, 0.375 },
+	DEMONHUNTER = { 0.375, 0.25, 0.375, 0.375, 0.5, 0.25, 0.5, 0.375 },
+}
+
 BLINKIISPORTRAITS.media = {
 	portraits = {
 		blizz = {
@@ -142,5 +158,19 @@ BLINKIISPORTRAITS.media = {
 		blizz_gold = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_blizz_gold.tga",
 		blizz_silver = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_blizz_silver.tga",
 		blizz_boss = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_blizz_boss.tga",
+	},
+	class = {
+		blizzard = {
+			texture = "Interface\\WorldStateFrame\\Icons-Classes",
+			texCoords = CLASS_ICON_TCOORDS,
+		},
+		hd = {
+			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\class_round.tga",
+			texCoords = texCoords,
+		},
+		new = {
+			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\class_transparent.tga",
+			texCoords = texCoords,
+		},
 	},
 }

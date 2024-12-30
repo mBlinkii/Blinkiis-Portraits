@@ -115,6 +115,25 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:LoadPortraits()
 							end,
 						},
+						classIcon_select = {
+							order = 1,
+							type = "select",
+							name = "Class icon",
+							desc = "Enable and select a class icon style for the portrait.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.misc.class_icon
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.misc.class_icon = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+							values = {
+								none = "None",
+								blizzard = "Blizzard",
+								hd = "HD",
+								new = "New Style",
+							},
+						},
 					},
 				},
 				custom_textures_group = {

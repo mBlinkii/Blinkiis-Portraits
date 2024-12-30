@@ -5,10 +5,13 @@ local UnitReaction = UnitReaction
 local UnitInPartyIsAI = UnitInPartyIsAI
 local UnitClassification = UnitClassification
 local UnitFactionGroup = UnitFactionGroup
+local UnitIsDead = UnitIsDead
+local UnitExists = UnitExists
 local select, tinsert = select, tinsert
 
 local mediaPortraits = BLINKIISPORTRAITS.media.portraits
 local mediaExtra = BLINKIISPORTRAITS.media.extra
+local mediaClass = BLINKIISPORTRAITS.media.class
 function BLINKIISPORTRAITS:RegisterEvents(portrait, events, cast)
 	for _, event in pairs(events) do
 		if cast and portrait.type ~= "party" then
@@ -18,6 +21,14 @@ function BLINKIISPORTRAITS:RegisterEvents(portrait, events, cast)
 		end
 		tinsert(portrait.events, event)
 	end
+
+	-- death check
+	if portrait.type == "party" then
+		portrait:RegisterEvent("UNIT_HEALTH")
+	else
+		portrait:RegisterUnitEvent("UNIT_HEALTH", portrait.unit)
+	end
+	tinsert(portrait.events, "UNIT_HEALTH")
 end
 
 local function UpdateZoom(texture, size)
@@ -26,6 +37,34 @@ local function UpdateZoom(texture, size)
 
 	texture:SetPoint("TOPLEFT", 0 - offset, 0 + offset)
 	texture:SetPoint("BOTTOMRIGHT", 0 + offset, 0 - offset)
+end
+
+function BLINKIISPORTRAITS:UpdatePortrait(portrait, event)
+	local showCastIcon = portrait.db.cast and BLINKIISPORTRAITS:UpdateCastIcon(portrait, event)
+
+	if not showCastIcon then
+		if portrait.useClassIcon and portrait.isPlayer then
+			portrait.unitClass = portrait.unitClass or select(2, UnitClass(portrait.unit))
+			portrait.texCoords = portrait.classIcons.texCoords[portrait.unitClass]
+			portrait.portrait:SetTexture(portrait.classIcons.texture, "CLAMP", "CLAMP", "TRILINEAR")
+		else
+			portrait.texCoords = nil
+			SetPortraitTexture(portrait.portrait, portrait.unit, true)
+		end
+
+		BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, portrait.texCoords)
+		BLINKIISPORTRAITS:UpdateDesaturated(portrait, portrait.isDead)
+	end
+end
+
+function BLINKIISPORTRAITS:UpdateDeathStatus(portrait, unit)
+	local isDead = (UnitExists(unit) and UnitIsDead(unit))
+	if isDead then
+		local deathColor = BLINKIISPORTRAITS.db.profile.colors.misc.death
+		BLINKIISPORTRAITS:UpdateDesaturated(portrait, isDead)
+		portrait.texture:SetVertexColor(deathColor.r, deathColor.g, deathColor.b, deathColor.a or 1)
+	end
+	return isDead
 end
 
 local unitFrames = nil
@@ -98,8 +137,17 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit)
 	return unitFrames and unitFrames[unit]
 end
 
-function BLINKIISPORTRAITS:Mirror(texture, mirror)
-	texture:SetTexCoord(mirror and 1 or 0, mirror and 0 or 1, 0, 1)
+function BLINKIISPORTRAITS:Mirror(texture, mirror, texCoords)
+	if texCoords then
+		local coords = texCoords
+		if #coords == 8 then
+			texture:SetTexCoord(unpack((mirror and { coords[5], coords[6], coords[7], coords[8], coords[1], coords[2], coords[3], coords[4] } or coords)))
+		else
+			texture:SetTexCoord(unpack((mirror and { coords[2], coords[1], coords[3], coords[4] } or coords)))
+		end
+	else
+		texture:SetTexCoord(mirror and 1 or 0, mirror and 0 or 1, 0, 1)
+	end
 end
 
 local function SetTexture(texture, file, wrapMode)
@@ -121,11 +169,11 @@ end
 
 local playerFaction
 
-function BLINKIISPORTRAITS:GetUnitColor(unit)
+function BLINKIISPORTRAITS:GetUnitColor(unit, isDead)
 	if not unit then return end
 	local colors = BLINKIISPORTRAITS.db.profile.colors
 
-	if UnitIsDead(unit) then return colors.misc.death, nil, true end
+	if isDead then return colors.misc.death, nil, true end
 	if BLINKIISPORTRAITS.db.profile.misc.force_default then return colors.misc.default end
 
 	if UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit)) then
@@ -137,7 +185,7 @@ function BLINKIISPORTRAITS:GetUnitColor(unit)
 			return colors.reaction[reactionType], true
 		else
 			local _, class = UnitClass(unit)
-			return colors.class[class], true
+			return colors.class[class], true, nil, class
 		end
 	else
 		local reaction = UnitReaction(unit, "player")
@@ -148,8 +196,10 @@ end
 
 function BLINKIISPORTRAITS:UpdateDesaturated(portrait, isDead)
 	if isDead then
-		portrait.portrait:SetDesaturated(true)
-		portrait.isDesaturated = true
+		if not portrait.isDesaturated then
+			portrait.portrait:SetDesaturated(true)
+			portrait.isDesaturated = true
+		end
 	elseif portrait.isDesaturated then
 		portrait.portrait:SetDesaturated(false)
 		portrait.isDesaturated = false
@@ -209,6 +259,8 @@ function BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, settings)
 	local media = mediaPortraits[settings.texture]
 
 	portrait.bgFile = "Interface\\Addons\\Blinkiis_Portraits\\media\\blank.tga"
+
+	if portrait.useClassIcon then portrait.classIcons = mediaClass[BLINKIISPORTRAITS.db.profile.misc.class_icon] end
 
 	if dbCustom.enable then
 		portrait.textureFile = "Interface\\Addons\\" .. dbCustom.texture
@@ -346,8 +398,6 @@ local function GetCastIcon(unit)
 end
 
 function BLINKIISPORTRAITS:UpdateCastIcon(portrait, event, addCastIcon)
-	if not addCastIcon then return false end
-
 	portrait.castStarted = castStartEvents[event] or false
 	portrait.castStopped = castStopEvents[event] or false
 
