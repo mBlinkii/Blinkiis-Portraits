@@ -1,6 +1,6 @@
 # Changelog - ElvUI_mMediaTag
 
-## [ver. 1.2] - xx.01.2025
+## [ver. 1.2] - 01.01.2025
 ### UPDATE
 - UPDATE - Optimized portraits update code
 ### NEW
