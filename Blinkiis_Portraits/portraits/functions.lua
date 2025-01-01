@@ -12,31 +12,70 @@ local select, tinsert = select, tinsert
 local mediaPortraits = BLINKIISPORTRAITS.media.portraits
 local mediaExtra = BLINKIISPORTRAITS.media.extra
 local mediaClass = BLINKIISPORTRAITS.media.class
-function BLINKIISPORTRAITS:RegisterEvents(portrait, events, cast)
-	for _, event in pairs(events) do
-		if cast and portrait.type ~= "party" then
-			portrait:RegisterUnitEvent(event, portrait.unit)
-		else
-			portrait:RegisterEvent(event)
-		end
-		tinsert(portrait.events, event)
-	end
 
-	-- death check
-	if portrait.type == "party" then
-		portrait:RegisterEvent("UNIT_HEALTH")
+local unitFrames = nil
+local playerFaction = nil
+
+-- portrait texture update functions
+function BLINKIISPORTRAITS:Mirror(texture, mirror, texCoords)
+	if texCoords then
+		local coords = texCoords
+		if #coords == 8 then
+			texture:SetTexCoord(unpack((mirror and { coords[5], coords[6], coords[7], coords[8], coords[1], coords[2], coords[3], coords[4] } or coords)))
+		else
+			texture:SetTexCoord(unpack((mirror and { coords[2], coords[1], coords[3], coords[4] } or coords)))
+		end
 	else
-		portrait:RegisterUnitEvent("UNIT_HEALTH", portrait.unit)
+		texture:SetTexCoord(mirror and 1 or 0, mirror and 0 or 1, 0, 1)
 	end
-	tinsert(portrait.events, "UNIT_HEALTH")
 end
 
-local function UpdateZoom(texture, size)
-	local zoom = BLINKIISPORTRAITS.db.profile.misc.zoom
-	local offset = (size / 2) * zoom
+local function SetTexture(texture, file, wrapMode)
+	texture:SetTexture(file, wrapMode, wrapMode, "TRILINEAR")
+end
 
-	texture:SetPoint("TOPLEFT", 0 - offset, 0 + offset)
-	texture:SetPoint("BOTTOMRIGHT", 0 + offset, 0 - offset)
+function BLINKIISPORTRAITS:UpdateTextures(portrait)
+	local mirror = portrait.db.mirror
+
+	SetTexture(portrait.texture, portrait.textureFile, "CLAMP")
+	SetTexture(portrait.mask, portrait.maskFile, "CLAMPTOBLACKADDITIVE")
+
+	if portrait.extraMask then SetTexture(portrait.extraMask, portrait.extraMaskFile, "CLAMPTOBLACKADDITIVE") end
+	SetTexture(portrait.bg, portrait.bgFile, "CLAMP")
+
+	BLINKIISPORTRAITS:Mirror(portrait.texture, mirror)
+	BLINKIISPORTRAITS:Mirror(portrait.extra, mirror)
+end
+
+function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, player)
+	if not portrait.extra then return end
+
+	local c = player and "player" or (portrait.type == "boss" and "boss" or UnitClassification(portrait.unit))
+
+	if not color then
+		if BLINKIISPORTRAITS.db.profile.misc.force_reaction then
+			local colorReaction = BLINKIISPORTRAITS.db.profile.colors.reaction
+			local reaction = UnitReaction(portrait.unit, "player")
+			local reactionType = reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly") or "enemy"
+			color = colorReaction[reactionType]
+		else
+			local colorClassification = BLINKIISPORTRAITS.db.profile.colors.classification
+
+			if player then
+				color = colorClassification.player
+			elseif portrait.db.extra then
+				color = colorClassification[c]
+			end
+		end
+	end
+
+	if color then
+		portrait.extra:SetTexture(portrait[c .. "File"], "CLAMP", "CLAMP", "TRILINEAR")
+		portrait.extra:SetVertexColor(color.r, color.g, color.b, color.a or 1)
+		portrait.extra:Show()
+	else
+		portrait.extra:Hide()
+	end
 end
 
 function BLINKIISPORTRAITS:UpdatePortrait(portrait, event)
@@ -57,6 +96,48 @@ function BLINKIISPORTRAITS:UpdatePortrait(portrait, event)
 	BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, (not showCastIcon and portrait.isPlayer) and portrait.texCoords)
 end
 
+-- color functions
+function BLINKIISPORTRAITS:GetUnitColor(unit, isDead)
+	if not unit then return end
+
+	local colors = BLINKIISPORTRAITS.db.profile.colors
+	local isPlayer = UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit))
+
+	if isDead then return colors.misc.death, isPlayer end
+
+	if BLINKIISPORTRAITS.db.profile.misc.force_default then return colors.misc.default, isPlayer end
+
+	if isPlayer then
+		if BLINKIISPORTRAITS.db.profile.misc.force_reaction then
+			local unitFaction = select(1, UnitFactionGroup(unit))
+			playerFaction = select(1, UnitFactionGroup("player"))
+
+			local reactionType = (playerFaction == unitFaction) and "friendly" or "enemy"
+			return colors.reaction[reactionType], isPlayer
+		else
+			local _, class = UnitClass(unit)
+			return colors.class[class], isPlayer, class
+		end
+	else
+		local reaction = UnitReaction(unit, "player")
+		local reactionType = (reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly")) or "enemy"
+		return colors.reaction[reactionType], isPlayer
+	end
+end
+
+function BLINKIISPORTRAITS:UpdateDesaturated(portrait, isDead)
+	if isDead then
+		if not portrait.isDesaturated then
+			portrait.portrait:SetDesaturated(true)
+			portrait.isDesaturated = true
+		end
+	elseif portrait.isDesaturated then
+		portrait.portrait:SetDesaturated(false)
+		portrait.isDesaturated = false
+	end
+end
+
+-- unit status functions
 function BLINKIISPORTRAITS:UpdateDeathStatus(portrait, unit)
 	local isDead = (UnitExists(unit) and UnitIsDead(unit))
 	if isDead then
@@ -67,7 +148,74 @@ function BLINKIISPORTRAITS:UpdateDeathStatus(portrait, unit)
 	return isDead
 end
 
-local unitFrames = nil
+-- update settings functions
+local function UpdateZoom(texture, size)
+	local zoom = BLINKIISPORTRAITS.db.profile.misc.zoom
+	local offset = (size / 2) * zoom
+
+	texture:SetPoint("TOPLEFT", 0 - offset, 0 + offset)
+	texture:SetPoint("BOTTOMRIGHT", 0 + offset, 0 - offset)
+end
+
+function BLINKIISPORTRAITS:UpdateSize(portrait, size, point)
+	if not InCombatLockdown() then
+		size = size or portrait.size
+		point = point or portrait.point
+		portrait:SetSize(size, size)
+		portrait:ClearAllPoints()
+		portrait:SetPoint(point.point, portrait.parentFrame, point.relativePoint, point.x, point.y)
+
+		if portrait.db.strata ~= "AUTO" then portrait:SetFrameStrata(portrait.db.strata) end
+		portrait:SetFrameLevel(portrait.db.level)
+	end
+end
+
+function BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, settings)
+	local dbMisc = BLINKIISPORTRAITS.db.profile.misc
+	local dbCustom = BLINKIISPORTRAITS.db.profile.custom
+	local media = mediaPortraits[settings.texture]
+
+	portrait.bgFile = "Interface\\Addons\\Blinkiis_Portraits\\media\\blank.tga"
+
+	if portrait.useClassIcon then portrait.classIcons = mediaClass[BLINKIISPORTRAITS.db.profile.misc.class_icon] end
+
+	if dbCustom.enable then
+		portrait.textureFile = "Interface\\Addons\\" .. dbCustom.texture
+		portrait.maskFile = "Interface\\Addons\\" .. dbCustom.mask
+
+		portrait.extraMaskFile = "Interface\\Addons\\" .. dbCustom.extra_mask
+
+		if dbCustom.extra then
+			portrait.playerFile = "Interface\\Addons\\" .. dbCustom.player
+
+			portrait.rareFile = "Interface\\Addons\\" .. dbCustom.rare
+			portrait.eliteFile = "Interface\\Addons\\" .. dbCustom.elite
+			portrait.rareeliteFile = "Interface\\Addons\\" .. dbCustom.rareelite
+			portrait.bossFile = "Interface\\Addons\\" .. dbCustom.boss
+		else
+			portrait.playerFile = mediaExtra[dbMisc.player]
+
+			portrait.rareFile = mediaExtra[dbMisc.rare]
+			portrait.eliteFile = mediaExtra[dbMisc.elite]
+			portrait.rareeliteFile = mediaExtra[dbMisc.rareelite]
+			portrait.bossFile = mediaExtra[dbMisc.boss]
+		end
+	else
+		portrait.textureFile = media.texture
+		portrait.maskFile = (settings.mirror and media.mask_mirror) and media.mask_mirror or media.mask
+
+		portrait.extraMaskFile = (settings.mirror and media.extra_mirror) and media.extra_mirror or media.extra
+
+		portrait.playerFile = mediaExtra[dbMisc.player]
+
+		portrait.rareFile = mediaExtra[dbMisc.rare]
+		portrait.eliteFile = mediaExtra[dbMisc.elite]
+		portrait.rareeliteFile = mediaExtra[dbMisc.rareelite]
+		portrait.bossFile = mediaExtra[dbMisc.boss]
+	end
+end
+
+-- initialize functions
 function BLINKIISPORTRAITS:GetUnitFrames(unit)
 	if not unitFrames then
 		unitFrames = {}
@@ -137,107 +285,23 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit)
 	return unitFrames and unitFrames[unit]
 end
 
-function BLINKIISPORTRAITS:Mirror(texture, mirror, texCoords)
-	if texCoords then
-		local coords = texCoords
-		if #coords == 8 then
-			texture:SetTexCoord(unpack((mirror and { coords[5], coords[6], coords[7], coords[8], coords[1], coords[2], coords[3], coords[4] } or coords)))
+function BLINKIISPORTRAITS:RegisterEvents(portrait, events, cast)
+	for _, event in pairs(events) do
+		if cast and portrait.type ~= "party" then
+			portrait:RegisterUnitEvent(event, portrait.unit)
 		else
-			texture:SetTexCoord(unpack((mirror and { coords[2], coords[1], coords[3], coords[4] } or coords)))
+			portrait:RegisterEvent(event)
 		end
+		tinsert(portrait.events, event)
+	end
+
+	-- death check
+	if portrait.type == "party" then
+		portrait:RegisterEvent("UNIT_HEALTH")
 	else
-		texture:SetTexCoord(mirror and 1 or 0, mirror and 0 or 1, 0, 1)
+		portrait:RegisterUnitEvent("UNIT_HEALTH", portrait.unit)
 	end
-end
-
-local function SetTexture(texture, file, wrapMode)
-	texture:SetTexture(file, wrapMode, wrapMode, "TRILINEAR")
-end
-
-function BLINKIISPORTRAITS:UpdateTextures(portrait)
-	local mirror = portrait.db.mirror
-
-	SetTexture(portrait.texture, portrait.textureFile, "CLAMP")
-	SetTexture(portrait.mask, portrait.maskFile, "CLAMPTOBLACKADDITIVE")
-
-	if portrait.extraMask then SetTexture(portrait.extraMask, portrait.extraMaskFile, "CLAMPTOBLACKADDITIVE") end
-	SetTexture(portrait.bg, portrait.bgFile, "CLAMP")
-
-	BLINKIISPORTRAITS:Mirror(portrait.texture, mirror)
-	BLINKIISPORTRAITS:Mirror(portrait.extra, mirror)
-end
-
-local playerFaction
-
-function BLINKIISPORTRAITS:GetUnitColor(unit, isDead)
-	if not unit then return end
-
-	local colors = BLINKIISPORTRAITS.db.profile.colors
-	local isPlayer = UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit))
-
-	if isDead then return colors.misc.death, isPlayer end
-
-	if BLINKIISPORTRAITS.db.profile.misc.force_default then return colors.misc.default, isPlayer end
-
-	if isPlayer then
-		if BLINKIISPORTRAITS.db.profile.misc.force_reaction then
-			local unitFaction = select(1, UnitFactionGroup(unit))
-			playerFaction = select(1, UnitFactionGroup("player"))
-
-			local reactionType = (playerFaction == unitFaction) and "friendly" or "enemy"
-			return colors.reaction[reactionType], isPlayer
-		else
-			local _, class = UnitClass(unit)
-			return colors.class[class], isPlayer, class
-		end
-	else
-		local reaction = UnitReaction(unit, "player")
-		local reactionType = (reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly")) or "enemy"
-		return colors.reaction[reactionType], isPlayer
-	end
-end
-
-function BLINKIISPORTRAITS:UpdateDesaturated(portrait, isDead)
-	if isDead then
-		if not portrait.isDesaturated then
-			portrait.portrait:SetDesaturated(true)
-			portrait.isDesaturated = true
-		end
-	elseif portrait.isDesaturated then
-		portrait.portrait:SetDesaturated(false)
-		portrait.isDesaturated = false
-	end
-end
-
-function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, player)
-	if not portrait.extra then return end
-
-	local c = player and "player" or (portrait.type == "boss" and "boss" or UnitClassification(portrait.unit))
-
-	if not color then
-		if BLINKIISPORTRAITS.db.profile.misc.force_reaction then
-			local colorReaction = BLINKIISPORTRAITS.db.profile.colors.reaction
-			local reaction = UnitReaction(portrait.unit, "player")
-			local reactionType = reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly") or "enemy"
-			color = colorReaction[reactionType]
-		else
-			local colorClassification = BLINKIISPORTRAITS.db.profile.colors.classification
-
-			if player then
-				color = colorClassification.player
-			elseif portrait.db.extra then
-				color = colorClassification[c]
-			end
-		end
-	end
-
-	if color then
-		portrait.extra:SetTexture(portrait[c .. "File"], "CLAMP", "CLAMP", "TRILINEAR")
-		portrait.extra:SetVertexColor(color.r, color.g, color.b, color.a or 1)
-		portrait.extra:Show()
-	else
-		portrait.extra:Hide()
-	end
+	tinsert(portrait.events, "UNIT_HEALTH")
 end
 
 function BLINKIISPORTRAITS:RemovePortrait(frame)
@@ -249,64 +313,6 @@ function BLINKIISPORTRAITS:RemovePortrait(frame)
 
 	frame:Hide()
 	frame = nil
-end
-
-function BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, settings)
-	local dbMisc = BLINKIISPORTRAITS.db.profile.misc
-	local dbCustom = BLINKIISPORTRAITS.db.profile.custom
-	local media = mediaPortraits[settings.texture]
-
-	portrait.bgFile = "Interface\\Addons\\Blinkiis_Portraits\\media\\blank.tga"
-
-	if portrait.useClassIcon then portrait.classIcons = mediaClass[BLINKIISPORTRAITS.db.profile.misc.class_icon] end
-
-	if dbCustom.enable then
-		portrait.textureFile = "Interface\\Addons\\" .. dbCustom.texture
-		portrait.maskFile = "Interface\\Addons\\" .. dbCustom.mask
-
-		portrait.extraMaskFile = "Interface\\Addons\\" .. dbCustom.extra_mask
-
-		if dbCustom.extra then
-			portrait.playerFile = "Interface\\Addons\\" .. dbCustom.player
-
-			portrait.rareFile = "Interface\\Addons\\" .. dbCustom.rare
-			portrait.eliteFile = "Interface\\Addons\\" .. dbCustom.elite
-			portrait.rareeliteFile = "Interface\\Addons\\" .. dbCustom.rareelite
-			portrait.bossFile = "Interface\\Addons\\" .. dbCustom.boss
-		else
-			portrait.playerFile = mediaExtra[dbMisc.player]
-
-			portrait.rareFile = mediaExtra[dbMisc.rare]
-			portrait.eliteFile = mediaExtra[dbMisc.elite]
-			portrait.rareeliteFile = mediaExtra[dbMisc.rareelite]
-			portrait.bossFile = mediaExtra[dbMisc.boss]
-		end
-	else
-		portrait.textureFile = media.texture
-		portrait.maskFile = (settings.mirror and media.mask_mirror) and media.mask_mirror or media.mask
-
-		portrait.extraMaskFile = (settings.mirror and media.extra_mirror) and media.extra_mirror or media.extra
-
-		portrait.playerFile = mediaExtra[dbMisc.player]
-
-		portrait.rareFile = mediaExtra[dbMisc.rare]
-		portrait.eliteFile = mediaExtra[dbMisc.elite]
-		portrait.rareeliteFile = mediaExtra[dbMisc.rareelite]
-		portrait.bossFile = mediaExtra[dbMisc.boss]
-	end
-end
-
-function BLINKIISPORTRAITS:UpdateSize(portrait, size, point)
-	if not InCombatLockdown() then
-		size = size or portrait.size
-		point = point or portrait.point
-		portrait:SetSize(size, size)
-		portrait:ClearAllPoints()
-		portrait:SetPoint(point.point, portrait.parentFrame, point.relativePoint, point.x, point.y)
-
-		if portrait.db.strata ~= "AUTO" then portrait:SetFrameStrata(portrait.db.strata) end
-		portrait:SetFrameLevel(portrait.db.level)
-	end
 end
 
 function BLINKIISPORTRAITS:CreatePortrait(name, parent)
