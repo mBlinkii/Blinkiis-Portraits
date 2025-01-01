@@ -171,26 +171,29 @@ local playerFaction
 
 function BLINKIISPORTRAITS:GetUnitColor(unit, isDead)
 	if not unit then return end
+
 	local colors = BLINKIISPORTRAITS.db.profile.colors
+	local isPlayer = UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit))
 
-	if isDead then return colors.misc.death, nil, true end
-	if BLINKIISPORTRAITS.db.profile.misc.force_default then return colors.misc.default end
+	if isDead then return colors.misc.death, isPlayer end
 
-	if UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit)) then
+	if BLINKIISPORTRAITS.db.profile.misc.force_default then return colors.misc.default, isPlayer end
+
+	if isPlayer then
 		if BLINKIISPORTRAITS.db.profile.misc.force_reaction then
 			local unitFaction = select(1, UnitFactionGroup(unit))
-			playerFaction = playerFaction or select(1, UnitFactionGroup("player"))
+			playerFaction = select(1, UnitFactionGroup("player"))
 
 			local reactionType = (playerFaction == unitFaction) and "friendly" or "enemy"
-			return colors.reaction[reactionType], true
+			return colors.reaction[reactionType], isPlayer
 		else
 			local _, class = UnitClass(unit)
-			return colors.class[class], true, nil, class
+			return colors.class[class], isPlayer, class
 		end
 	else
 		local reaction = UnitReaction(unit, "player")
-		local reactionType = reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly") or "enemy"
-		return colors.reaction[reactionType], false
+		local reactionType = (reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly")) or "enemy"
+		return colors.reaction[reactionType], isPlayer
 	end
 end
 
@@ -246,11 +249,6 @@ function BLINKIISPORTRAITS:RemovePortrait(frame)
 
 	frame:Hide()
 	frame = nil
-end
-
-function BLINKIISPORTRAITS:UpdateSettings(portrait, settings)
-	portrait.size = settings.size
-	portrait.point = settings.point
 end
 
 function BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, settings)
@@ -329,8 +327,6 @@ function BLINKIISPORTRAITS:CreatePortrait(name, parent)
 		portrait.portrait:AddMaskTexture(portrait.mask)
 		local unit = (parent.unit == "party" or not parent.unit) and "player" or parent.unit
 
-		SetPortraitTexture(portrait.portrait, unit, true)
-
 		-- rare/elite/boss
 		local extraOnTop = BLINKIISPORTRAITS.db.profile.misc.extratop
 		portrait.extra = portrait:CreateTexture("BP_extra-" .. name, "OVERLAY", nil, extraOnTop and 7 or 1)
@@ -397,7 +393,7 @@ local function GetCastIcon(unit)
 	return select(3, UnitCastingInfo(unit)) or select(3, UnitChannelInfo(unit))
 end
 
-function BLINKIISPORTRAITS:UpdateCastIcon(portrait, event, addCastIcon)
+function BLINKIISPORTRAITS:UpdateCastIcon(portrait, event)
 	portrait.castStarted = castStartEvents[event] or false
 	portrait.castStopped = castStopEvents[event] or false
 

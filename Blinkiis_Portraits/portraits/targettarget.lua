@@ -59,7 +59,6 @@ function BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
 			portraits[unit].lastGUID = nil
 			portraits[unit].forceUpdate = true
 
-			BLINKIISPORTRAITS:UpdateSettings(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
 			BLINKIISPORTRAITS:UpdateTexturesFiles(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
 			BLINKIISPORTRAITS:UpdateSize(portraits[unit])
 			BLINKIISPORTRAITS:UpdateCastSettings(portraits[unit])

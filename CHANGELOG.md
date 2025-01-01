@@ -1,5 +1,11 @@
 # Changelog - ElvUI_mMediaTag
 
+## [ver. 1.2] - xx.01.2025
+### UPDATE
+- UPDATE - Optimized portraits update code
+### NEW
+- NEW - Add Class icons support
+
 ## [ver. 1.1] - 29.12.2024
 ### UPDATE
 - UPDATE - Add Blizzards (rare/elite/boss) textures
