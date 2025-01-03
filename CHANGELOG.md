@@ -1,5 +1,16 @@
 # Changelog - ElvUI_mMediaTag
 
+## [ver. 1.21] - 03.01.2025
+### FIX 
+- FIX - Rare/Elite Texture does not work correctly
+- FIX - Switching back from Class Icons to Portrait, could bug the portrait
+- FIX - Color reset Buttons in the Settings menu
+### UPDATE
+- UPDATE - Defaults Extra on Top ist per default enabled (this will show the extra texture on top of the portraits)
+- UPDATE - Defaults Extra Textures to Blizzard Neutral and Blizzard Boss Neutral 
+### NEW
+- NEW - Two variants of the Blizzard extra Texture Neutral and BossNeutral
+
 ## [ver. 1.2] - 01.01.2025
 ### UPDATE
 - UPDATE - Optimized portraits update code

@@ -63,6 +63,8 @@ local extra = {
 	blizz_gold = "Blizzard Gold",
 	blizz_silver = "Blizzard Silver",
 	blizz_boss = "Blizzard Boss",
+	blizz_neutral = "Blizzard Neutral",
+	blizz_boss_neutral = "Blizzard Boss Neutral",
 }
 
 local frameStrata = {
@@ -2128,7 +2130,7 @@ BLINKIISPORTRAITS.options = {
 					type = "execute",
 					name = "Reset class colors",
 					func = function()
-						BLINKIISPORTRAITS.db.profile.colors.class = CopyTable(BLINKIISPORTRAITS.defaults.colors.class)
+						BLINKIISPORTRAITS.db.profile.colors.class = CopyTable(BLINKIISPORTRAITS.defaults.profile.colors.class)
 					end,
 				},
 				reset_colors_execute = {
@@ -2136,7 +2138,7 @@ BLINKIISPORTRAITS.options = {
 					type = "execute",
 					name = "Reset all colors",
 					func = function()
-						BLINKIISPORTRAITS.db.profile.colors = CopyTable(BLINKIISPORTRAITS.defaults.colors)
+						BLINKIISPORTRAITS.db.profile.colors = CopyTable(BLINKIISPORTRAITS.defaults.profile.colors)
 					end,
 				},
 				settings_group = {

@@ -158,6 +158,8 @@ BLINKIISPORTRAITS.media = {
 		blizz_gold = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_blizz_gold.tga",
 		blizz_silver = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_blizz_silver.tga",
 		blizz_boss = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_blizz_boss.tga",
+		blizz_neutral = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_blizz_neutral.tga",
+		blizz_boss_neutral = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_blizz_boss_neutral.tga",
 	},
 	class = {
 		blizzard = {
