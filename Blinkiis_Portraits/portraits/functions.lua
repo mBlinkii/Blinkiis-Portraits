@@ -78,7 +78,7 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, player)
 	end
 end
 
-function BLINKIISPORTRAITS:UpdatePortrait(portrait, event)
+function BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
 	local showCastIcon = portrait.db.cast and BLINKIISPORTRAITS:UpdateCastIcon(portrait, event)
 
 	if not showCastIcon then
@@ -87,8 +87,7 @@ function BLINKIISPORTRAITS:UpdatePortrait(portrait, event)
 			portrait.texCoords = portrait.classIcons.texCoords[portrait.unitClass]
 			portrait.portrait:SetTexture(portrait.classIcons.texture, "CLAMP", "CLAMP", "TRILINEAR")
 		else
-			--portrait.texCoords = nil
-			SetPortraitTexture(portrait.portrait, portrait.unit, true)
+			SetPortraitTexture(portrait.portrait, unit or portrait.unit, true)
 		end
 
 		BLINKIISPORTRAITS:UpdateDesaturated(portrait, portrait.isDead)

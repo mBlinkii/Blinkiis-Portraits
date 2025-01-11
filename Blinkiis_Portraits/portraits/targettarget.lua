@@ -2,7 +2,7 @@ local UnitGUID = UnitGUID
 local UnitExists = UnitExists
 
 local function OnEvent(portrait, event, eventUnit)
-	local unit = portrait.unit
+	local unit = (portrait.demo and not UnitExists(portrait.parentFrame.unit)) and "player" or portrait.unit
 	if not unit or not UnitExists(unit) or ((event == "PORTRAITS_UPDATED" or event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_HEALTH") and unit ~= eventUnit) then return end
 
 	if event == "UNIT_HEALTH" then
@@ -20,12 +20,12 @@ local function OnEvent(portrait, event, eventUnit)
 
 		if color then portrait.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
 
-		BLINKIISPORTRAITS:UpdatePortrait(portrait, event)
+		BLINKIISPORTRAITS:UpdatePortrait(portrait, event, portrait.demo and unit)
 		BLINKIISPORTRAITS:UpdateExtraTexture(portrait, portrait.db.unitcolor and color)
 
 		portrait.forceUpdate = false
 	else
-		BLINKIISPORTRAITS:UpdatePortrait(portrait, event)
+		BLINKIISPORTRAITS:UpdatePortrait(portrait, event, portrait.demo and unit)
 	end
 
 	if not InCombatLockdown() and portrait:GetAttribute("unit") ~= unit then portrait:SetAttribute("unit", unit) end
