@@ -1,4 +1,5 @@
 local UnitGUID = UnitGUID
+local UnitExists = UnitExists
 
 local function OnEvent(portrait, event, eventUnit)
 	local unit = portrait.parentFrame.unit
@@ -40,36 +41,41 @@ function BLINKIISPORTRAITS:InitializeArenaPortrait()
 	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("arena")
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits
-		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_NAME_UPDATE", "UPDATE_ACTIVE_BATTLEFIELD", "GROUP_ROSTER_UPDATE", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE" }
+		local events =
+			{ "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_NAME_UPDATE", "UPDATE_ACTIVE_BATTLEFIELD", "GROUP_ROSTER_UPDATE", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE" }
 
 		for i = 1, 5 do
 			local parent = _G[unitframe .. i]
-			local unit = "arena" .. i
-			local type = "arena"
 
-			portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait(unit, _G[unitframe .. i])
+			if parent then
+				local unit = "arena" .. i
+				local type = "arena"
 
-			if portraits[unit] then
-				portraits[unit].events = {}
-				portraits[unit].parentFrame = parent
-				portraits[unit].unit = BLINKIISPORTRAITS.Cell and parent._unit or parent.unit
-				portraits[unit].type = type
-				portraits[unit].db = BLINKIISPORTRAITS.db.profile[type]
-				portraits[unit].size = BLINKIISPORTRAITS.db.profile[type].size
-				portraits[unit].point = BLINKIISPORTRAITS.db.profile[type].point
-				portraits[unit].useClassIcon = BLINKIISPORTRAITS.db.profile.misc.class_icon ~= "none"
-				portraits[unit].func = OnEvent
+				portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait(unit, _G[unitframe .. i])
 
-				portraits[unit].isPlayer = nil
-				portraits[unit].unitClass = nil
-				portraits[unit].lastGUID = nil
-				portraits[unit].forceUpdate = true
+				if portraits[unit] then
+					portraits[unit].events = {}
+					portraits[unit].parentFrame = parent
+					portraits[unit].unit = BLINKIISPORTRAITS.Cell and parent._unit or parent.unit
+					portraits[unit].type = type
+					portraits[unit].db = BLINKIISPORTRAITS.db.profile[type]
+					portraits[unit].size = BLINKIISPORTRAITS.db.profile[type].size
+					portraits[unit].point = BLINKIISPORTRAITS.db.profile[type].point
+					portraits[unit].useClassIcon = BLINKIISPORTRAITS.db.profile.misc.class_icon ~= "none"
+					portraits[unit].demo = BLINKIISPORTRAITS.SUF and not ShadowUF.db.profile.locked
+					portraits[unit].func = OnEvent
 
-				BLINKIISPORTRAITS:UpdateTexturesFiles(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
-				BLINKIISPORTRAITS:UpdateSize(portraits[unit])
-				BLINKIISPORTRAITS:UpdateCastSettings(portraits[unit])
+					portraits[unit].isPlayer = nil
+					portraits[unit].unitClass = nil
+					portraits[unit].lastGUID = nil
+					portraits[unit].forceUpdate = true
 
-				BLINKIISPORTRAITS:InitPortrait(portraits[unit], events)
+					BLINKIISPORTRAITS:UpdateTexturesFiles(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
+					BLINKIISPORTRAITS:UpdateSize(portraits[unit])
+					BLINKIISPORTRAITS:UpdateCastSettings(portraits[unit])
+
+					BLINKIISPORTRAITS:InitPortrait(portraits[unit], events)
+				end
 			end
 		end
 	end

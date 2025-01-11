@@ -56,7 +56,6 @@ function BLINKIISPORTRAITS:LoadDB()
 end
 
 function BLINKIISPORTRAITS:LoadPortraits()
-	--if BLINKIISPORTRAITS.SUF and
 	BLINKIISPORTRAITS:InitializeArenaPortrait()
 	BLINKIISPORTRAITS:InitializeBossPortrait()
 	BLINKIISPORTRAITS:InitializeFocusPortrait()
@@ -75,7 +74,7 @@ function BLINKIISPORTRAITS:OnInitialize()
 	BLINKIISPORTRAITS.SUF = IsAddOnLoaded("ShadowedUnitFrames")
 	BLINKIISPORTRAITS.ELVUI = IsAddOnLoaded("ElvUI")
 	BLINKIISPORTRAITS.PB4 = IsAddOnLoaded("PitBull4")
-	BLINKIISPORTRAITS.Cell = IsAddOnLoaded("Cell")	and IsAddOnLoaded("Cell_UnitFrames")
+	BLINKIISPORTRAITS.Cell = IsAddOnLoaded("Cell") and IsAddOnLoaded("Cell_UnitFrames")
 
 	BLINKIISPORTRAITS:LoadDB()
 	BLINKIISPORTRAITS:RegisterEvent("PLAYER_ENTERING_WORLD")
