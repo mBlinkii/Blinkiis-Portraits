@@ -3,7 +3,6 @@ local UnitExists = UnitExists
 
 local function OnEvent(portrait, event, eventUnit)
 	local unit = (portrait.demo and not UnitExists(portrait.parentFrame.unit)) and "player" or portrait.unit
-	print(unit)
 	if not unit or not UnitExists(unit) or ((event == "PORTRAITS_UPDATED" or event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_HEALTH") and unit ~= eventUnit) then return end
 
 	if event == "UNIT_HEALTH" then

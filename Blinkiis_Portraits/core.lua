@@ -70,6 +70,16 @@ function BLINKIISPORTRAITS:PLAYER_ENTERING_WORLD(event)
 	BLINKIISPORTRAITS:LoadPortraits()
 end
 
+local function UpdateGroupPortraits(_, typ)
+	if typ == "arena" then
+		BLINKIISPORTRAITS:InitializeArenaPortrait(true)
+	elseif typ == "boss" then
+		BLINKIISPORTRAITS:InitializeBossPortrait(true)
+	elseif typ.groups and typ.groupName == "party" then
+		BLINKIISPORTRAITS:InitializePartyPortrait(true)
+	end
+end
+
 function BLINKIISPORTRAITS:OnInitialize()
 	BLINKIISPORTRAITS.SUF = IsAddOnLoaded("ShadowedUnitFrames")
 	BLINKIISPORTRAITS.ELVUI = IsAddOnLoaded("ElvUI")
@@ -99,5 +109,12 @@ function BLINKIISPORTRAITS:OnInitialize()
 
 			BLINKIISPORTRAITS.SUF_Hook = true
 		end
+	end
+
+	-- elvui demo mode
+	if BLINKIISPORTRAITS.ELVUI and ElvUI then
+		local UF = ElvUI[1]:GetModule("UnitFrames")
+		hooksecurefunc(UF, "ToggleForceShowGroupFrames", UpdateGroupPortraits)
+		hooksecurefunc(UF, "HeaderConfig", UpdateGroupPortraits)
 	end
 end

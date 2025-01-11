@@ -35,7 +35,7 @@ local function OnEvent(portrait, event, eventUnit)
 	if not InCombatLockdown() and portrait:GetAttribute("unit") ~= unit then portrait:SetAttribute("unit", unit) end
 end
 
-function BLINKIISPORTRAITS:InitializeBossPortrait()
+function BLINKIISPORTRAITS:InitializeBossPortrait(demo)
 	if not BLINKIISPORTRAITS.db.profile.boss.enable then return end
 
 	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("boss")
@@ -61,8 +61,13 @@ function BLINKIISPORTRAITS:InitializeBossPortrait()
 					portraits[unit].size = BLINKIISPORTRAITS.db.profile[type].size
 					portraits[unit].point = BLINKIISPORTRAITS.db.profile[type].point
 					portraits[unit].useClassIcon = BLINKIISPORTRAITS.db.profile.misc.class_icon ~= "none"
-					portraits[unit].demo = BLINKIISPORTRAITS.SUF and not ShadowUF.db.profile.locked
 					portraits[unit].func = OnEvent
+
+					if demo then
+						portraits[unit].demo = not portraits[unit].demo
+					else
+						portraits[unit].demo = BLINKIISPORTRAITS.SUF and not ShadowUF.db.profile.locked
+					end
 
 					portraits[unit].isPlayer = nil
 					portraits[unit].unitClass = nil
