@@ -56,6 +56,7 @@ function BLINKIISPORTRAITS:LoadDB()
 end
 
 function BLINKIISPORTRAITS:LoadPortraits()
+	--if BLINKIISPORTRAITS.SUF and
 	BLINKIISPORTRAITS:InitializeArenaPortrait()
 	BLINKIISPORTRAITS:InitializeBossPortrait()
 	BLINKIISPORTRAITS:InitializeFocusPortrait()
@@ -95,6 +96,7 @@ function BLINKIISPORTRAITS:OnInitialize()
 	if BLINKIISPORTRAITS.SUF and ShadowUF then
 		if not BLINKIISPORTRAITS.SUF_Hook then
 			hooksecurefunc(ShadowUF, "LoadUnits", BLINKIISPORTRAITS.LoadPortraits)
+			hooksecurefunc(ShadowUF.modules.movers, "Update", BLINKIISPORTRAITS.LoadPortraits)
 
 			BLINKIISPORTRAITS.SUF_Hook = true
 		end

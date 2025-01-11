@@ -277,8 +277,8 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit)
 				targettarget = "SUFUnittargettarget",
 				focus = BLINKIISPORTRAITS.Classic and nil or "SUFUnitfocus",
 				party = "SUFHeaderpartyUnitButton",
-				boss = BLINKIISPORTRAITS.Classic and nil or "SUFHeaderboss",
-				arena = BLINKIISPORTRAITS.Classic and nil or "SUFHeaderArena",
+				boss = BLINKIISPORTRAITS.Classic and nil or "SUFHeaderbossUnitButton",
+				arena = BLINKIISPORTRAITS.Classic and nil or "SUFHeaderarenaUnitButton",
 			}
 		end
 	end
