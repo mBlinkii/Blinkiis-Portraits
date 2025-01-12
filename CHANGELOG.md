@@ -1,6 +1,6 @@
 # Changelog - ElvUI_mMediaTag
 
-## [ver. 1.23] - 12.01.2025
+## [ver. 1.22] - 12.01.2025
 ### FIX 
 - FIX - Portraits dose not work with SUF Arena and Boss frames
 - FIX - Nill error if the parent frame does not exist
