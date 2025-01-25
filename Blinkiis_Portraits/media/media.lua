@@ -165,14 +165,31 @@ BLINKIISPORTRAITS.media = {
 		blizzard = {
 			texture = "Interface\\WorldStateFrame\\Icons-Classes",
 			texCoords = CLASS_ICON_TCOORDS,
+			name = "Blizzard"
 		},
 		hd = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\class_round.tga",
 			texCoords = texCoords,
+			name = "Blizzard HD"
 		},
 		new = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\class_transparent.tga",
 			texCoords = texCoords,
+			name = "New Style"
 		},
 	},
 }
+
+function BLINKIISPORTRAITS:UpdateCustomClassIcons()
+	BLINKIISPORTRAITS.media.custom = {}
+
+	for k, v in pairs(BLINKIISPORTRAITS.db.global.custom_classicons) do
+		if not (k == "blizzard" or k == "hd" or k == "new") then
+			BLINKIISPORTRAITS.media.class[k] = {
+				texture = "Interface\\Addons\\" .. v.texture,
+				name = v.name,
+				texCoords = v.texCoords or texCoords
+			}
+		end
+	end
+end

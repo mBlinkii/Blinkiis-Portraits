@@ -77,20 +77,19 @@ local frameStrata = {
 	AUTO = "Auto",
 }
 
+local custom_classicons = {
+	selected = nil,
+	name = nil,
+	path = nil,
+	texCoords = nil,
+}
+
 BLINKIISPORTRAITS.options = {
 	name = BLINKIISPORTRAITS.Name,
 	handler = BLINKIISPORTRAITS,
 	type = "group",
 	childGroups = "tab",
 	args = {
-		-- logo = {
-		-- 	type = "description",
-		-- 	name = "",
-		-- 	order = 1,
-		-- 	image = function()
-		-- 		return "Interface\\Addons\\Blinkiis_Portraits\\media\\logo.tga", 256, 64
-		-- 	end,
-		-- },
 		general_group = {
 			order = 2,
 			type = "group",
@@ -116,25 +115,6 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS.db.profile.misc.zoom = value
 								BLINKIISPORTRAITS:LoadPortraits()
 							end,
-						},
-						classIcon_select = {
-							order = 1,
-							type = "select",
-							name = "Class icon",
-							desc = "Enable and select a class icon style for the portrait.",
-							get = function(info)
-								return BLINKIISPORTRAITS.db.profile.misc.class_icon
-							end,
-							set = function(info, value)
-								BLINKIISPORTRAITS.db.profile.misc.class_icon = value
-								BLINKIISPORTRAITS:LoadPortraits()
-							end,
-							values = {
-								none = "None",
-								blizzard = "Blizzard",
-								hd = "HD",
-								new = "New Style",
-							},
 						},
 					},
 				},
@@ -200,7 +180,7 @@ BLINKIISPORTRAITS.options = {
 							type = "input",
 							width = "smal",
 							disabled = function()
-								return not  BLINKIISPORTRAITS.db.profile.custom.enable
+								return not BLINKIISPORTRAITS.db.profile.custom.enable
 							end,
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.custom.extra_mask
@@ -2513,6 +2493,133 @@ BLINKIISPORTRAITS.options = {
 								local t = BLINKIISPORTRAITS.db.profile.colors.reaction.friendly
 								t.r, t.g, t.b, t.a = r, g, b, a
 							end,
+						},
+					},
+				},
+			},
+		},
+		classicons_group = {
+			order = 2,
+			type = "group",
+			name = "Class Icons",
+			args = {
+				classIcon_select = {
+					order = 1,
+					type = "select",
+					name = "Class icon",
+					desc = "Enable and select a class icon style for the portrait.",
+					get = function(info)
+						return BLINKIISPORTRAITS.db.profile.misc.class_icon
+					end,
+					set = function(info, value)
+						BLINKIISPORTRAITS.db.profile.misc.class_icon = value
+						BLINKIISPORTRAITS:LoadPortraits()
+					end,
+					values = function()
+						local t = {}
+						for k, v in pairs(BLINKIISPORTRAITS.media.class) do
+							if type(v) == "table" then t[k] = v.name end
+						end
+						for k, v in pairs(BLINKIISPORTRAITS.media.custom) do
+							if type(v) == "table" then t[k] = v.name end
+						end
+						return t
+					end,
+				},
+				customicons_group = {
+					order = 2,
+					type = "group",
+					name = "custom Class Icons",
+					inline = true,
+					args = {
+						add_new_group = {
+							order = 1,
+							type = "group",
+							name = "Add new Icons",
+							inline = true,
+							args = {
+								icon_path_input = {
+									order = 1,
+									name = "Icon Path",
+									desc = "The path should be in your Addons folder, example: MyIcons\\MyClassIcons.tga",
+									type = "input",
+									width = "smal",
+									get = function(info)
+										return custom_classicons.path
+									end,
+									set = function(info, value)
+										custom_classicons.path = value
+									end,
+								},
+								icon_name_input = {
+									order = 2,
+									name = "Icon Name",
+									desc = "Name for your custom class Icons",
+									type = "input",
+									width = "smal",
+									get = function(info)
+										return custom_classicons.name
+									end,
+									set = function(info, value)
+										custom_classicons.name = value
+									end,
+								},
+								add_execute = {
+									order = 3,
+									type = "execute",
+									name = "Add",
+									func = function()
+										if custom_classicons.name == "blizzard" or custom_classicons.name == "hd" or custom_classicons.name == "new" then
+											custom_classicons.name = "Custom " .. custom_classicons.name
+										end
+
+										if custom_classicons.path and custom_classicons.path:match("%S") and custom_classicons.name and custom_classicons.name:match("%S") then
+											BLINKIISPORTRAITS.db.global.custom_classicons[custom_classicons.name] = {
+												texture = custom_classicons.path,
+												name = custom_classicons.name,
+												texCoords = custom_classicons.texCoords or nil,
+											}
+
+											BLINKIISPORTRAITS:UpdateCustomClassIcons()
+											BLINKIISPORTRAITS.db.global.name = custom_classicons.name
+											custom_classicons.selected = custom_classicons.name
+
+											custom_classicons.path = nil
+											custom_classicons.name = nil
+											custom_classicons.texCoords = nil
+										end
+									end,
+								},
+							},
+						},
+						delete_group = {
+							order = 2,
+							type = "group",
+							name = "Delete",
+							inline = true,
+							args = {
+								delete_icon_select = {
+									order = 1,
+									type = "select",
+									name = "Delete icons",
+									get = function() end,
+									set = function(info, value)
+										StaticPopup_Show("BLINKIISPORTRAITS_DELETE_ICON", value, nil, value)
+										custom_classicons.path = nil
+										custom_classicons.name = nil
+										custom_classicons.texCoords = nil
+										custom_classicons.selected = nil
+										BLINKIISPORTRAITS:UpdateCustomClassIcons()
+									end,
+									values = function()
+										local t = {}
+										for k, v in pairs(BLINKIISPORTRAITS.db.global.custom_classicons) do
+											if type(v) == "table" then t[k] = v.name end
+										end
+										return t
+									end,
+								},
+							},
 						},
 					},
 				},

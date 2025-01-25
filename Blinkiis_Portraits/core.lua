@@ -117,4 +117,7 @@ function BLINKIISPORTRAITS:OnInitialize()
 		hooksecurefunc(UF, "ToggleForceShowGroupFrames", UpdateGroupPortraits)
 		hooksecurefunc(UF, "HeaderConfig", UpdateGroupPortraits)
 	end
+
+	-- update custom class icons
+	BLINKIISPORTRAITS:UpdateCustomClassIcons()
 end

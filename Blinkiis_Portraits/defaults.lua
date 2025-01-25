@@ -164,3 +164,7 @@ BLINKIISPORTRAITS.defaults.profile.colors = {
 		neutral = { r = 1.00, g = 0.70, b = 0, a = 1 },
 	},
 }
+
+BLINKIISPORTRAITS.defaults.global = {}
+
+BLINKIISPORTRAITS.defaults.global.custom_classicons = {}
