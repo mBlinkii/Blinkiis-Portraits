@@ -1,12 +1,15 @@
 # Changelog - ElvUI_mMediaTag
 
+## [ver. 1.23] - 25.01.2025
+### NEW
+- NEW - You can now add your custom class icons to the Portraits
+
 ## [ver. 1.22] - 12.01.2025
 ### FIX 
 - FIX - Portraits dose not work with SUF Arena and Boss frames
 - FIX - Nill error if the parent frame does not exist
 ### UPDATE
 - UPDATE - Portraits take now care of SUF & ElvUI test/ demo mode
-
 
 ## [ver. 1.21] - 03.01.2025
 ### FIX 
