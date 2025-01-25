@@ -2499,7 +2499,7 @@ BLINKIISPORTRAITS.options = {
 			},
 		},
 		classicons_group = {
-			order = 2,
+			order = 13,
 			type = "group",
 			name = "Class Icons",
 			args = {
