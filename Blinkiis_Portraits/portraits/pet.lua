@@ -1,13 +1,13 @@
 local UnitGUID = UnitGUID
 local UnitExists = UnitExists
 
-local function OnEvent(portrait, event, eventUnit)
+local function OnEvent(portrait, event, eventUnit, arg2)
 	local unit = (portrait.demo and not UnitExists(portrait.parentFrame.unit)) and "player" or (portrait.unit or portrait.parentFrame.unit)
 
 	if not unit or not UnitExists(unit) or ((event == "PORTRAITS_UPDATED" or event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_HEALTH") and unit ~= eventUnit) then return end
 
-	if event == "UNIT_PET" or event == "UNIT_EXITED_VEHICLE" or event == "PET_UI_UPDATE" then
-		unit = (UnitInVehicle("player") and UnitHasVehiclePlayerFrameUI("player")) and "player" or "pet"
+	if event == "VEHICLE_UPDATE" or event == "UNIT_EXITING_VEHICLE" or event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE" or event == "PET_UI_UPDATE" then
+		unit = (UnitInVehicle("player") and arg2) and "player" or "pet"
 	end
 
 	portrait.unit = unit
@@ -44,7 +44,7 @@ function BLINKIISPORTRAITS:InitializePetPortrait()
 	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("pet")
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits
-		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_PET", "UNIT_EXITED_VEHICLE", "PET_UI_UPDATE" }
+		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_PET", "UNIT_EXITED_VEHICLE", "PET_UI_UPDATE", "VEHICLE_UPDATE" }
 		local parent = _G[unitframe]
 
 		if parent then
