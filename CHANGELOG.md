@@ -4,6 +4,8 @@
 ### FIX
 - FIX - Portraits for non-players when class icons are enabled.
 - FIX - Fixed missing disable function for class icons
+### UPDATE
+- UPDATE - Classic game version.
 ### NEW
 - NEW - Add force extra texture to target, tot, focus, pet, and party frames.
 

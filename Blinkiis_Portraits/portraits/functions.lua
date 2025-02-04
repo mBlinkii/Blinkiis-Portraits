@@ -82,7 +82,7 @@ function BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
 	local showCastIcon = portrait.db.cast and BLINKIISPORTRAITS:UpdateCastIcon(portrait, event)
 
 	if not showCastIcon then
-		if portrait.useClassIcon and portrait.isPlayer then
+		if portrait.useClassIcon and (portrait.isPlayer or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit))) then
 			portrait.unitClass = portrait.unitClass or select(2, UnitClass(portrait.unit))
 			portrait.texCoords = portrait.classIcons.texCoords[portrait.unitClass]
 			portrait.portrait:SetTexture(portrait.classIcons.texture, "CLAMP", "CLAMP", "TRILINEAR")
