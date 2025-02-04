@@ -24,7 +24,7 @@ local function OnEvent(portrait, event, eventUnit)
 		if color then portrait.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
 
 		BLINKIISPORTRAITS:UpdatePortrait(portrait, event, portrait.demo and unit)
-		BLINKIISPORTRAITS:UpdateExtraTexture(portrait, portrait.db.unitcolor and color, portrait.db.extra)
+		BLINKIISPORTRAITS:UpdateExtraTexture(portrait, portrait.db.unitcolor and color, portrait.db.extra and portrait.db.forceExtra)
 
 		portrait.forceUpdate = false
 	else

@@ -47,12 +47,17 @@ function BLINKIISPORTRAITS:UpdateTextures(portrait)
 	BLINKIISPORTRAITS:Mirror(portrait.extra, mirror)
 end
 
-function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, player)
-	if not portrait.extra then return end
+function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, force)
+	if not (portrait.extra and portrait.db.extra) then
+		if portrait.extra then portrait.extra:Hide() end
+		return
+	end
 
-	local c = player and "player" or (portrait.type == "boss" and "boss" or UnitClassification(portrait.unit))
+	local c = portrait.type == "boss" and "boss" or UnitClassification(portrait.unit)
+	local isExtraUnit = c == "rare" or c == "elite" or c == "rareelite" or c == "boss"
+	if not isExtraUnit and (force and force ~= "none") then c = force end
 
-	if not color then
+	if ((force and force ~= "none") or isExtraUnit) and not color then
 		if BLINKIISPORTRAITS.db.profile.misc.force_reaction then
 			local colorReaction = BLINKIISPORTRAITS.db.profile.colors.reaction
 			local reaction = UnitReaction(portrait.unit, "player")
@@ -60,12 +65,7 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, player)
 			color = colorReaction[reactionType]
 		else
 			local colorClassification = BLINKIISPORTRAITS.db.profile.colors.classification
-
-			if player then
-				color = colorClassification.player
-			elseif portrait.db.extra then
-				color = colorClassification[c]
-			end
+			color = colorClassification[c]
 		end
 	end
 

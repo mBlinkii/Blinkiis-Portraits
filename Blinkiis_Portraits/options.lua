@@ -602,6 +602,27 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:InitializeTargetPortrait()
 							end,
 						},
+						force_extra_toggle = {
+							order = 6,
+							type = "select",
+							name = "Force Extra Texture",
+							desc = "It will override the default extra texture, but will take care of rare/elite/boss units.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.target.forceExtra
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.target.forceExtra = value
+								BLINKIISPORTRAITS:InitializeTargetPortrait()
+							end,
+							values = {
+								none = "None",
+								player = "Player",
+								rare = "Rare",
+								elite = "Elite",
+								rareelite = "Rare Elite",
+								boss = "Boss",
+							},
+						},
 					},
 				},
 				anchor_group = {
@@ -812,6 +833,27 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS.db.profile.focus.unitcolor = value
 								BLINKIISPORTRAITS:InitializeFocusPortrait()
 							end,
+						},
+						force_extra_toggle = {
+							order = 6,
+							type = "select",
+							name = "Force Extra Texture",
+							desc = "It will override the default extra texture, but will take care of rare/elite/boss units.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.focus.forceExtra
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.focus.forceExtra = value
+								BLINKIISPORTRAITS:InitializeFocusPortrait()
+							end,
+							values = {
+								none = "None",
+								player = "Player",
+								rare = "Rare",
+								elite = "Elite",
+								rareelite = "Rare Elite",
+								boss = "Boss",
+							},
 						},
 					},
 				},
@@ -1024,6 +1066,27 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
 							end,
 						},
+						force_extra_toggle = {
+							order = 6,
+							type = "select",
+							name = "Force Extra Texture",
+							desc = "It will override the default extra texture, but will take care of rare/elite/boss units.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.targettarget.forceExtra
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.targettarget.forceExtra = value
+								BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
+							end,
+							values = {
+								none = "None",
+								player = "Player",
+								rare = "Rare",
+								elite = "Elite",
+								rareelite = "Rare Elite",
+								boss = "Boss",
+							},
+						},
 					},
 				},
 				anchor_group = {
@@ -1235,6 +1298,27 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:InitializePetPortrait()
 							end,
 						},
+						force_extra_toggle = {
+							order = 6,
+							type = "select",
+							name = "Force Extra Texture",
+							desc = "It will override the default extra texture, but will take care of rare/elite/boss units.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.pet.forceExtra
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.pet.forceExtra = value
+								BLINKIISPORTRAITS:InitializePetPortrait()
+							end,
+							values = {
+								none = "None",
+								player = "Player",
+								rare = "Rare",
+								elite = "Elite",
+								rareelite = "Rare Elite",
+								boss = "Boss",
+							},
+						},
 					},
 				},
 				anchor_group = {
@@ -1445,6 +1529,27 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS.db.profile.party.unitcolor = value
 								BLINKIISPORTRAITS:InitializePartyPortrait()
 							end,
+						},
+						force_extra_toggle = {
+							order = 6,
+							type = "select",
+							name = "Force Extra Texture",
+							desc = "It will override the default extra texture, but will take care of rare/elite/boss units.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.party.forceExtra
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.party.forceExtra = value
+								BLINKIISPORTRAITS:InitializePartyPortrait()
+							end,
+							values = {
+								none = "None",
+								player = "Player",
+								rare = "Rare",
+								elite = "Elite",
+								rareelite = "Rare Elite",
+								boss = "Boss",
+							},
 						},
 					},
 				},
