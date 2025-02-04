@@ -2523,6 +2523,7 @@ BLINKIISPORTRAITS.options = {
 						for k, v in pairs(BLINKIISPORTRAITS.media.custom) do
 							if type(v) == "table" then t[k] = v.name end
 						end
+						t.none = "None"
 						return t
 					end,
 				},
