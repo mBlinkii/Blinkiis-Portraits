@@ -1,5 +1,12 @@
 # Changelog - ElvUI_mMediaTag
 
+## [ver. 1.24] - 04.03.2025
+### FIX
+- FIX - Portraits for non-players when class icons are enabled.
+- FIX - Fixed missing disable function for class icons
+### NEW
+- NEW - Add force extra texture to target, tot, focus, pet, and party frames.
+
 ## [ver. 1.23] - 25.01.2025
 ### NEW
 - NEW - You can now add your custom class icons to the Portraits
