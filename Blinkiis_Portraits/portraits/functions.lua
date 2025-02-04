@@ -93,7 +93,7 @@ function BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
 		BLINKIISPORTRAITS:UpdateDesaturated(portrait, portrait.isDead)
 	end
 
-	BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, portrait.useClassIcon and portrait.texCoords)
+	BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, (portrait.isPlayer and portrait.useClassIcon) and portrait.texCoords)
 end
 
 -- color functions
