@@ -119,13 +119,9 @@ function BLINKIISPORTRAITS:GetUnitColor(unit, isDead)
 			return colors.class[class], isPlayer, class
 		end
 	else
-		if unit == "vehicle" or unit == "pet" then
-			return colors.reaction["friendly"], isPlayer
-		else
-			local reaction = UnitReaction(unit, "player")
-			local reactionType = (reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly")) or "enemy"
-			return colors.reaction[reactionType], isPlayer
-		end
+		local reaction = (unit == "pet") and UnitReaction("player", unit) or UnitReaction(unit, "player")
+		local reactionType = (reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly")) or "enemy"
+		return colors.reaction[reactionType], isPlayer
 	end
 end
 
