@@ -10,7 +10,8 @@ BLINKIISPORTRAITS.defaults.profile.misc = {
 	player = "blizz_neutral",
 	extratop = true,
 	zoom = 0,
-	class_icon = "none"
+	class_icon = "none",
+	desaturate = false,
 }
 
 BLINKIISPORTRAITS.defaults.profile.custom = {

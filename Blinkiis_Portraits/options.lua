@@ -116,6 +116,19 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:LoadPortraits()
 							end,
 						},
+						enable_force_desaturate = {
+							order = 2,
+							type = "toggle",
+							name = "Desaturate",
+							desc = "Will always desaturate the portraits.",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.misc.desaturate
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.misc.desaturate = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+						},
 					},
 				},
 				custom_textures_group = {

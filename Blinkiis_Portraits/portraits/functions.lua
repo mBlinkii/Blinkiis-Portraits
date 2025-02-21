@@ -78,8 +78,9 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, force)
 	end
 end
 
-function BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
+function BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit )
 	local showCastIcon = portrait.db.cast and BLINKIISPORTRAITS:UpdateCastIcon(portrait, event)
+	local forceDesaturate = BLINKIISPORTRAITS.db.profile.misc.desaturate
 
 	if not showCastIcon then
 		if portrait.useClassIcon and (portrait.isPlayer or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit))) then
@@ -90,7 +91,7 @@ function BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
 			SetPortraitTexture(portrait.portrait, unit or portrait.unit, true)
 		end
 
-		BLINKIISPORTRAITS:UpdateDesaturated(portrait, portrait.isDead)
+		BLINKIISPORTRAITS:UpdateDesaturated(portrait, (forceDesaturate or portrait.isDead))
 	end
 
 	BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, (portrait.isPlayer and portrait.useClassIcon) and portrait.texCoords)
