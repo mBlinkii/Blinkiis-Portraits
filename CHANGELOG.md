@@ -1,6 +1,14 @@
 # Changelog - ElvUI_mMediaTag
 
-## [ver. 1.24] - 04.03.2025
+## [ver. 1.25] - 21.03.2025
+### FIX
+- FIX - Portraits for Player & Pet if the Player is in a Vehicle
+### UPDATE
+- UPDATE - Classic game version.
+### NEW
+- NEW - Add force desaturate function to the Portraits.
+
+## [ver. 1.24] - 04.02.2025
 ### FIX
 - FIX - Portraits for non-players when class icons are enabled.
 - FIX - Fixed missing disable function for class icons
