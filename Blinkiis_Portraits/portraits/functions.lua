@@ -13,7 +13,6 @@ local mediaPortraits = BLINKIISPORTRAITS.media.portraits
 local mediaExtra = BLINKIISPORTRAITS.media.extra
 local mediaClass = BLINKIISPORTRAITS.media.class
 
-local unitFrames = nil
 local playerFaction = nil
 
 -- portrait texture update functions
@@ -78,7 +77,7 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, force)
 	end
 end
 
-function BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit )
+function BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
 	local showCastIcon = portrait.db.cast and BLINKIISPORTRAITS:UpdateCastIcon(portrait, event)
 	local forceDesaturate = BLINKIISPORTRAITS.db.profile.misc.desaturate
 
@@ -216,74 +215,109 @@ function BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, settings)
 	end
 end
 
--- initialize functions
-function BLINKIISPORTRAITS:GetUnitFrames(unit)
-	if not unitFrames then
-		unitFrames = {}
+-- initialize function
+local function GetUnitFrame(unit, type)
+	local unitFrames = {
+		elvui = {
+			player = "ElvUF_Player",
+			target = "ElvUF_Target",
+			pet = "ElvUF_Pet",
+			targettarget = "ElvUF_TargetTarget",
+			focus = BLINKIISPORTRAITS.Classic and nil or "ElvUF_Focus",
+			party = "ElvUF_PartyGroup1UnitButton",
+			boss = BLINKIISPORTRAITS.Classic and nil or "ElvUF_Boss",
+			arena = "ElvUF_Arena",
+		},
+		suf = {
+			player = "SUFUnitplayer",
+			target = "SUFUnittarget",
+			pet = "SUFUnitpet",
+			targettarget = "SUFUnittargettarget",
+			focus = BLINKIISPORTRAITS.Classic and nil or "SUFUnitfocus",
+			party = "SUFHeaderpartyUnitButton",
+			boss = BLINKIISPORTRAITS.Classic and nil or "SUFHeaderbossUnitButton",
+			arena = "SUFHeaderarenaUnitButton",
+		},
+		cell = {
+			player = "CUF_Player",
+			target = "CUF_Target",
+			pet = "CUF_Pet",
+			targettarget = "CUF_TargetTarget",
+			focus = BLINKIISPORTRAITS.Classic and nil or "CUF_Focus",
+			party = "CellPartyFrameHeaderUnitButton",
+			boss = "CUF_Boss",
+			arena = "CUF_Arena",
+		},
+		pb4 = {
+			singleUnits = function()
+				local PitBull4 = _G.PitBull4
+				local PB4_SingleUnits = PitBull4.db.profile.units
+				local validSingleUnits = {
+					player = true,
+					target = true,
+					pet = true,
+					targettarget = true,
+					focus = BLINKIISPORTRAITS.Classic and nil or true,
+				}
 
-		if BLINKIISPORTRAITS.Cell then
-			unitFrames = {
-				player = "CUF_Player",
-				target = "CUF_Target",
-				pet = "CUF_Pet",
-				targettarget = "CUF_TargetTarget",
-				focus = BLINKIISPORTRAITS.Classic and nil or "CUF_Focus",
-				party = "CellPartyFrameHeaderUnitButton",
-				boss = BLINKIISPORTRAITS.Classic and nil or "CUF_Boss",
-				arena = BLINKIISPORTRAITS.Classic and nil or "CUF_Arena",
-			}
-		elseif BLINKIISPORTRAITS.ELVUI then
-			unitFrames = {
-				player = "ElvUF_Player",
-				target = "ElvUF_Target",
-				pet = "ElvUF_Pet",
-				targettarget = "ElvUF_TargetTarget",
-				focus = BLINKIISPORTRAITS.Classic and nil or "ElvUF_Focus",
-				party = "ElvUF_PartyGroup1UnitButton",
-				boss = BLINKIISPORTRAITS.Classic and nil or "ElvUF_Boss",
-				arena = BLINKIISPORTRAITS.Classic and nil or "ElvUF_Arena",
-			}
-		elseif BLINKIISPORTRAITS.PB4 then
-			local PitBull4 = _G.PitBull4
-			local PB4_SingleUnits = PitBull4.db.profile.units
-			local PB4_GroupUnits = PitBull4.db.profile.groups
+				local frames = {}
+				for singleName, value in pairs(PB4_SingleUnits) do
+					if value and validSingleUnits[value.unit] then frames[value.unit] = "PitBull4_Frames_" .. singleName end
+				end
+				return frames
+			end,
+			groupUnits = function()
+				local PitBull4 = _G.PitBull4
+				local PB4_GroupUnits = PitBull4.db.profile.groups
+				local validGroupUnits = {
+					party = true,
+					boss = BLINKIISPORTRAITS.Classic and nil or true,
+					arena = BLINKIISPORTRAITS.Classic and nil or true,
+				}
 
-			local validSingleUnits = {
-				player = true,
-				target = true,
-				pet = true,
-				targettarget = true,
-				focus = BLINKIISPORTRAITS.Classic and nil or true,
-			}
+				local frames = {}
+				for groupName, value in pairs(PB4_GroupUnits) do
+					if value and validGroupUnits[value.unit_group] then frames[value.unit_group] = format("PitBull4_Groups_%sUnitButton", groupName) end
+				end
+				return frames
+			end,
+		},
+	}
 
-			local validGroupUnits = {
-				party = true,
-				boss = BLINKIISPORTRAITS.Classic and nil or true,
-				arena = BLINKIISPORTRAITS.Classic and nil or true,
-			}
+	if type == "pb4" then
+		local singleFrames = unitFrames.pb4.singleUnits()
+		local groupFrames = unitFrames.pb4.groupUnits()
+		return singleFrames[unit] or groupFrames[unit]
+	else
+		return unitFrames[type][unit]
+	end
+end
 
-			for singleName, value in pairs(PB4_SingleUnits) do
-				if value and validSingleUnits[value.unit] then unitFrames[value.unit] = "PitBull4_Frames_" .. singleName end
-			end
-
-			for groupName, value in pairs(PB4_GroupUnits) do
-				if value and validGroupUnits[value.unit_group] then unitFrames[value.unit_group] = format("PitBull4_Groups_%sUnitButton", groupName) end
-			end
-		elseif BLINKIISPORTRAITS.SUF then
-			unitFrames = {
-				player = "SUFUnitplayer",
-				target = "SUFUnittarget",
-				pet = "SUFUnitpet",
-				targettarget = "SUFUnittargettarget",
-				focus = BLINKIISPORTRAITS.Classic and nil or "SUFUnitfocus",
-				party = "SUFHeaderpartyUnitButton",
-				boss = BLINKIISPORTRAITS.Classic and nil or "SUFHeaderbossUnitButton",
-				arena = BLINKIISPORTRAITS.Classic and nil or "SUFHeaderarenaUnitButton",
-			}
-		end
+function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
+	local type
+	if BLINKIISPORTRAITS.Cell and (parent == "auto" or parent == "cell") then
+		type = "cell"
+	elseif BLINKIISPORTRAITS.ELVUI and (parent == "auto" or parent == "elvui") then
+		type = "elvui"
+	elseif BLINKIISPORTRAITS.PB4 and (parent == "auto" or parent == "pb4") then
+		type = "pb4"
+	elseif BLINKIISPORTRAITS.SUF and (parent == "auto" or parent == "suf") then
+		type = "suf"
 	end
 
-	return unitFrames and unitFrames[unit]
+	if type then
+		return GetUnitFrame(unit, type)
+	else
+		if BLINKIISPORTRAITS.Cell then
+			return GetUnitFrame(unit, "cell")
+		elseif BLINKIISPORTRAITS.ELVUI then
+			return GetUnitFrame(unit, "elvui")
+		elseif BLINKIISPORTRAITS.PB4 then
+			return GetUnitFrame(unit, "pb4")
+		elseif BLINKIISPORTRAITS.SUF then
+			return GetUnitFrame(unit, "suf")
+		end
+	end
 end
 
 function BLINKIISPORTRAITS:RegisterEvents(portrait, events, cast)

@@ -84,6 +84,14 @@ local custom_classicons = {
 	texCoords = nil,
 }
 
+local parentFrames = {
+	elvui = "ElvUI",
+	suf = "Shadowed Unit Frames",
+	pb4 = "PitBull 4",
+	cell = "Cell",
+	auto = "Auto",
+}
+
 BLINKIISPORTRAITS.options = {
 	name = BLINKIISPORTRAITS.Name,
 	handler = BLINKIISPORTRAITS,
@@ -412,8 +420,21 @@ BLINKIISPORTRAITS.options = {
 					inline = true,
 					name = "Anchor",
 					args = {
-						anchor_select = {
+						frame_select = {
 							order = 1,
+							type = "select",
+							name = "Parent Frame",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.player.unitframe
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.player.unitframe = value
+								BLINKIISPORTRAITS:InitializePlayerPortrait()
+							end,
+							values = parentFrames,
+						},
+						anchor_select = {
+							order = 2,
 							type = "select",
 							name = "Anchor Point",
 							get = function(info)
@@ -441,7 +462,7 @@ BLINKIISPORTRAITS.options = {
 							},
 						},
 						offset_x_range = {
-							order = 2,
+							order = 3,
 							name = "X offset",
 							type = "range",
 							min = -256,
@@ -458,7 +479,7 @@ BLINKIISPORTRAITS.options = {
 							end,
 						},
 						range_ofsY = {
-							order = 3,
+							order = 4,
 							name = "Y offset",
 							type = "range",
 							min = -256,
@@ -644,8 +665,21 @@ BLINKIISPORTRAITS.options = {
 					inline = true,
 					name = "Anchor",
 					args = {
-						anchor_select = {
+						frame_select = {
 							order = 1,
+							type = "select",
+							name = "Parent Frame",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.target.unitframe
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.target.unitframe = value
+								BLINKIISPORTRAITS:InitializeTargetPortrait()
+							end,
+							values = parentFrames,
+						},
+						anchor_select = {
+							order = 2,
 							type = "select",
 							name = "Anchor Point",
 							get = function(info)
@@ -673,7 +707,7 @@ BLINKIISPORTRAITS.options = {
 							},
 						},
 						offset_x_range = {
-							order = 2,
+							order = 3,
 							name = "X offset",
 							type = "range",
 							min = -256,
@@ -690,7 +724,7 @@ BLINKIISPORTRAITS.options = {
 							end,
 						},
 						range_ofsY = {
-							order = 3,
+							order = 4,
 							name = "Y offset",
 							type = "range",
 							min = -256,
@@ -876,8 +910,21 @@ BLINKIISPORTRAITS.options = {
 					inline = true,
 					name = "Anchor",
 					args = {
-						anchor_select = {
+						frame_select = {
 							order = 1,
+							type = "select",
+							name = "Parent Frame",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.focus.unitframe
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.focus.unitframe = value
+								BLINKIISPORTRAITS:InitializeFocusPortrait()
+							end,
+							values = parentFrames,
+						},
+						anchor_select = {
+							order = 2,
 							type = "select",
 							name = "Anchor Point",
 							get = function(info)
@@ -905,7 +952,7 @@ BLINKIISPORTRAITS.options = {
 							},
 						},
 						offset_x_range = {
-							order = 2,
+							order = 3,
 							name = "X offset",
 							type = "range",
 							min = -256,
@@ -922,7 +969,7 @@ BLINKIISPORTRAITS.options = {
 							end,
 						},
 						range_ofsY = {
-							order = 3,
+							order = 4,
 							name = "Y offset",
 							type = "range",
 							min = -256,
@@ -1108,8 +1155,21 @@ BLINKIISPORTRAITS.options = {
 					inline = true,
 					name = "Anchor",
 					args = {
-						anchor_select = {
+						frame_select = {
 							order = 1,
+							type = "select",
+							name = "Parent Frame",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.targettarget.unitframe
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.targettarget.unitframe = value
+								BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
+							end,
+							values = parentFrames,
+						},
+						anchor_select = {
+							order = 2,
 							type = "select",
 							name = "Anchor Point",
 							get = function(info)
@@ -1137,7 +1197,7 @@ BLINKIISPORTRAITS.options = {
 							},
 						},
 						offset_x_range = {
-							order = 2,
+							order = 3,
 							name = "X offset",
 							type = "range",
 							min = -256,
@@ -1154,7 +1214,7 @@ BLINKIISPORTRAITS.options = {
 							end,
 						},
 						range_ofsY = {
-							order = 3,
+							order = 4,
 							name = "Y offset",
 							type = "range",
 							min = -256,
@@ -1340,8 +1400,21 @@ BLINKIISPORTRAITS.options = {
 					inline = true,
 					name = "Anchor",
 					args = {
-						anchor_select = {
+						frame_select = {
 							order = 1,
+							type = "select",
+							name = "Parent Frame",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.pet.unitframe
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.pet.unitframe = value
+								BLINKIISPORTRAITS:InitializePetPortrait()
+							end,
+							values = parentFrames,
+						},
+						anchor_select = {
+							order = 2,
 							type = "select",
 							name = "Anchor Point",
 							get = function(info)
@@ -1369,7 +1442,7 @@ BLINKIISPORTRAITS.options = {
 							},
 						},
 						offset_x_range = {
-							order = 2,
+							order = 3,
 							name = "X offset",
 							type = "range",
 							min = -256,
@@ -1386,7 +1459,7 @@ BLINKIISPORTRAITS.options = {
 							end,
 						},
 						range_ofsY = {
-							order = 3,
+							order = 4,
 							name = "Y offset",
 							type = "range",
 							min = -256,
@@ -1572,8 +1645,21 @@ BLINKIISPORTRAITS.options = {
 					inline = true,
 					name = "Anchor",
 					args = {
-						anchor_select = {
+						frame_select = {
 							order = 1,
+							type = "select",
+							name = "Parent Frame",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.party.unitframe
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.party.unitframe = value
+								BLINKIISPORTRAITS:InitializePartyPortrait()
+							end,
+							values = parentFrames,
+						},
+						anchor_select = {
+							order = 2,
 							type = "select",
 							name = "Anchor Point",
 							get = function(info)
@@ -1601,7 +1687,7 @@ BLINKIISPORTRAITS.options = {
 							},
 						},
 						offset_x_range = {
-							order = 2,
+							order = 3,
 							name = "X offset",
 							type = "range",
 							min = -256,
@@ -1618,7 +1704,7 @@ BLINKIISPORTRAITS.options = {
 							end,
 						},
 						range_ofsY = {
-							order = 3,
+							order = 4,
 							name = "Y offset",
 							type = "range",
 							min = -256,
@@ -1783,8 +1869,21 @@ BLINKIISPORTRAITS.options = {
 					inline = true,
 					name = "Anchor",
 					args = {
-						anchor_select = {
+						frame_select = {
 							order = 1,
+							type = "select",
+							name = "Parent Frame",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.boss.unitframe
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.boss.unitframe = value
+								BLINKIISPORTRAITS:InitializeBossPortrait()
+							end,
+							values = parentFrames,
+						},
+						anchor_select = {
+							order = 2,
 							type = "select",
 							name = "Anchor Point",
 							get = function(info)
@@ -1812,7 +1911,7 @@ BLINKIISPORTRAITS.options = {
 							},
 						},
 						offset_x_range = {
-							order = 2,
+							order = 3,
 							name = "X offset",
 							type = "range",
 							min = -256,
@@ -1829,7 +1928,7 @@ BLINKIISPORTRAITS.options = {
 							end,
 						},
 						range_ofsY = {
-							order = 3,
+							order = 4,
 							name = "Y offset",
 							type = "range",
 							min = -256,
@@ -1994,8 +2093,21 @@ BLINKIISPORTRAITS.options = {
 					inline = true,
 					name = "Anchor",
 					args = {
-						anchor_select = {
+						frame_select = {
 							order = 1,
+							type = "select",
+							name = "Parent Frame",
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.arena.unitframe
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.arena.unitframe = value
+								BLINKIISPORTRAITS:InitializeArenaPortrait()
+							end,
+							values = parentFrames,
+						},
+						anchor_select = {
+							order = 2,
 							type = "select",
 							name = "Anchor Point",
 							get = function(info)
@@ -2023,7 +2135,7 @@ BLINKIISPORTRAITS.options = {
 							},
 						},
 						offset_x_range = {
-							order = 2,
+							order = 3,
 							name = "X offset",
 							type = "range",
 							min = -256,
@@ -2040,7 +2152,7 @@ BLINKIISPORTRAITS.options = {
 							end,
 						},
 						range_ofsY = {
-							order = 3,
+							order = 4,
 							name = "Y offset",
 							type = "range",
 							min = -256,

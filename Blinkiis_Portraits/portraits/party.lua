@@ -37,7 +37,7 @@ end
 function BLINKIISPORTRAITS:InitializePartyPortrait(demo)
 	if not BLINKIISPORTRAITS.db.profile.party.enable then return end
 
-	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("party")
+	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("party", BLINKIISPORTRAITS.db.profile.party.unitframe)
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits
 		local events =
@@ -53,6 +53,9 @@ function BLINKIISPORTRAITS:InitializePartyPortrait(demo)
 				portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait(unit, parent)
 
 				if portraits[unit] then
+					if BLINKIISPORTRAITS.db.profile[type].unitframe~= "auto" then
+						portraits[unit]:SetParent(_G[unitframe])
+					end
 					portraits[unit].events = {}
 					portraits[unit].parentFrame = parent
 					portraits[unit].unit = BLINKIISPORTRAITS.Cell and parent._unit or parent.unit

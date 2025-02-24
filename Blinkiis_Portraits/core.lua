@@ -80,6 +80,15 @@ local function UpdateGroupPortraits(_, typ)
 	end
 end
 
+local function IsSUFParent()
+	local units = { "player", "target", "targettarget", "focus", "party", "boss", "arena" }
+
+	for _, unit in ipairs(units) do
+		if BLINKIISPORTRAITS.db.profile[unit].unitframe == "suf" then return true end
+	end
+	return false
+end
+
 function BLINKIISPORTRAITS:OnInitialize()
 	BLINKIISPORTRAITS.SUF = IsAddOnLoaded("ShadowedUnitFrames")
 	BLINKIISPORTRAITS.ELVUI = IsAddOnLoaded("ElvUI")
@@ -89,11 +98,7 @@ function BLINKIISPORTRAITS:OnInitialize()
 	BLINKIISPORTRAITS:LoadDB()
 	BLINKIISPORTRAITS:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-	if IsAddOnLoaded("ElvUI") then
-		local E, _, _, _, _ = unpack(ElvUI)
-		local EP = E.Libs.EP
-		EP:RegisterPlugin(addonName, BLINKIISPORTRAITS.LoadOptions)
-	end
+	if IsAddOnLoaded("ElvUI") then ElvUI[1].Libs.EP:RegisterPlugin(addonName, BLINKIISPORTRAITS.LoadOptions) end
 
 	-- add options profile tab
 	BLINKIISPORTRAITS.options.args.profile_group = LibStub("AceDBOptions-3.0"):GetOptionsTable(BLINKIISPORTRAITS.db)
@@ -102,7 +107,7 @@ function BLINKIISPORTRAITS:OnInitialize()
 	self.db.RegisterCallback(self, "OnProfileChanged", BLINKIISPORTRAITS.LoadPortraits)
 
 	-- fix for suf
-	if BLINKIISPORTRAITS.SUF and ShadowUF then
+	if BLINKIISPORTRAITS.SUF and IsSUFParent() and ShadowUF then
 		if not BLINKIISPORTRAITS.SUF_Hook then
 			hooksecurefunc(ShadowUF, "LoadUnits", BLINKIISPORTRAITS.LoadPortraits)
 			hooksecurefunc(ShadowUF.modules.movers, "Update", BLINKIISPORTRAITS.LoadPortraits)

@@ -39,6 +39,7 @@ BLINKIISPORTRAITS.defaults.profile.player = {
 	strata = "AUTO",
 	texture = "blizz",
 	unitcolor = false,
+	unitframe = "auto",
 }
 
 BLINKIISPORTRAITS.defaults.profile.target = {
@@ -53,6 +54,7 @@ BLINKIISPORTRAITS.defaults.profile.target = {
 	strata = "AUTO",
 	texture = "blizz",
 	unitcolor = false,
+	unitframe = "auto",
 }
 
 BLINKIISPORTRAITS.defaults.profile.focus = {
@@ -67,6 +69,7 @@ BLINKIISPORTRAITS.defaults.profile.focus = {
 	strata = "AUTO",
 	texture = "blizz",
 	unitcolor = false,
+	unitframe = "auto",
 }
 
 BLINKIISPORTRAITS.defaults.profile.targettarget = {
@@ -81,6 +84,7 @@ BLINKIISPORTRAITS.defaults.profile.targettarget = {
 	strata = "AUTO",
 	texture = "blizz",
 	unitcolor = false,
+	unitframe = "auto",
 }
 
 BLINKIISPORTRAITS.defaults.profile.pet = {
@@ -95,6 +99,7 @@ BLINKIISPORTRAITS.defaults.profile.pet = {
 	strata = "AUTO",
 	texture = "blizz",
 	unitcolor = false,
+	unitframe = "auto",
 }
 
 BLINKIISPORTRAITS.defaults.profile.party = {
@@ -109,6 +114,7 @@ BLINKIISPORTRAITS.defaults.profile.party = {
 	strata = "AUTO",
 	texture = "blizz",
 	unitcolor = false,
+	unitframe = "auto",
 }
 
 BLINKIISPORTRAITS.defaults.profile.boss = {
@@ -122,6 +128,7 @@ BLINKIISPORTRAITS.defaults.profile.boss = {
 	strata = "AUTO",
 	texture = "blizz",
 	unitcolor = false,
+	unitframe = "auto",
 }
 
 BLINKIISPORTRAITS.defaults.profile.arena = {
@@ -135,6 +142,7 @@ BLINKIISPORTRAITS.defaults.profile.arena = {
 	strata = "AUTO",
 	texture = "blizz",
 	unitcolor = false,
+	unitframe = "auto",
 }
 
 BLINKIISPORTRAITS.defaults.profile.colors = {

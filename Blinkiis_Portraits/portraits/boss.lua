@@ -38,7 +38,7 @@ end
 function BLINKIISPORTRAITS:InitializeBossPortrait(demo)
 	if not BLINKIISPORTRAITS.db.profile.boss.enable then return end
 
-	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("boss")
+	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("boss", BLINKIISPORTRAITS.db.profile.boss.unitframe)
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits
 		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "INSTANCE_ENCOUNTER_ENGAGE_UNIT" }
@@ -53,6 +53,9 @@ function BLINKIISPORTRAITS:InitializeBossPortrait(demo)
 				portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait(unit, parent)
 
 				if portraits[unit] then
+					if BLINKIISPORTRAITS.db.profile[type].unitframe~= "auto" then
+						portraits[unit]:SetParent(_G[unitframe])
+					end
 					portraits[unit].events = {}
 					portraits[unit].parentFrame = parent
 					portraits[unit].unit = BLINKIISPORTRAITS.Cell and parent._unit or parent.unit

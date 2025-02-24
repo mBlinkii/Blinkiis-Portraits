@@ -34,7 +34,7 @@ end
 function BLINKIISPORTRAITS:InitializeFocusPortrait()
 	if not BLINKIISPORTRAITS.db.profile.focus.enable then return end
 
-	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("focus")
+	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("focus", BLINKIISPORTRAITS.db.profile.focus.unitframe)
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits
 		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "PLAYER_FOCUS_CHANGED", "GROUP_ROSTER_UPDATE" }
@@ -47,6 +47,9 @@ function BLINKIISPORTRAITS:InitializeFocusPortrait()
 			portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait("focus", _G[unitframe])
 
 			if portraits[unit] then
+				if BLINKIISPORTRAITS.db.profile[type].unitframe~= "auto" then
+					portraits[unit]:SetParent(_G[unitframe])
+				end
 				portraits[unit].events = {}
 				portraits[unit].parentFrame = parent
 				portraits[unit].unit = BLINKIISPORTRAITS.Cell and parent._unit or parent.unit

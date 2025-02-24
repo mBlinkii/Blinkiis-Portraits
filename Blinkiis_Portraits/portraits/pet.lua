@@ -41,7 +41,7 @@ end
 function BLINKIISPORTRAITS:InitializePetPortrait()
 	if not BLINKIISPORTRAITS.db.profile.pet.enable then return end
 
-	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("pet")
+	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("pet", BLINKIISPORTRAITS.db.profile.pet.unitframe)
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits
 		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_PET", "UNIT_EXITED_VEHICLE", "PET_UI_UPDATE", "VEHICLE_UPDATE", "UNIT_EXITING_VEHICLE", "UNIT_ENTERED_VEHICLE" }
@@ -54,6 +54,9 @@ function BLINKIISPORTRAITS:InitializePetPortrait()
 			portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait("pet", _G[unitframe])
 
 			if portraits[unit] then
+				if BLINKIISPORTRAITS.db.profile[type].unitframe~= "auto" then
+					portraits[unit]:SetParent(_G[unitframe])
+				end
 				portraits[unit].events = {}
 				portraits[unit].parentFrame = parent
 				portraits[unit].unit = BLINKIISPORTRAITS.Cell and parent._unit or parent.unit
