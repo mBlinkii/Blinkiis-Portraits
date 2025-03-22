@@ -109,9 +109,10 @@ function BLINKIISPORTRAITS:OnInitialize()
 	-- fix for suf
 	if BLINKIISPORTRAITS.SUF and IsSUFParent() and ShadowUF then
 		if not BLINKIISPORTRAITS.SUF_Hook then
-			hooksecurefunc(ShadowUF, "LoadUnits", BLINKIISPORTRAITS.LoadPortraits)
+			--hooksecurefunc(ShadowUF, "LoadUnits", BLINKIISPORTRAITS.LoadPortraits)
 			hooksecurefunc(ShadowUF.modules.movers, "Update", BLINKIISPORTRAITS.LoadPortraits)
-
+			hooksecurefunc(ShadowUF.Units, "InitializeFrame", BLINKIISPORTRAITS.LoadPortraits)
+			hooksecurefunc(ShadowUF.Units, "UninitializeFrame", BLINKIISPORTRAITS.LoadPortraits)
 			BLINKIISPORTRAITS.SUF_Hook = true
 		end
 	end
