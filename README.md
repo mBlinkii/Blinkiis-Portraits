@@ -18,7 +18,7 @@ Blinkiis Portraits is a small addon for ElvUI, SUF, Cell and PitBull 4 to displa
    ## About The Project
    ![mMT Logo](https://raw.githubusercontent.com/mBlinkii/Blinkiis-Portraits/refs/heads/main/logo.png)
 
-   Blinkiis Portraits is a small addon for ElvUI, SUF and PitBull 4 to display additional 2D portraits. There are many different shapes and textures, there should be something for everyone to beautify their interface.
+   Blinkiis Portraits is a small addon for ElvUI, SUF, Cell and PitBull 4 to display additional 2D portraits. There are many different shapes and textures, there should be something for everyone to beautify their interface.
 
    ### Features
       - Portraits for: player, target, dead, pet, focus, party, arena, boss
