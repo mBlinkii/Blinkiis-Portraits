@@ -1,6 +1,12 @@
 # Changelog - ElvUI_mMediaTag
 
-## [ver. 1.25] - 21.03.2025
+## [ver. 1.26] - 23.03.2025
+### FIX
+- FIX - Update Bug wit SUF and Party frames
+### NEW
+- NEW - Parent frame can now select per dropdown, if you are using multiple unitframe addons like cell and suf
+
+## [ver. 1.25] - 21.02.2025
 ### FIX
 - FIX - Portraits for Player & Pet if the Player is in a Vehicle
 ### UPDATE
