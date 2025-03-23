@@ -5,7 +5,7 @@
 <img src="https://img.shields.io/github/downloads/mBlinkii/blinkiis-portraits/total" alt="Downloads">
 <h3 align="center">Blinkiis Portraits</h3>
 <p align="center">
-Blinkiis Portraits is a small addon for ElvUI, SUF and PitBull 4 to display additional 2D portraits. There are many different shapes and textures, there should be something for everyone to beautify their interface.
+Blinkiis Portraits is a small addon for ElvUI, SUF, Cell and PitBull 4 to display additional 2D portraits. There are many different shapes and textures, there should be something for everyone to beautify their interface.
 <br/>
 <br/>
 <a href="https://www.curseforge.com/wow/addons/blinkiis-portraits">Curse .</a>  
