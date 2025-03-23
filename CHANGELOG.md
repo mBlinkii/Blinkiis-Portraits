@@ -1,5 +1,9 @@
 # Changelog - ElvUI_mMediaTag
 
+## [ver. 1.27] - 23.03.2025
+### FIX
+- FIX - Removed dev prints leftover
+
 ## [ver. 1.26] - 23.03.2025
 ### FIX
 - FIX - Update Bug wit SUF and Party frames
