@@ -4,8 +4,6 @@ local function OnEvent(portrait, event, eventUnit)
 	local unit = (portrait.demo and not UnitExists(portrait.parentFrame.unit)) and "player" or portrait.parentFrame.unit
 	unit = (unit == portrait.type) and "player" or unit
 
-	print("OnEvent", portrait, portrait.parent, event, eventUnit, unit)
-
 	if not unit or not UnitExists(unit) or ((event == "PORTRAITS_UPDATED" or event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_HEALTH") and unit ~= eventUnit) then return end
 
 	portrait.unit = unit
@@ -37,7 +35,6 @@ local function OnEvent(portrait, event, eventUnit)
 end
 
 function BLINKIISPORTRAITS:InitializePartyPortrait(demo)
-	print("InitializePartyPortrait")
 	if not BLINKIISPORTRAITS.db.profile.party.enable then return end
 
 	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("party", BLINKIISPORTRAITS.db.profile.party.unitframe)
