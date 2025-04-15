@@ -12,6 +12,7 @@ Blinkiis Portraits is a small addon for ElvUI, SUF, Cell and PitBull 4 to displa
 <a href="https://github.com/mBlinkii/Blinkiis-Portraits/issues">Report Bug .</a>
 <a href="https://github.com/mBlinkii/Blinkiis-Portraits/issues">Request Feature</a>
 <a href="https://discord.gg/AE9XebMU49">Discord</a> 
+<a href="https://ko-fi.com/blinkii">Donation</a> 
 </p>
 </div> 
 
