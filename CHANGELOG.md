@@ -1,5 +1,9 @@
 # Changelog - ElvUI_mMediaTag
 
+## [ver. 1.28] - 16.04.2025
+### FIX
+- FIX - Bug with ElvUI Options search function
+
 ## [ver. 1.27] - 23.03.2025
 ### FIX
 - FIX - Removed dev prints leftover
