@@ -102,7 +102,7 @@ function BLINKIISPORTRAITS:OnInitialize()
 	BLINKIISPORTRAITS.options.args.profile_group = LibStub("AceDBOptions-3.0"):GetOptionsTable(BLINKIISPORTRAITS.db)
 
 	-- callback on profile change
-	if not BLINKIISPORTRAITS.ELVUI then self.db.RegisterCallback(self, "OnProfileChanged", BLINKIISPORTRAITS.LoadPortraits) end
+	self.db.RegisterCallback(self, "OnProfileChanged", BLINKIISPORTRAITS.LoadPortraits)
 
 	-- fix for suf
 	if BLINKIISPORTRAITS.SUF and IsSUFParent() and ShadowUF then

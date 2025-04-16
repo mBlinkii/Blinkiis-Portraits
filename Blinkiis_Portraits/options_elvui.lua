@@ -92,7 +92,7 @@ local parentFrames = {
 	auto = "Auto",
 }
 
-BLINKIISPORTRAITS.options = {
+BLINKIISPORTRAITS.options_elvui = {
 	name = BLINKIISPORTRAITS.Name,
 	handler = BLINKIISPORTRAITS,
 	type = "group",
@@ -2856,12 +2856,11 @@ BLINKIISPORTRAITS.options = {
 				},
 			},
 		},
-		profile_group = {},
 	},
 }
 
-do
-	-- add options
-	LibStub("AceConfig-3.0"):RegisterOptionsTable("BLINKIISPORTRAITS", BLINKIISPORTRAITS.options)
-	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BLINKIISPORTRAITS", BLINKIISPORTRAITS.Name)
+
+function BLINKIISPORTRAITS:LoadOptions()
+	local E, _, _, _, _ = unpack(ElvUI)
+	E.Options.args.BLINKIISPORTRAITS = BLINKIISPORTRAITS.options_elvui
 end

@@ -31,6 +31,7 @@ libs\Ace3\AceSerializer-3.0\AceSerializer-3.0.xml
 
 core.lua
 options.lua
+options_elvui.lua
 cmd.lua
 defaults.lua
 popup.lua
