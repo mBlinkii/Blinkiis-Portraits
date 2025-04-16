@@ -98,24 +98,24 @@ function BLINKIISPORTRAITS:OnInitialize()
 	BLINKIISPORTRAITS:LoadDB()
 	BLINKIISPORTRAITS:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-	if IsAddOnLoaded("ElvUI") then ElvUI[1].Libs.EP:RegisterPlugin(addonName, BLINKIISPORTRAITS.LoadOptions) end
-
 	-- add options profile tab
 	BLINKIISPORTRAITS.options.args.profile_group = LibStub("AceDBOptions-3.0"):GetOptionsTable(BLINKIISPORTRAITS.db)
 
 	-- callback on profile change
-	self.db.RegisterCallback(self, "OnProfileChanged", BLINKIISPORTRAITS.LoadPortraits)
+	if not BLINKIISPORTRAITS.ELVUI then self.db.RegisterCallback(self, "OnProfileChanged", BLINKIISPORTRAITS.LoadPortraits) end
 
 	-- fix for suf
 	if BLINKIISPORTRAITS.SUF and IsSUFParent() and ShadowUF then
 		if not BLINKIISPORTRAITS.SUF_Hook then
-			--hooksecurefunc(ShadowUF, "LoadUnits", BLINKIISPORTRAITS.LoadPortraits)
 			hooksecurefunc(ShadowUF.modules.movers, "Update", BLINKIISPORTRAITS.LoadPortraits)
 			hooksecurefunc(ShadowUF.Units, "InitializeFrame", BLINKIISPORTRAITS.LoadPortraits)
 			hooksecurefunc(ShadowUF.Units, "UninitializeFrame", BLINKIISPORTRAITS.LoadPortraits)
 			BLINKIISPORTRAITS.SUF_Hook = true
 		end
 	end
+
+	-- add options to elvui options
+	if IsAddOnLoaded("ElvUI") then ElvUI[1].Libs.EP:RegisterPlugin(addonName, BLINKIISPORTRAITS.LoadOptions) end
 
 	-- elvui demo mode
 	if BLINKIISPORTRAITS.ELVUI and ElvUI then
