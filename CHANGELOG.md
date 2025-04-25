@@ -1,5 +1,9 @@
 # Changelog - ElvUI_mMediaTag
 
+## [ver. 1.29] - 25.04.2025
+### UPDATE
+- UPDATE - TOC Game Version
+
 ## [ver. 1.28] - 16.04.2025
 ### FIX
 - FIX - Bug with ElvUI Options search function
