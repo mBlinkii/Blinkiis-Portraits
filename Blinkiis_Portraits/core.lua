@@ -68,12 +68,12 @@ function BLINKIISPORTRAITS:LoadPortraits()
 	BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
 end
 
-function BLINKIISPORTRAITS:UpdatePortraitsSUF()
+function BLINKIISPORTRAITS:DelayedUpdate()
 	C_Timer_After(0.1, BLINKIISPORTRAITS.LoadPortraits)
 end
 
-function BLINKIISPORTRAITS:PLAYER_ENTERING_WORLD(event)
-	BLINKIISPORTRAITS:LoadPortraits()
+function BLINKIISPORTRAITS:PLAYER_ENTERING_WORLD()
+	C_Timer_After(0.1, BLINKIISPORTRAITS.LoadPortraits)
 end
 
 local function UpdateGroupPortraits(_, typ)
@@ -113,11 +113,11 @@ function BLINKIISPORTRAITS:OnInitialize()
 	-- fix for suf
 	if BLINKIISPORTRAITS.SUF and IsSUFParent() and ShadowUF then
 		if not BLINKIISPORTRAITS.SUF_Hook then
-			hooksecurefunc(ShadowUF.Units, "CheckUnitStatus", BLINKIISPORTRAITS.UpdatePortraitsSUF)
-			hooksecurefunc(ShadowUF.Units, "InitializeFrame", BLINKIISPORTRAITS.UpdatePortraitsSUF)
-			hooksecurefunc(ShadowUF.Units, "UninitializeFrame", BLINKIISPORTRAITS.UpdatePortraitsSUF)
-			hooksecurefunc(ShadowUF.Units, "CheckGroupedUnitStatus", BLINKIISPORTRAITS.UpdatePortraitsSUF)
-			hooksecurefunc(ShadowUF.Units, "CheckUnitStatus", BLINKIISPORTRAITS.UpdatePortraitsSUF)
+			hooksecurefunc(ShadowUF.Units, "CheckUnitStatus", BLINKIISPORTRAITS.DelayedUpdate)
+			hooksecurefunc(ShadowUF.Units, "InitializeFrame", BLINKIISPORTRAITS.DelayedUpdate)
+			hooksecurefunc(ShadowUF.Units, "UninitializeFrame", BLINKIISPORTRAITS.DelayedUpdate)
+			hooksecurefunc(ShadowUF.Units, "CheckGroupedUnitStatus", BLINKIISPORTRAITS.DelayedUpdate)
+			hooksecurefunc(ShadowUF.Units, "CheckUnitStatus", BLINKIISPORTRAITS.DelayedUpdate)
 			BLINKIISPORTRAITS.SUF_Hook = true
 		end
 	end
