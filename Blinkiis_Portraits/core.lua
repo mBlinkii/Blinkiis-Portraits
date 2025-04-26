@@ -4,6 +4,7 @@ local IsAddOnLoaded = _G.C_AddOns and _G.C_AddOns.IsAddOnLoaded or IsAddOnLoaded
 
 -- addon name and namespace
 local addonName, _ = ...
+local C_Timer_After = C_Timer.After
 
 BLINKIISPORTRAITS = LibStub("AceAddon-3.0"):NewAddon("BLINKIISPORTRAITS", "AceEvent-3.0", "AceConsole-3.0")
 
@@ -19,6 +20,7 @@ BLINKIISPORTRAITS.SUF = nil
 BLINKIISPORTRAITS.ELVUI = nil
 BLINKIISPORTRAITS.PB4 = nil
 BLINKIISPORTRAITS.Cell = nil
+BLINKIISPORTRAITS.CachedBossIDs = {}
 
 do
 	BLINKIISPORTRAITS.Cata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
@@ -66,6 +68,10 @@ function BLINKIISPORTRAITS:LoadPortraits()
 	BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
 end
 
+function BLINKIISPORTRAITS:UpdatePortraitsSUF()
+	C_Timer_After(0.1, BLINKIISPORTRAITS.LoadPortraits)
+end
+
 function BLINKIISPORTRAITS:PLAYER_ENTERING_WORLD(event)
 	BLINKIISPORTRAITS:LoadPortraits()
 end
@@ -107,9 +113,11 @@ function BLINKIISPORTRAITS:OnInitialize()
 	-- fix for suf
 	if BLINKIISPORTRAITS.SUF and IsSUFParent() and ShadowUF then
 		if not BLINKIISPORTRAITS.SUF_Hook then
-			hooksecurefunc(ShadowUF.modules.movers, "Update", BLINKIISPORTRAITS.LoadPortraits)
-			hooksecurefunc(ShadowUF.Units, "InitializeFrame", BLINKIISPORTRAITS.LoadPortraits)
-			hooksecurefunc(ShadowUF.Units, "UninitializeFrame", BLINKIISPORTRAITS.LoadPortraits)
+			hooksecurefunc(ShadowUF.Units, "CheckUnitStatus", BLINKIISPORTRAITS.UpdatePortraitsSUF)
+			hooksecurefunc(ShadowUF.Units, "InitializeFrame", BLINKIISPORTRAITS.UpdatePortraitsSUF)
+			hooksecurefunc(ShadowUF.Units, "UninitializeFrame", BLINKIISPORTRAITS.UpdatePortraitsSUF)
+			hooksecurefunc(ShadowUF.Units, "CheckGroupedUnitStatus", BLINKIISPORTRAITS.UpdatePortraitsSUF)
+			hooksecurefunc(ShadowUF.Units, "CheckUnitStatus", BLINKIISPORTRAITS.UpdatePortraitsSUF)
 			BLINKIISPORTRAITS.SUF_Hook = true
 		end
 	end

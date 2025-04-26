@@ -16,6 +16,7 @@ local function OnEvent(portrait, event, eventUnit)
 
 	local guid = UnitGUID(unit)
 	if portrait.lastGUID ~= guid or portrait.forceUpdate then
+		if portrait.type == "boss" and guid then BLINKIISPORTRAITS.CachedBossIDs[guid] = guid end
 		local color, isPlayer, class = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead)
 
 		portrait.isPlayer = isPlayer
@@ -53,9 +54,7 @@ function BLINKIISPORTRAITS:InitializeBossPortrait(demo)
 				portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait(unit, parent)
 
 				if portraits[unit] then
-					if BLINKIISPORTRAITS.db.profile[type].unitframe~= "auto" then
-						portraits[unit]:SetParent(_G[unitframe])
-					end
+					if BLINKIISPORTRAITS.db.profile[type].unitframe ~= "auto" then portraits[unit]:SetParent(_G[unitframe]) end
 					portraits[unit].events = {}
 					portraits[unit].parentFrame = parent
 					portraits[unit].unit = BLINKIISPORTRAITS.Cell and parent._unit or parent.unit
