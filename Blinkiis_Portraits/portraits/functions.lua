@@ -355,19 +355,6 @@ function BLINKIISPORTRAITS:CreatePortrait(name, parent)
 	if parent then
 		local portrait = CreateFrame("Button", "BP_Portrait_" .. name, parent, "SecureUnitButtonTemplate")
 
-		local backdropInfo = {
-			bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-			edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-			tile = true,
-			tileEdge = true,
-			tileSize = 8,
-			edgeSize = 8,
-			insets = { left = 1, right = 1, top = 1, bottom = 1 },
-		}
-		portrait.bg =portrait:CreateTexture("BP_texture-bg" .. name, "ARTWORK", nil, 1)
-		portrait.bg:SetTexture("Interface\\Tooltips\\UI-Tooltip-Background")
-		portrait.bg:SetAllPoints(portrait)
-
 		-- texture
 		portrait.texture = portrait:CreateTexture("BP_texture-" .. name, "ARTWORK", nil, 4)
 		portrait.texture:SetPoint("CENTER", portrait, "CENTER", 0, 0)
