@@ -55,7 +55,7 @@ function BLINKIISPORTRAITS:InitializeArenaPortrait(demo)
 				portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait(unit, _G[unitframe .. i])
 
 				if portraits[unit] then
-					if BLINKIISPORTRAITS.db.profile[type].unitframe ~= "auto" then portraits[unit]:SetParent(_G[unitframe]) end
+					if BLINKIISPORTRAITS.db.profile[type].unitframe ~= "auto" then portraits[unit]:SetParent(_G[unitframe .. i]) end
 					local isCellParentFrame = (parentFrame == "cell") and BLINKIISPORTRAITS.Cell
 					portraits[unit].events = {}
 					portraits[unit].parentFrame = parent

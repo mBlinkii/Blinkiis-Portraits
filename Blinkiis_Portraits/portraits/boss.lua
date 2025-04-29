@@ -55,7 +55,7 @@ function BLINKIISPORTRAITS:InitializeBossPortrait(demo)
 				portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait(unit, parent)
 
 				if portraits[unit] then
-					if BLINKIISPORTRAITS.db.profile[type].unitframe ~= "auto" then portraits[unit]:SetParent(_G[unitframe]) end
+					if BLINKIISPORTRAITS.db.profile[type].unitframe ~= "auto" then portraits[unit]:SetParent(_G[unitframe .. i]) end
 					local isCellParentFrame = (parentFrame == "cell") and BLINKIISPORTRAITS.Cell
 					portraits[unit].events = {}
 					portraits[unit].parentFrame = parent
@@ -70,8 +70,8 @@ function BLINKIISPORTRAITS:InitializeBossPortrait(demo)
 
 					if demo then
 						portraits[unit].demo = not portraits[unit].demo
-					else
-						portraits[unit].demo = BLINKIISPORTRAITS.SUF and not ShadowUF.db.profile.locked
+					elseif BLINKIISPORTRAITS.SUF then
+						portraits[unit].demo = not ShadowUF.db.profile.locked
 					end
 
 					portraits[unit].isPlayer = nil
