@@ -306,16 +306,16 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
 	end
 
 	if type then
-		return GetUnitFrame(unit, type)
+		return GetUnitFrame(unit, type), type
 	else
 		if BLINKIISPORTRAITS.Cell then
-			return GetUnitFrame(unit, "cell")
+			return GetUnitFrame(unit, "cell"), "cell"
 		elseif BLINKIISPORTRAITS.ELVUI then
-			return GetUnitFrame(unit, "elvui")
+			return GetUnitFrame(unit, "elvui"), "elvui"
 		elseif BLINKIISPORTRAITS.PB4 then
-			return GetUnitFrame(unit, "pb4")
+			return GetUnitFrame(unit, "pb4"), "pb4"
 		elseif BLINKIISPORTRAITS.SUF then
-			return GetUnitFrame(unit, "suf")
+			return GetUnitFrame(unit, "suf"), "suf"
 		end
 	end
 end

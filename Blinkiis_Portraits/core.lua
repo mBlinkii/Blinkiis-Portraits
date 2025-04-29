@@ -69,11 +69,11 @@ function BLINKIISPORTRAITS:LoadPortraits()
 end
 
 function BLINKIISPORTRAITS:DelayedUpdate()
-	C_Timer_After(0.1, BLINKIISPORTRAITS.LoadPortraits)
+	C_Timer_After(0.5, BLINKIISPORTRAITS.LoadPortraits)
 end
 
 function BLINKIISPORTRAITS:PLAYER_ENTERING_WORLD()
-	C_Timer_After(0.1, BLINKIISPORTRAITS.LoadPortraits)
+	C_Timer_After(0.5, BLINKIISPORTRAITS.LoadPortraits)
 end
 
 local function UpdateGroupPortraits(_, typ)

@@ -2,7 +2,8 @@ local UnitGUID = UnitGUID
 local UnitExists = UnitExists
 
 local function OnEvent(portrait, event, eventUnit)
-	local unit = (portrait.demo and not UnitExists(portrait.parentFrame.unit)) and "player" or portrait.unit
+	local unit = portrait.isCellParentFrame and portrait.parentFrame._unit or portrait.parentFrame.unit
+	local unit = (portrait.demo and not UnitExists(unit)) and "player" or portrait.unit
 	if not unit or not UnitExists(unit) or ((event == "PORTRAITS_UPDATED" or event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_HEALTH") and unit ~= eventUnit) then return end
 
 	if event == "UNIT_HEALTH" then
@@ -34,7 +35,7 @@ end
 function BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
 	if not BLINKIISPORTRAITS.db.profile.targettarget.enable then return end
 
-	local unitframe = BLINKIISPORTRAITS:GetUnitFrames("targettarget", BLINKIISPORTRAITS.db.profile.targettarget.unitframe)
+	local unitframe, parentFrame = BLINKIISPORTRAITS:GetUnitFrames("targettarget", BLINKIISPORTRAITS.db.profile.targettarget.unitframe)
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits
 		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_TARGET", "GROUP_ROSTER_UPDATE" }
@@ -47,12 +48,12 @@ function BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
 			portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait("targettarget", _G[unitframe])
 
 			if portraits[unit] then
-				if BLINKIISPORTRAITS.db.profile[type].unitframe~= "auto" then
-					portraits[unit]:SetParent(_G[unitframe])
-				end
+				if BLINKIISPORTRAITS.db.profile[type].unitframe ~= "auto" then portraits[unit]:SetParent(_G[unitframe]) end
+				local isCellParentFrame = (parentFrame == "cell") and BLINKIISPORTRAITS.Cell
 				portraits[unit].events = {}
 				portraits[unit].parentFrame = parent
-				portraits[unit].unit = BLINKIISPORTRAITS.Cell and parent._unit or parent.unit
+				portraits[unit].isCellParentFrame = isCellParentFrame
+				portraits[unit].unit = isCellParentFrame and parent._unit or parent.unit
 				portraits[unit].type = type
 				portraits[unit].db = BLINKIISPORTRAITS.db.profile[type]
 				portraits[unit].size = BLINKIISPORTRAITS.db.profile[type].size
