@@ -430,6 +430,7 @@ BLINKIISPORTRAITS.options = {
 							set = function(info, value)
 								BLINKIISPORTRAITS.db.profile.player.unitframe = value
 								BLINKIISPORTRAITS:InitializePlayerPortrait()
+								StaticPopup_Show("BLINKIISPORTRAITS_RL")
 							end,
 							values = parentFrames,
 						},
@@ -675,6 +676,7 @@ BLINKIISPORTRAITS.options = {
 							set = function(info, value)
 								BLINKIISPORTRAITS.db.profile.target.unitframe = value
 								BLINKIISPORTRAITS:InitializeTargetPortrait()
+								StaticPopup_Show("BLINKIISPORTRAITS_RL")
 							end,
 							values = parentFrames,
 						},
@@ -920,6 +922,7 @@ BLINKIISPORTRAITS.options = {
 							set = function(info, value)
 								BLINKIISPORTRAITS.db.profile.focus.unitframe = value
 								BLINKIISPORTRAITS:InitializeFocusPortrait()
+								StaticPopup_Show("BLINKIISPORTRAITS_RL")
 							end,
 							values = parentFrames,
 						},
@@ -1165,6 +1168,7 @@ BLINKIISPORTRAITS.options = {
 							set = function(info, value)
 								BLINKIISPORTRAITS.db.profile.targettarget.unitframe = value
 								BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
+								StaticPopup_Show("BLINKIISPORTRAITS_RL")
 							end,
 							values = parentFrames,
 						},
@@ -1410,6 +1414,7 @@ BLINKIISPORTRAITS.options = {
 							set = function(info, value)
 								BLINKIISPORTRAITS.db.profile.pet.unitframe = value
 								BLINKIISPORTRAITS:InitializePetPortrait()
+								StaticPopup_Show("BLINKIISPORTRAITS_RL")
 							end,
 							values = parentFrames,
 						},
@@ -1655,6 +1660,7 @@ BLINKIISPORTRAITS.options = {
 							set = function(info, value)
 								BLINKIISPORTRAITS.db.profile.party.unitframe = value
 								BLINKIISPORTRAITS:InitializePartyPortrait()
+								StaticPopup_Show("BLINKIISPORTRAITS_RL")
 							end,
 							values = parentFrames,
 						},
@@ -1879,6 +1885,7 @@ BLINKIISPORTRAITS.options = {
 							set = function(info, value)
 								BLINKIISPORTRAITS.db.profile.boss.unitframe = value
 								BLINKIISPORTRAITS:InitializeBossPortrait()
+								StaticPopup_Show("BLINKIISPORTRAITS_RL")
 							end,
 							values = parentFrames,
 						},
@@ -2103,6 +2110,7 @@ BLINKIISPORTRAITS.options = {
 							set = function(info, value)
 								BLINKIISPORTRAITS.db.profile.arena.unitframe = value
 								BLINKIISPORTRAITS:InitializeArenaPortrait()
+								StaticPopup_Show("BLINKIISPORTRAITS_RL")
 							end,
 							values = parentFrames,
 						},
