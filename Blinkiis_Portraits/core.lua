@@ -105,7 +105,7 @@ function BLINKIISPORTRAITS:OnInitialize()
 	BLINKIISPORTRAITS:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 	-- add options profile tab
-	BLINKIISPORTRAITS.options.args.profile_group = LibStub("AceDBOptions-3.0"):GetOptionsTable(BLINKIISPORTRAITS.db)
+	BLINKIISPORTRAITS.options.args.profile_group.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(BLINKIISPORTRAITS.db)
 
 	-- callback on profile change
 	self.db.RegisterCallback(self, "OnProfileChanged", BLINKIISPORTRAITS.LoadPortraits)

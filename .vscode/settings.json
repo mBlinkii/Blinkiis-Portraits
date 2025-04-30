@@ -176,6 +176,7 @@
     ],
     "cSpell.words": [
         "bgstyle",
+        "Blinkii",
         "BLINKII",
         "Blinkiis",
         "BLINKIISPORTRAITS",
@@ -246,6 +247,7 @@
         "Spellbook",
         "SPELLCAST",
         "strlower",
+        "strmatch",
         "strsplit",
         "TARGETABLE",
         "targettarget",
@@ -270,5 +272,12 @@
         "worldboss"
     ],
     "stylua.targetReleaseVersion": "latest",
-    "Lua.type.weakUnionCheck": true
+    "Lua.diagnostics.disable": [
+        "action-after-return",
+        "unused-label",
+        "unused-function",
+        "unused-local",
+        "undefined-global",
+        "assign-type-mismatch"
+    ]
 }

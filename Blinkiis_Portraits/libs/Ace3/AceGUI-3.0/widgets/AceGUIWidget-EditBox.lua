@@ -33,6 +33,7 @@ function _G.AceGUIEditBoxInsertLink(text)
 end
 
 local function ShowButton(self)
+	print("ShowButton", self.disablebutton)
 	if not self.disablebutton then
 		self.button:Show()
 		self.editbox:SetTextInsets(0, 20, 3, 3)

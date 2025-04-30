@@ -1,4 +1,6 @@
 local CopyTable = CopyTable
+local LibSerialize = LibStub("LibSerialize")
+local LibDeflate = LibStub("LibDeflate")
 
 local form = {
 	blizz = "Blizz",
@@ -90,6 +92,23 @@ local parentFrames = {
 	pb4 = "PitBull 4",
 	cell = "Cell",
 	auto = "Auto",
+}
+
+local exportProfile = {
+	author = nil,
+	name = nil,
+	version = nil,
+	bp_version = nil,
+	profile = nil,
+}
+
+local exportString = nil
+local importInfos = {
+	author = nil,
+	name = nil,
+	version = nil,
+	bp_version = nil,
+	profile = nil,
 }
 
 BLINKIISPORTRAITS.options = {
@@ -2864,7 +2883,203 @@ BLINKIISPORTRAITS.options = {
 				},
 			},
 		},
-		profile_group = {},
+		profile_group = {
+			order = 14,
+			type = "group",
+			name = "Profile",
+			childGroups = "tab",
+			args = {
+				profile = {},
+				import = {
+					order = 110,
+					type = "group",
+					name = "Import",
+					args = {
+						import = {
+							order = 1,
+							type = "input",
+							name = "Import",
+							multiline = true,
+							width = "full",
+							get = function()
+								if importInfos.success then
+									return format("Author: %s\nName: %s\nVersion: %s\nBP Version: %s %s", importInfos.author, importInfos.name, importInfos.version, importInfos.bp_version, BLINKIISPORTRAITS.Name)
+								else
+									return "ERROR - Import string is corrupted!"
+								end
+							 end,
+							set = function(info, import)
+								importInfos = {
+									author = nil,
+									name = nil,
+									version = nil,
+									bp_version = nil,
+									profile = nil,
+								}
+
+								print("import start >>>")
+								-- check the import string
+								if not strmatch(import, "^" .. "!BP") then return "ERROR 1 - This is not a Blinkii´s Portraits profile!" end
+								print("import string is valid")
+								local profileImport = gsub(import, "^" .. "!BP", "")
+
+								local decoded = LibDeflate:DecodeForPrint(profileImport)
+								if not decoded then return "ERROR 2 - Import string is corrupted!" end
+
+								print("decoded import string")
+								local decompressed = LibDeflate:DecompressDeflate(decoded)
+								if not decompressed then return "ERROR 4 - Import string is corrupted!" end
+								print("decompressed import string")
+
+								local success, outputDB = LibSerialize:Deserialize(decompressed)
+								if not success then return "ERROR 5 - Import string is corrupted!" end
+								print("deserialized import string")
+
+								if success and outputDB then
+									importInfos.success = success
+									importInfos.author = outputDB.author
+									importInfos.name = outputDB.name
+									importInfos.version = outputDB.version
+									importInfos.bp_version = outputDB.bp_version
+									importInfos.profile = outputDB.profile
+									print("import string is valid")
+									return format("Author: %s\nName: %s\nVersion: %s\nBP Version: %s", importInfos.author, importInfos.name, importInfos.version, importInfos.bp_version)
+
+								end
+
+								-- if success and infos then
+								-- 	local profiles = WarpDeplete.db:GetProfiles() -- get all profiles
+
+								-- 	if profiles then
+								-- 		-- check if the profile exists
+								-- 		local profileExists = false
+								-- 		for _, name in ipairs(profiles) do
+								-- 			if  name == infos.name then
+								-- 				profileExists = true
+								-- 				break
+								-- 			end
+								-- 		end
+								-- 		if profileExists then
+								-- 			print("PROFILE EXISTS", infos.name) -- do something here, like ask for overwrite
+								-- 		end
+
+								-- 		-- if the profile does not exist, we add it to the db
+								-- 		WarpDeplete.db.profiles[infos.name] = db -- add the profile to the db
+								-- 		WarpDeplete.db:SetProfile(infos.name) -- and set the new profile
+
+								-- 		print("Profile imported:", infos.name) -- print the imported profile name
+								-- 	end
+
+								-- 	-- after import we reset the vars
+								-- 	profileInfos = nil
+								-- 	importString = nil
+								-- end
+							end,
+						},
+						info = {
+							order = 2,
+							type = "description",
+							fontSize = "medium",
+							name = "Import your profile from another character.",
+						},
+					},
+				},
+				export = {
+					order = 120,
+					type = "group",
+					name = "Export",
+					args = {
+						export_button = {
+							order = 1,
+							type = "execute",
+							name = "Export",
+							func = function()
+								print("export start >>>")
+
+								-- get profile infos
+								exportProfile.author = exportProfile.author or "Unknown"
+								exportProfile.name = exportProfile.name or BLINKIISPORTRAITS.db:GetCurrentProfile()
+								exportProfile.version = exportProfile.version or "1.0"
+								exportProfile.bp_version = BLINKIISPORTRAITS.Version
+
+								print("author: " .. exportProfile.author)
+								print("name: " .. exportProfile.name)
+								print("version: " .. exportProfile.version)
+								print("bp_version: " .. exportProfile.bp_version)
+
+								-- get profile db
+								exportProfile.profile = BLINKIISPORTRAITS.db.profile
+
+								-- build export string
+								local serialized = LibSerialize:Serialize(exportProfile) -- serialized the profile db
+								local compressed = LibDeflate:CompressDeflate(serialized) -- compress the serialized string
+								local encoded = LibDeflate:EncodeForPrint(compressed) -- encode the compressed string for the wow addon channel
+								exportString = encoded and format("!BP%s", encoded) or nil -- add prefix to the encoded string
+
+								-- cleanup the export data
+								exportProfile.author = nil
+								exportProfile.name = nil
+								exportProfile.version = nil
+								exportProfile.bp_version = nil
+								exportProfile.profile = nil
+
+								print("export end <<<")
+							end,
+						},
+						export = {
+							order = 2,
+							type = "input",
+							name = "Export String",
+							multiline = true,
+							width = "full",
+							set = false,
+							get = function(info, import)
+								return exportString -- return the finished export string
+							end,
+						},
+						info = {
+							order = 3,
+							type = "description",
+							fontSize = "medium",
+							name = "This is where you can fill in your optional profile information.",
+						},
+						author = {
+							order = 4,
+							type = "input",
+							name = "Author",
+							multiline = false,
+							width = "smal",
+							get = false,
+							set = function(info, author)
+								exportProfile.author = author
+							end,
+						},
+						name = {
+							order = 5,
+							type = "input",
+							name = "Profile Name",
+							multiline = false,
+							width = "smal",
+							get = false,
+							set = function(info, name)
+								exportProfile.name = name
+							end,
+						},
+						version = {
+							order = 5,
+							type = "input",
+							name = "Profile Version",
+							multiline = false,
+							width = "smal",
+							get = false,
+							set = function(info, version)
+								exportProfile.version = version
+							end,
+						},
+					},
+				},
+			},
+		},
 	},
 }
 
