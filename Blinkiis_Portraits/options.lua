@@ -2903,11 +2903,18 @@ BLINKIISPORTRAITS.options = {
 							width = "full",
 							get = function()
 								if importInfos.success then
-									return format("Author: %s\nName: %s\nVersion: %s\nBP Version: %s %s", importInfos.author, importInfos.name, importInfos.version, importInfos.bp_version, BLINKIISPORTRAITS.Name)
-								else
-									return "ERROR - Import string is corrupted!"
+									return format(
+										"Author: %s\nName: %s\nVersion: %s\nBP Version: %s %s",
+										importInfos.author,
+										importInfos.name,
+										importInfos.version,
+										importInfos.bp_version,
+										BLINKIISPORTRAITS.Name
+									)
+								elseif importInfos.error then
+									return importInfos.error
 								end
-							 end,
+							end,
 							set = function(info, import)
 								importInfos = {
 									author = nil,
@@ -2917,23 +2924,31 @@ BLINKIISPORTRAITS.options = {
 									profile = nil,
 								}
 
-								print("import start >>>")
 								-- check the import string
-								if not strmatch(import, "^" .. "!BP") then return "ERROR 1 - This is not a Blinkii´s Portraits profile!" end
-								print("import string is valid")
+								if not strmatch(import, "^" .. "!BP") then
+									importInfos.error = "ERROR 1 - This is not a Blinkii´s Portraits profile!"
+									return
+								end
+
 								local profileImport = gsub(import, "^" .. "!BP", "")
 
 								local decoded = LibDeflate:DecodeForPrint(profileImport)
-								if not decoded then return "ERROR 2 - Import string is corrupted!" end
+								if not decoded then
+									importInfos.error = "ERROR 2 - Import string is corrupted!"
+									return
+								end
 
-								print("decoded import string")
 								local decompressed = LibDeflate:DecompressDeflate(decoded)
-								if not decompressed then return "ERROR 4 - Import string is corrupted!" end
-								print("decompressed import string")
+								if not decompressed then
+									importInfos.error = "ERROR 3 - Import string is corrupted!"
+									return
+								end
 
 								local success, outputDB = LibSerialize:Deserialize(decompressed)
-								if not success then return "ERROR 5 - Import string is corrupted!" end
-								print("deserialized import string")
+								if not success then
+									importInfos.error = "ERROR 4 - Import string is corrupted!"
+									return
+								end
 
 								if success and outputDB then
 									importInfos.success = success
@@ -2942,9 +2957,6 @@ BLINKIISPORTRAITS.options = {
 									importInfos.version = outputDB.version
 									importInfos.bp_version = outputDB.bp_version
 									importInfos.profile = outputDB.profile
-									print("import string is valid")
-									return format("Author: %s\nName: %s\nVersion: %s\nBP Version: %s", importInfos.author, importInfos.name, importInfos.version, importInfos.bp_version)
-
 								end
 
 								-- if success and infos then
