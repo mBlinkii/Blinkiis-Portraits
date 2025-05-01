@@ -2985,8 +2985,8 @@ BLINKIISPORTRAITS.options = {
 
 								-- show import infos
 								if importInfos.success then
-									local outputString = profileExists and "Author: %s\nName: %s (exists)\nVersion: %s\nBP Version: %s" or "Author: %s\nName: %s\nVersion: %s\nBP Version: %s"
-									return format(outputString, importInfos.author, importInfos.name, importInfos.version, importInfos.bp_version)
+									local outputString = profileExists and "Author: %s\nName: %s (exists)\nVersion: %s" or "Author: %s\nName: %s\nVersion: %s"
+									return format(outputString, importInfos.author, importInfos.name, importInfos.version)
 								elseif importInfos.error then
 									return importInfos.error
 								end
@@ -3090,8 +3090,16 @@ BLINKIISPORTRAITS.options = {
 								exportProfile.author = author
 							end,
 						},
-						name = {
+						info_author = {
 							order = 5,
+							type = "description",
+							fontSize = "medium",
+							name = function()
+								return exportProfile.author
+							end,
+						},
+						name = {
+							order = 6,
 							type = "input",
 							name = "Profile Name",
 							multiline = false,
@@ -3101,8 +3109,16 @@ BLINKIISPORTRAITS.options = {
 								exportProfile.name = name
 							end,
 						},
+						info_name = {
+							order = 7,
+							type = "description",
+							fontSize = "medium",
+							name = function()
+								return exportProfile.name
+							end,
+						},
 						version = {
-							order = 5,
+							order = 8,
 							type = "input",
 							name = "Profile Version",
 							multiline = false,
@@ -3110,6 +3126,14 @@ BLINKIISPORTRAITS.options = {
 							get = false,
 							set = function(info, version)
 								exportProfile.version = version
+							end,
+						},
+						info_version = {
+							order = 9,
+							type = "description",
+							fontSize = "medium",
+							name = function()
+								return exportProfile.version
 							end,
 						},
 					},
