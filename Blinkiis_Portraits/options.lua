@@ -3140,6 +3140,45 @@ BLINKIISPORTRAITS.options = {
 				},
 			},
 		},
+		about = {
+			order = 15,
+			type = "group",
+			name = "About",
+			args = {
+				help = {
+					order = 1,
+					type = "group",
+					inline = true,
+					name = "Help",
+					args = {
+						contact = {
+							order = 1,
+							type = "execute",
+							name = "Contact",
+							func = function()
+								StaticPopup_Show("BLINKIISPORTRAITS_EDITBOX", nil, nil, "mmediatag@gmx.de")
+							end,
+						},
+						git = {
+							order = 2,
+							type = "execute",
+							name = "GitHub",
+							func = function()
+							StaticPopup_Show("BLINKIISPORTRAITS_EDITBOX", nil, nil, "https://github.com/mBlinkii/Blinkiis-Portraits")
+							end,
+						},
+						discord = {
+							order = 3,
+							type = "execute",
+							name = "Discord",
+							func = function()
+								StaticPopup_Show("BLINKIISPORTRAITS_EDITBOX", nil, nil, "https://discord.com/invite/AE9XebMU49")
+							end,
+						},
+					},
+				},
+			},
+		},
 	},
 }
 
