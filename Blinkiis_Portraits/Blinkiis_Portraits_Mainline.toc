@@ -34,7 +34,6 @@ libs\LibSerialize\lib.xml
 
 core.lua
 options.lua
-options_elvui.lua
 cmd.lua
 defaults.lua
 popup.lua

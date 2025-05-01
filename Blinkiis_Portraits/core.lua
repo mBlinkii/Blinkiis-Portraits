@@ -122,8 +122,8 @@ function BLINKIISPORTRAITS:OnInitialize()
 		end
 	end
 
-	-- add options to elvui options
-	if IsAddOnLoaded("ElvUI") then ElvUI[1].Libs.EP:RegisterPlugin(addonName, BLINKIISPORTRAITS.LoadOptions) end
+	-- add options
+	--BLINKIISPORTRAITS:LoadOptions()
 
 	-- elvui demo mode
 	if BLINKIISPORTRAITS.ELVUI and ElvUI then
