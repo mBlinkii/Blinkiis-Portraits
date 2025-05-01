@@ -1,5 +1,17 @@
 # Changelog - ElvUI_mMediaTag
 
+## [ver. 1.30] - 01.05.2025
+### FIX 
+- FIX - Portraits does not work correctly with Cell Party and Boss Frames.
+- FIX - Force a reload interface after parent frame settings have been changed..
+- FIX - Higher Update delay to prevent Bugs with SUF.
+### UPDATE
+- UPDATE - Removed integration into ElvUI Options menu.
+- UPDATE - Reduced the clickable area of the Portraits.
+### NEW
+- NEW - Add About page to Options.
+- NEW - Profile Export/ Import function.
+
 ## [ver. 1.29] - 25.04.2025
 ### UPDATE
 - UPDATE - TOC Game Version
