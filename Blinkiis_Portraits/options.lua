@@ -111,6 +111,51 @@ local importInfos = {
 	profile = nil,
 }
 
+local function copyTable(src, dest)
+	if type(dest) ~= "table" then dest = {} end
+	if type(src) == "table" then
+		for k, v in pairs(src) do
+			if type(v) == "table" then
+				-- try to index the key first so that the metatable creates the defaults, if set, and use that table
+				v = copyTable(v, dest[k])
+			end
+			dest[k] = v
+		end
+	end
+	return dest
+end
+
+StaticPopupDialogs["BLINKIISPORTRAITS_PROFILE_EXISTS"] = {
+	text = "The profile you tried to import already exists. Choose a new name or accept to overwrite the existing profile.",
+	button1 = ACCEPT,
+	button2 = CANCEL,
+	hasEditBox = 1,
+	editBoxWidth = 350,
+	maxLetters = 127,
+	OnAccept = function(frame, data)
+		if importInfos and importInfos.success then
+			BLINKIISPORTRAITS.db.profiles[importInfos.name] = copyTable(BLINKIISPORTRAITS.defaults)
+			copyTable(importInfos.profile, BLINKIISPORTRAITS.db.profiles[importInfos.name])
+			BLINKIISPORTRAITS.db:SetProfile(importInfos.name)
+
+			importInfos = {}
+		end
+	end,
+	EditBoxOnTextChanged = function(frame)
+		local validInput = frame:GetText() ~= ""
+		frame:GetParent().button1:SetEnabled(validInput)
+		importInfos.name = validInput and frame:GetText() or importInfos.name
+	end,
+	OnShow = function(frame, data)
+		frame.editBox:SetText(data)
+		frame.editBox:SetFocus()
+	end,
+	timeout = 0,
+	whileDead = 1,
+	hideOnEscape = true,
+	preferredIndex = 3,
+}
+
 BLINKIISPORTRAITS.options = {
 	name = BLINKIISPORTRAITS.Name,
 	handler = BLINKIISPORTRAITS,
@@ -2895,34 +2940,59 @@ BLINKIISPORTRAITS.options = {
 					type = "group",
 					name = "Import",
 					args = {
-						import = {
+						import_button = {
 							order = 1,
+							type = "execute",
+							name = "Import",
+							disabled = function()
+								return not importInfos.success
+							end,
+							func = function()
+								-- import the profile
+								if importInfos and importInfos.success then
+									if importInfos.exists then
+										StaticPopup_Show("BLINKIISPORTRAITS_PROFILE_EXISTS", "", nil, importInfos.name)
+									else
+										BLINKIISPORTRAITS.db.profiles[importInfos.name] = copyTable(BLINKIISPORTRAITS.defaults)
+										copyTable(importInfos.profile, BLINKIISPORTRAITS.db.profiles[importInfos.name])
+										BLINKIISPORTRAITS.db:SetProfile(importInfos.name)
+
+										importInfos = {}
+									end
+								end
+							end,
+						},
+						import = {
+							order = 2,
 							type = "input",
 							name = "Import",
 							multiline = true,
 							width = "full",
 							get = function()
+								-- check if the a profile with same name exists
+								local profileExists
+								local profiles = BLINKIISPORTRAITS.db:GetProfiles()
+								if profiles then
+									for _, name in ipairs(profiles) do
+										if name == importInfos.name then
+											profileExists = true
+											break
+										end
+									end
+								end
+
+								importInfos.exists = profileExists
+
+								-- show import infos
 								if importInfos.success then
-									return format(
-										"Author: %s\nName: %s\nVersion: %s\nBP Version: %s %s",
-										importInfos.author,
-										importInfos.name,
-										importInfos.version,
-										importInfos.bp_version,
-										BLINKIISPORTRAITS.Name
-									)
+									local outputString = profileExists and "Author: %s\nName: %s (exists)\nVersion: %s\nBP Version: %s" or "Author: %s\nName: %s\nVersion: %s\nBP Version: %s"
+									return format(outputString, importInfos.author, importInfos.name, importInfos.version, importInfos.bp_version)
 								elseif importInfos.error then
 									return importInfos.error
 								end
 							end,
 							set = function(info, import)
-								importInfos = {
-									author = nil,
-									name = nil,
-									version = nil,
-									bp_version = nil,
-									profile = nil,
-								}
+								importInfos = {}
 
 								-- check the import string
 								if not strmatch(import, "^" .. "!BP") then
@@ -2950,6 +3020,7 @@ BLINKIISPORTRAITS.options = {
 									return
 								end
 
+								-- if success, the add the infos to the importInfos table
 								if success and outputDB then
 									importInfos.success = success
 									importInfos.author = outputDB.author
@@ -2958,41 +3029,7 @@ BLINKIISPORTRAITS.options = {
 									importInfos.bp_version = outputDB.bp_version
 									importInfos.profile = outputDB.profile
 								end
-
-								-- if success and infos then
-								-- 	local profiles = WarpDeplete.db:GetProfiles() -- get all profiles
-
-								-- 	if profiles then
-								-- 		-- check if the profile exists
-								-- 		local profileExists = false
-								-- 		for _, name in ipairs(profiles) do
-								-- 			if  name == infos.name then
-								-- 				profileExists = true
-								-- 				break
-								-- 			end
-								-- 		end
-								-- 		if profileExists then
-								-- 			print("PROFILE EXISTS", infos.name) -- do something here, like ask for overwrite
-								-- 		end
-
-								-- 		-- if the profile does not exist, we add it to the db
-								-- 		WarpDeplete.db.profiles[infos.name] = db -- add the profile to the db
-								-- 		WarpDeplete.db:SetProfile(infos.name) -- and set the new profile
-
-								-- 		print("Profile imported:", infos.name) -- print the imported profile name
-								-- 	end
-
-								-- 	-- after import we reset the vars
-								-- 	profileInfos = nil
-								-- 	importString = nil
-								-- end
 							end,
-						},
-						info = {
-							order = 2,
-							type = "description",
-							fontSize = "medium",
-							name = "Import your profile from another character.",
 						},
 					},
 				},
@@ -3006,18 +3043,11 @@ BLINKIISPORTRAITS.options = {
 							type = "execute",
 							name = "Export",
 							func = function()
-								print("export start >>>")
-
 								-- get profile infos
 								exportProfile.author = exportProfile.author or "Unknown"
 								exportProfile.name = exportProfile.name or BLINKIISPORTRAITS.db:GetCurrentProfile()
 								exportProfile.version = exportProfile.version or "1.0"
 								exportProfile.bp_version = BLINKIISPORTRAITS.Version
-
-								print("author: " .. exportProfile.author)
-								print("name: " .. exportProfile.name)
-								print("version: " .. exportProfile.version)
-								print("bp_version: " .. exportProfile.bp_version)
 
 								-- get profile db
 								exportProfile.profile = BLINKIISPORTRAITS.db.profile
@@ -3029,13 +3059,7 @@ BLINKIISPORTRAITS.options = {
 								exportString = encoded and format("!BP%s", encoded) or nil -- add prefix to the encoded string
 
 								-- cleanup the export data
-								exportProfile.author = nil
-								exportProfile.name = nil
-								exportProfile.version = nil
-								exportProfile.bp_version = nil
-								exportProfile.profile = nil
-
-								print("export end <<<")
+								exportProfile = {}
 							end,
 						},
 						export = {
