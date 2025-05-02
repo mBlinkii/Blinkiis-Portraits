@@ -1,5 +1,9 @@
 # Changelog - ElvUI_mMediaTag
 
+## [ver. 1.31] - 02.05.2025
+### FIX 
+- FIX - Reset Portrait Offset/ Zoom to prevent black Portraits.
+
 ## [ver. 1.30] - 01.05.2025
 ### FIX 
 - FIX - Portraits does not work correctly with Cell Party and Boss Frames.

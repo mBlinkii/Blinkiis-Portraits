@@ -134,4 +134,10 @@ function BLINKIISPORTRAITS:OnInitialize()
 
 	-- update custom class icons
 	BLINKIISPORTRAITS:UpdateCustomClassIcons()
+
+	-- db updates/ fixes
+	if not BLINKIISPORTRAITS.db.profile.db_Update or BLINKIISPORTRAITS.db.profile.db_Update < 1.30 then
+		BLINKIISPORTRAITS.db.profile.db_Update = tonumber(BLINKIISPORTRAITS.Version)
+		BLINKIISPORTRAITS.db.profile.misc.zoom = 0
+	end
 end
