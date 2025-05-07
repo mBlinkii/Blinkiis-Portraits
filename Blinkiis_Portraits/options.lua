@@ -91,6 +91,7 @@ local parentFrames = {
 	suf = "Shadowed Unit Frames",
 	pb4 = "PitBull 4",
 	cell = "Cell",
+	uuf = "Unhalted Unit Frames",
 	auto = "Auto",
 }
 

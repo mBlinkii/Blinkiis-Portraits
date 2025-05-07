@@ -283,6 +283,16 @@ local function GetUnitFrame(unit, type)
 				return frames
 			end,
 		},
+		uuf = {
+			player = "UUF_Player",
+			target = "UUF_Target",
+			pet = "UUF_Pet",
+			targettarget = "UUF_TargetTarget",
+			focus = BLINKIISPORTRAITS.Classic and nil or "UUF_Focus",
+			party = BLINKIISPORTRAITS.Classic and nil or "UUF_Party",
+			boss = BLINKIISPORTRAITS.Classic and nil or "UUF_Boss",
+			arena = BLINKIISPORTRAITS.Classic and nil or "UUF_Arena",
+		},
 	}
 
 	if type == "pb4" then
@@ -304,6 +314,8 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
 		type = "pb4"
 	elseif BLINKIISPORTRAITS.SUF and (parent == "auto" or parent == "suf") then
 		type = "suf"
+	elseif BLINKIISPORTRAITS.UUF and (parent == "auto" or parent == "uuf") then
+		type = "uuf"
 	end
 
 	if type then
@@ -317,6 +329,8 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
 			return GetUnitFrame(unit, "pb4"), "pb4"
 		elseif BLINKIISPORTRAITS.SUF then
 			return GetUnitFrame(unit, "suf"), "suf"
+		elseif BLINKIISPORTRAITS.UUF then
+			return GetUnitFrame(unit, "uuf"), "uuf"
 		end
 	end
 end
