@@ -42,6 +42,13 @@ BLINKIISPORTRAITS.media = {
 			mask_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\diagonal_mask_b.tga",
 			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\diagonal_extra_b.tga",
 		},
+		diagonal_mirror = {
+			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\diagonal_mirror.tga",
+			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\diagonal_mask_b.tga",
+			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\diagonal_extra_b.tga",
+			mask_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\diagonal_mask_a.tga",
+			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\diagonal_extra_a.tga",
+		},
 		diamond = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\diamond.tga",
 			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\diamond_mask.tga",

@@ -7,6 +7,7 @@ local form = {
 	blizz_up = "Blizz Up",
 	circle = "Circle",
 	diagonal = "Diagonal",
+	diagonal_mirror = "Diagonal Mirror",
 	diamond = "Diamond",
 	drop = "Drop",
 	drop_mirror = "Drop Mirror",
