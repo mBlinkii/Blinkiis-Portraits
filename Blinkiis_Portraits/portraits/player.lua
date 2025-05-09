@@ -19,6 +19,7 @@ local function OnEvent(portrait, event, eventUnit, arg2)
 	end
 
 	local guid = UnitGUID(unit)
+
 	if portrait.lastGUID ~= guid or portrait.forceUpdate then
 		local color, isPlayer, class = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead)
 

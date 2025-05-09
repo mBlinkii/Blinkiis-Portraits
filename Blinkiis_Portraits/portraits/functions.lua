@@ -288,10 +288,10 @@ local function GetUnitFrame(unit, type)
 			target = "UUF_Target",
 			pet = "UUF_Pet",
 			targettarget = "UUF_TargetTarget",
-			focus = BLINKIISPORTRAITS.Classic and nil or "UUF_Focus",
-			party = BLINKIISPORTRAITS.Classic and nil or "UUF_Party",
-			boss = BLINKIISPORTRAITS.Classic and nil or "UUF_Boss",
-			arena = BLINKIISPORTRAITS.Classic and nil or "UUF_Arena",
+			focus = "UUF_Focus",
+			party = nil, -- uff has no party frames
+			boss = "UUF_Boss",
+			arena = nil, -- uff has no arena frames
 		},
 	}
 
