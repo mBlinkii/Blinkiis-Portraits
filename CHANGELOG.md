@@ -1,5 +1,14 @@
 # Changelog - ElvUI_mMediaTag
 
+## [ver. 1.32] - 10.05.2025
+### FIX 
+- FIX - Extra Texture E & L was missing.
+- FIX - Portrait bug in Delves.
+### NEW
+- NEW - Add Portrait Texture Diagonal mirror.
+- NEW - Add support for Unhalted Unit Frames -thx to Cbogolin
+
+
 ## [ver. 1.31] - 02.05.2025
 ### FIX 
 - FIX - Reset Portrait Offset/ Zoom to prevent black Portraits.
