@@ -45,7 +45,7 @@ function BLINKIISPORTRAITS:InitializeBossPortrait(demo)
 		local portraits = BLINKIISPORTRAITS.Portraits
 		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "INSTANCE_ENCOUNTER_ENGAGE_UNIT" }
 
-		for i = 1, BLINKIISPORTRAITS.ELVUI and 8 or 5 do
+		for i = 1, (BLINKIISPORTRAITS.ELVUI or BLINKIISPORTRAITS.UUF) and 8 or 5 do
 			local parent = _G[unitframe .. i]
 
 			if parent then
