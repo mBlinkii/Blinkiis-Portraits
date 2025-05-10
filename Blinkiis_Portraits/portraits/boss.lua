@@ -17,7 +17,7 @@ local function OnEvent(portrait, event, eventUnit)
 
 	local guid = UnitGUID(unit)
 	if portrait.lastGUID ~= guid or portrait.forceUpdate then
-		if portrait.type == "boss" and guid then BLINKIISPORTRAITS.CachedBossIDs[guid] = guid end
+		if (portrait.type == "boss" and unit ~= "player") and guid then BLINKIISPORTRAITS.CachedBossIDs[guid] = guid end
 		local color, isPlayer, class = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead)
 
 		portrait.isPlayer = isPlayer
