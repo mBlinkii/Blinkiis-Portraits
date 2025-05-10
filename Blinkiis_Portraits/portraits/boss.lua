@@ -4,7 +4,7 @@ local UnitExists = UnitExists
 local function OnEvent(portrait, event, eventUnit)
 	local unit = portrait.isCellParentFrame and portrait.parentFrame._unit or portrait.parentFrame.unit
 	unit = (portrait.demo and not UnitExists(unit)) and "player" or unit
-	unit = (unit == portrait.type) and "player" or unit
+	unit = (unit == portrait.type or type(event) == "table") and "player" or unit
 
 	if not unit or not UnitExists(unit) or ((event == "PORTRAITS_UPDATED" or event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_HEALTH") and unit ~= eventUnit) then return end
 
@@ -84,6 +84,7 @@ function BLINKIISPORTRAITS:InitializeBossPortrait(demo)
 					BLINKIISPORTRAITS:UpdateCastSettings(portraits[unit])
 
 					BLINKIISPORTRAITS:InitPortrait(portraits[unit], events)
+					--OnEvent(portraits[unit], nil, "player")
 				end
 			end
 		end
