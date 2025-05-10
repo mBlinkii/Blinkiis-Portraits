@@ -1,5 +1,9 @@
 # Changelog - ElvUI_mMediaTag
 
+## [ver. 1.33] - 10.05.2025
+### FIX 
+- FIX - Prevent players from being marked as boss.
+
 ## [ver. 1.32] - 10.05.2025
 ### FIX 
 - FIX - Extra Texture E & L was missing.
