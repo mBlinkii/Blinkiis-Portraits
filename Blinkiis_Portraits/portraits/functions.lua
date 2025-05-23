@@ -110,7 +110,7 @@ function BLINKIISPORTRAITS:GetUnitColor(unit, isDead)
 	if isPlayer then
 		if BLINKIISPORTRAITS.db.profile.misc.force_reaction then
 			local unitFaction = select(1, UnitFactionGroup(unit))
-			playerFaction = select(1, UnitFactionGroup("player"))
+			playerFaction = playerFaction or select(1, UnitFactionGroup("player"))
 
 			local reactionType = (playerFaction == unitFaction) and "friendly" or "enemy"
 			return colors.reaction[reactionType], isPlayer
