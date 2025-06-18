@@ -1,4 +1,9 @@
-# Changelog - ElvUI_mMediaTag
+# Changelog
+
+## [ver. 1.34] - 18.06.2025
+### UPDATE
+- UPDATE - TOC Game Version
+- UPDATE - Optimized reaction check.
 
 ## [ver. 1.33] - 10.05.2025
 ### FIX 
@@ -10,7 +15,7 @@
 - FIX - Portrait bug in Delves.
 ### NEW
 - NEW - Add Portrait Texture Diagonal mirror.
-- NEW - Add support for Unhalted Unit Frames -thx to Cbogolin
+- NEW - Add support for Unhalted Unit Frames - thx to Cbogolin
 
 
 ## [ver. 1.31] - 02.05.2025
