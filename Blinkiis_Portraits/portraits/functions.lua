@@ -161,7 +161,7 @@ function BLINKIISPORTRAITS:UpdateSize(portrait, size, point)
 	if not InCombatLockdown() then
 		size = size or portrait.size
 		point = point or portrait.point
-		portrait:SetSize(size/2, size/2)
+		portrait:SetSize(size / 2, size / 2)
 		portrait.texture:SetSize(size, size)
 		portrait:ClearAllPoints()
 		portrait:SetPoint(point.point, portrait.parentFrame, point.relativePoint, point.x, point.y)
@@ -293,6 +293,16 @@ local function GetUnitFrame(unit, type)
 			boss = "UUF_Boss",
 			arena = nil, -- uff has no arena frames
 		},
+		ndui = {
+			player = "oUF_Player",
+			target = "oUF_Target",
+			pet = "oUF_Pet",
+			targettarget = "oUF_ToT",
+			focus = BLINKIISPORTRAITS.Classic and nil or "oUF_Focus",
+			party = "oUF_PartyUnitButton",
+			boss = BLINKIISPORTRAITS.Classic and nil or "oUF_Boss",
+			arena = BLINKIISPORTRAITS.Classic and nil or "oUF_Arena",
+		},
 	}
 
 	if type == "pb4" then
@@ -316,6 +326,8 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
 		type = "suf"
 	elseif BLINKIISPORTRAITS.UUF and (parent == "auto" or parent == "uuf") then
 		type = "uuf"
+	elseif BLINKIISPORTRAITS.NDUI and (parent == "auto" or parent == "ndui") then
+		type = "ndui"
 	end
 
 	if type then
@@ -331,6 +343,8 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
 			return GetUnitFrame(unit, "suf"), "suf"
 		elseif BLINKIISPORTRAITS.UUF then
 			return GetUnitFrame(unit, "uuf"), "uuf"
+		elseif BLINKIISPORTRAITS.NDUI then
+			return GetUnitFrame(unit, "ndui"), "ndui"
 		end
 	end
 end
