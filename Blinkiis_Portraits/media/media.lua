@@ -1,3 +1,5 @@
+local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits")
+
 local texCoords = {
 	WARRIOR = { 0, 0, 0, 0.125, 0.125, 0, 0.125, 0.125 },
 	MAGE = { 0.125, 0, 0.125, 0.125, 0.25, 0, 0.25, 0.125 },
@@ -174,17 +176,17 @@ BLINKIISPORTRAITS.media = {
 		blizzard = {
 			texture = "Interface\\WorldStateFrame\\Icons-Classes",
 			texCoords = CLASS_ICON_TCOORDS,
-			name = "Blizzard"
+			name = L["Blizzard"]
 		},
 		hd = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\class_round.tga",
 			texCoords = texCoords,
-			name = "Blizzard HD"
+			name = L["Blizzard HD"]
 		},
 		new = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\class_transparent.tga",
 			texCoords = texCoords,
-			name = "New Style"
+			name = L["New Style"]
 		},
 	},
 }
