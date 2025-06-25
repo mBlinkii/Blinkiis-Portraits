@@ -1,6 +1,7 @@
 local _G = _G
 local GetAddOnMetadata = _G.C_AddOns and _G.C_AddOns.GetAddOnMetadata or _G.GetAddOnMetadata
 local IsAddOnLoaded = _G.C_AddOns and _G.C_AddOns.IsAddOnLoaded or IsAddOnLoaded
+local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits")
 
 -- addon name and namespace
 local addonName, _ = ...
@@ -10,7 +11,7 @@ BLINKIISPORTRAITS = LibStub("AceAddon-3.0"):NewAddon("BLINKIISPORTRAITS", "AceEv
 
 -- settings
 BLINKIISPORTRAITS.Version = GetAddOnMetadata(addonName, "Version")
-BLINKIISPORTRAITS.Name = "|CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits"
+BLINKIISPORTRAITS.Name = L["|CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits"]
 BLINKIISPORTRAITS.Icon = "|TInterface\\Addons\\Blinkiis_Portraits\\media\\icon.tga:14:14|t"
 BLINKIISPORTRAITS.Logo = "Interface\\Addons\\Blinkiis_Portraits\\media\\logo.tga"
 BLINKIISPORTRAITS.media = {}
@@ -42,7 +43,7 @@ end
 function BLINKIISPORTRAITS_OnAddonCompartmentOnEnter()
 	GameTooltip:ClearLines()
 	GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR_RIGHT")
-	GameTooltip:AddDoubleLine(BLINKIISPORTRAITS.Name, format("|CFFF7DC6FVer. %s|r", BLINKIISPORTRAITS.Version))
+	GameTooltip:AddDoubleLine(BLINKIISPORTRAITS.Name, format(L["|CFFF7DC6FVer. %s|r"], BLINKIISPORTRAITS.Version))
 	GameTooltip:Show()
 end
 

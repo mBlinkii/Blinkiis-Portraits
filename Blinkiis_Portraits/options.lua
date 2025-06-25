@@ -1,83 +1,84 @@
 local CopyTable = CopyTable
 local LibSerialize = LibStub("LibSerialize")
 local LibDeflate = LibStub("LibDeflate")
+local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits")
 
 local form = {
-	blizz = "Blizz",
-	blizz_up = "Blizz Up",
-	circle = "Circle",
-	diagonal = "Diagonal",
-	diagonal_mirror = "Diagonal Mirror",
-	diamond = "Diamond",
-	drop = "Drop",
-	drop_mirror = "Drop Mirror",
-	drop_side = "Drop side",
-	drop_side_mirror = "Drop side Mirror",
-	egg = "Egg",
-	hexa = "Hexa",
-	pad = "Pad",
-	page = "Page",
-	page_mirror = "Page Mirror",
-	square = "Square",
-	square_round = "Square Round",
+	blizz = L["Blizz"],
+	blizz_up = L["Blizz Up"],
+	circle = L["Circle"],
+	diagonal = L["Diagonal"],
+	diagonal_mirror = L["Diagonal Mirror"],
+	diamond = L["Diamond"],
+	drop = L["Drop"],
+	drop_mirror = L["Drop Mirror"],
+	drop_side = L["Drop side"],
+	drop_side_mirror = L["Drop side Mirror"],
+	egg = L["Egg"],
+	hexa = L["Hexa"],
+	pad = L["Pad"],
+	page = L["Page"],
+	page_mirror = L["Page Mirror"],
+	square = L["Square"],
+	square_round = L["Square Round"],
 }
 local extra = {
-	extra_a = "Extra A",
-	extra_b = "Extra B",
-	extra_c = "Extra C",
-	extra_d = "Extra D",
-	extra_e = "Extra E",
-	extra_f = "Extra F",
-	extra_g = "Extra G",
-	extra_h = "Extra H",
-	extra_i = "Extra I",
-	extra_j = "Extra J",
-	extra_k = "Extra K",
-	extra_l = "Extra L",
-	extra_m = "Extra M",
+	extra_a = L["Extra A"],
+	extra_b = L["Extra B"],
+	extra_c = L["Extra C"],
+	extra_d = L["Extra D"],
+	extra_e = L["Extra E"],
+	extra_f = L["Extra F"],
+	extra_g = L["Extra G"],
+	extra_h = L["Extra H"],
+	extra_i = L["Extra I"],
+	extra_j = L["Extra J"],
+	extra_k = L["Extra K"],
+	extra_l = L["Extra L"],
+	extra_m = L["Extra M"],
 
-	animal = "Animal",
-	dragon_a = "Dragon A",
-	dragon_b = "Dragon B",
-	fire = "Fire",
-	leaf = "Leaf",
-	micro = "Micro",
-	misc = "Misc",
-	pen = "Pen",
-	star = "Star",
+	animal = L["Animal"],
+	dragon_a = L["Dragon A"],
+	dragon_b = L["Dragon B"],
+	fire = L["Fire"],
+	leaf = L["Leaf"],
+	micro = L["Micro"],
+	misc = L["Misc"],
+	pen = L["Pen"],
+	star = L["Star"],
 
-	egg_dragon = "Egg Dragon",
-	egg_leaf = "Egg Leaf",
-	egg_micro = "Egg Micro",
+	egg_dragon = L["Egg Dragon"],
+	egg_leaf = L["Egg Leaf"],
+	egg_micro = L["Egg Micro"],
 
-	pad_animal = "Pad Animal",
-	pad_dragon = "Pad Dragon",
-	pad_dragon_b = "Pad Dragon B",
-	pad_fire = "Pad Fire",
-	pad_leaf = "Pad Leaf",
-	pad_micro = "Pad Micro",
-	pad_misc = "Pad Misc",
-	pad_pen = "Pad Pen",
-	pad_star = "Pad Star",
+	pad_animal = L["Pad Animal"],
+	pad_dragon = L["Pad Dragon"],
+	pad_dragon_b = L["Pad Dragon B"],
+	pad_fire = L["Pad Fire"],
+	pad_leaf = L["Pad Leaf"],
+	pad_micro = L["Pad Micro"],
+	pad_misc = L["Pad Misc"],
+	pad_pen = L["Pad Pen"],
+	pad_star = L["Pad Star"],
 
-	page_dragon_a = "Page Dragon A",
-	page_dragon_b = "Page Dragon B",
+	page_dragon_a = L["Page Dragon A"],
+	page_dragon_b = L["Page Dragon B"],
 
-	blizz_gold = "Blizzard Gold",
-	blizz_silver = "Blizzard Silver",
-	blizz_boss = "Blizzard Boss",
-	blizz_neutral = "Blizzard Neutral",
-	blizz_boss_neutral = "Blizzard Boss Neutral",
+	blizz_gold = L["Blizz Gold"],
+	blizz_silver = L["Blizz Silver"],
+	blizz_boss = L["Blizz Boss"],
+	blizz_neutral = L["Blizz Neutral"],
+	blizz_boss_neutral = L["Blizz Boss Neutral"],
 }
 
 local frameStrata = {
-	BACKGROUND = "BACKGROUND",
-	LOW = "LOW",
-	MEDIUM = "MEDIUM",
-	HIGH = "HIGH",
-	DIALOG = "DIALOG",
-	TOOLTIP = "TOOLTIP",
-	AUTO = "Auto",
+	BACKGROUND = L["BACKGROUND"],
+	LOW = L["LOW"],
+	MEDIUM = L["MEDIUM"],
+	HIGH = L["HIGH"],
+	DIALOG = L["DIALOG"],
+	TOOLTIP = L["TOOLTIP"],
+	AUTO = L["AUTO"],
 }
 
 local custom_classicons = {
@@ -94,7 +95,7 @@ local parentFrames = {
 	cell = "Cell",
 	uuf = "Unhalted Unit Frames",
 	ndui = "NDui",
-	auto = "Auto",
+	auto = L["AUTO"],
 }
 
 local exportProfile = {
@@ -129,7 +130,7 @@ local function copyTable(src, dest)
 end
 
 StaticPopupDialogs["BLINKIISPORTRAITS_PROFILE_EXISTS"] = {
-	text = "The profile you tried to import already exists. Choose a new name or accept to overwrite the existing profile.",
+	text = L["The profile you tried to import already exists. Choose a new name or accept to overwrite the existing profile."],
 	button1 = ACCEPT,
 	button2 = CANCEL,
 	hasEditBox = 1,
@@ -168,17 +169,17 @@ BLINKIISPORTRAITS.options = {
 		general_group = {
 			order = 2,
 			type = "group",
-			name = "General",
+			name = L["General"],
 			args = {
 				misc_group = {
 					order = 1,
 					type = "group",
 					inline = true,
-					name = "Misc",
+					name = L["Misc"],
 					args = {
 						zoom_range = {
 							order = 1,
-							name = "Zoom/ Offset",
+							name = L["Zoom/ Offset"],
 							type = "range",
 							min = -1,
 							max = 1,
@@ -194,8 +195,8 @@ BLINKIISPORTRAITS.options = {
 						enable_force_desaturate = {
 							order = 2,
 							type = "toggle",
-							name = "Desaturate",
-							desc = "Will always desaturate the portraits.",
+							name = L["Desaturate"],
+							desc = L["Will always desaturate the portraits."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.misc.desaturate
 							end,
@@ -210,13 +211,13 @@ BLINKIISPORTRAITS.options = {
 					order = 2,
 					type = "group",
 					inline = true,
-					name = "Custom Textures",
+					name = L["Custom Textures"],
 					args = {
 						enable_custom_textures_toggle = {
 							order = 1,
 							type = "toggle",
-							name = "Enable",
-							desc = "Enable Custom Textures for Portrait.",
+							name = L["Enable"],
+							desc = L["Enable Custom Textures for Portrait."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.custom.enable
 							end,
@@ -228,11 +229,11 @@ BLINKIISPORTRAITS.options = {
 						description = {
 							order = 2,
 							type = "description",
-							name = "Put your custom textures in the Addon folder and add the path here (example MyMediaFolder\\MyTexture.tga).",
+							name = L["Put your custom textures in the Addon folder and add the path here (example MyMediaFolder\\MyTexture.tga)."],
 						},
 						texture_input = {
 							order = 3,
-							name = "Texture",
+							name = L["Texture"],
 							type = "input",
 							width = "smal",
 							disabled = function()
@@ -248,7 +249,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						mask_input = {
 							order = 4,
-							name = "Mask",
+							name = L["Mask"],
 							type = "input",
 							width = "smal",
 							disabled = function()
@@ -264,7 +265,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						extra_mask_input = {
 							order = 5,
-							name = "Extra Mask",
+							name = L["Extra Mask"],
 							type = "input",
 							width = "smal",
 							disabled = function()
@@ -286,8 +287,8 @@ BLINKIISPORTRAITS.options = {
 						enable_custom_extra_toggle = {
 							order = 7,
 							type = "toggle",
-							name = "Custom Extra Texture",
-							desc = "Enable Custom extra Textures for Portrait.",
+							name = L["Custom Extra Texture"],
+							desc = L["Enable Custom extra Textures for Portrait."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.custom.extra
 							end,
@@ -298,7 +299,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						rare_input = {
 							order = 8,
-							name = "Rare",
+							name = L["Rare"],
 							type = "input",
 							width = "smal",
 							disabled = function()
@@ -314,7 +315,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						elite_input = {
 							order = 9,
-							name = "Elite",
+							name = L["Elite"],
 							type = "input",
 							width = "smal",
 							disabled = function()
@@ -330,7 +331,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						rareelite_input = {
 							order = 10,
-							name = "Rare Elite",
+							name = L["Rare Elite"],
 							type = "input",
 							width = "smal",
 							disabled = function()
@@ -346,7 +347,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						boss_input = {
 							order = 11,
-							name = "Boss",
+							name = L["Boss"],
 							type = "input",
 							width = "smal",
 							disabled = function()
@@ -362,7 +363,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						player_input = {
 							order = 12,
-							name = "Player",
+							name = L["Player"],
 							type = "input",
 							width = "smal",
 							disabled = function()
@@ -383,13 +384,13 @@ BLINKIISPORTRAITS.options = {
 		player_group = {
 			order = 3,
 			type = "group",
-			name = "Player",
+			name = L["Player"],
 			args = {
 				enable_toggle = {
 					order = 1,
 					type = "toggle",
-					name = "Enable",
-					desc = "Enable Player Portrait.",
+					name = L["Enable"],
+					desc = L["Enable Player Portrait."],
 					get = function(info)
 						return BLINKIISPORTRAITS.db.profile.player.enable
 					end,
@@ -407,13 +408,13 @@ BLINKIISPORTRAITS.options = {
 					order = 2,
 					type = "group",
 					inline = true,
-					name = "General",
+					name = L["General"],
 					args = {
 						styles_select = {
 							order = 1,
 							type = "select",
-							name = "Style",
-							desc = "Select a portrait texture style.",
+							name = L["Style"],
+							desc = L["Select a portrait texture style."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.player.texture
 							end,
@@ -425,7 +426,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						size_range = {
 							order = 2,
-							name = "Size",
+							name = L["Size"],
 							type = "range",
 							min = 16,
 							max = 512,
@@ -443,8 +444,8 @@ BLINKIISPORTRAITS.options = {
 						cast_toggle = {
 							order = 3,
 							type = "toggle",
-							name = "Cast Icon",
-							desc = "Enable Cast Icons.",
+							name = L["Cast Icon"],
+							desc = L["Enable Cast Icons."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.player.cast
 							end,
@@ -456,8 +457,8 @@ BLINKIISPORTRAITS.options = {
 						extra_toggle = {
 							order = 4,
 							type = "toggle",
-							name = "Enable Extra Texture",
-							desc = "Shows the Extra Texture (rare/elite) for the Player Portrait.",
+							name = L["Enable Extra Texture"],
+							desc = L["Shows the Extra Texture (rare/elite) for the Player Portrait."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.player.extra
 							end,
@@ -469,8 +470,8 @@ BLINKIISPORTRAITS.options = {
 						unitcolor_toggle = {
 							order = 5,
 							type = "toggle",
-							name = "Unitcolor for Extra",
-							desc = "Use the unit color for the Extra (Rare/Elite) Texture.",
+							name = L["Unitcolor for Extra"],
+							desc = L["Use the unit color for the Extra (Rare/Elite) Texture."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.player.unitcolor
 							end,
@@ -485,12 +486,12 @@ BLINKIISPORTRAITS.options = {
 					order = 3,
 					type = "group",
 					inline = true,
-					name = "Anchor",
+					name = L["Anchor"],
 					args = {
 						frame_select = {
 							order = 1,
 							type = "select",
-							name = "Parent Frame",
+							name = L["Parent Frame"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.player.unitframe
 							end,
@@ -504,7 +505,7 @@ BLINKIISPORTRAITS.options = {
 						anchor_select = {
 							order = 2,
 							type = "select",
-							name = "Anchor Point",
+							name = L["Anchor Point"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.player.point.relativePoint
 							end,
@@ -524,14 +525,14 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:InitializePlayerPortrait()
 							end,
 							values = {
-								LEFT = "LEFT",
-								RIGHT = "RIGHT",
-								CENTER = "CENTER",
+								LEFT = L["LEFT"],
+								RIGHT = L["RIGHT"],
+								CENTER = L["CENTER"],
 							},
 						},
 						offset_x_range = {
 							order = 3,
-							name = "X offset",
+							name = L["X offset"],
 							type = "range",
 							min = -256,
 							max = 256,
@@ -548,7 +549,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						range_ofsY = {
 							order = 4,
-							name = "Y offset",
+							name = L["Y offset"],
 							type = "range",
 							min = -256,
 							max = 256,
@@ -569,12 +570,12 @@ BLINKIISPORTRAITS.options = {
 					order = 4,
 					type = "group",
 					inline = true,
-					name = "Frame Level/ Strata",
+					name = L["Frame Level/ Strata"],
 					args = {
 						strata_select = {
 							order = 1,
 							type = "select",
-							name = "Frame Strata",
+							name = L["Frame Strata"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.player.strata
 							end,
@@ -586,7 +587,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						level_range = {
 							order = 2,
-							name = "Frame Level",
+							name = L["Frame Level"],
 							type = "range",
 							min = 0,
 							max = 1000,
@@ -608,13 +609,13 @@ BLINKIISPORTRAITS.options = {
 		target_group = {
 			order = 4,
 			type = "group",
-			name = "Target",
+			name = L["Target"],
 			args = {
 				enable_toggle = {
 					order = 1,
 					type = "toggle",
-					name = "Enable",
-					desc = "Enable Target Portrait.",
+					name = L["Enable"],
+					desc = L["Enable Target Portrait."],
 					get = function(info)
 						return BLINKIISPORTRAITS.db.profile.target.enable
 					end,
@@ -632,13 +633,13 @@ BLINKIISPORTRAITS.options = {
 					order = 2,
 					type = "group",
 					inline = true,
-					name = "General",
+					name = L["General"],
 					args = {
 						styles_select = {
 							order = 1,
 							type = "select",
-							name = "Style",
-							desc = "Select a portrait texture style.",
+							name = L["Style"],
+							desc = L["Select a portrait texture style."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.target.texture
 							end,
@@ -650,7 +651,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						size_range = {
 							order = 2,
-							name = "Size",
+							name = L["Size"],
 							type = "range",
 							min = 16,
 							max = 512,
@@ -668,8 +669,8 @@ BLINKIISPORTRAITS.options = {
 						cast_toggle = {
 							order = 3,
 							type = "toggle",
-							name = "Cast Icon",
-							desc = "Enable Cast Icons.",
+							name = L["Cast Icon"],
+							desc = L["Enable Cast Icons."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.target.cast
 							end,
@@ -681,8 +682,8 @@ BLINKIISPORTRAITS.options = {
 						extra_toggle = {
 							order = 4,
 							type = "toggle",
-							name = "Enable Extra Texture",
-							desc = "Shows the Extra Texture (rare/elite) for the Target Portrait.",
+							name = L["Enable Extra Texture"],
+							desc = L["Shows the Extra Texture (rare/elite) for the Target Portrait."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.target.extra
 							end,
@@ -694,8 +695,8 @@ BLINKIISPORTRAITS.options = {
 						unitcolor_toggle = {
 							order = 5,
 							type = "toggle",
-							name = "Unitcolor for Extra",
-							desc = "Use the unit color for the Extra (Rare/Elite) Texture.",
+							name = L["Unitcolor for Extra"],
+							desc = L["Use the unit color for the Extra (Rare/Elite) Texture."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.target.unitcolor
 							end,
@@ -707,8 +708,8 @@ BLINKIISPORTRAITS.options = {
 						force_extra_toggle = {
 							order = 6,
 							type = "select",
-							name = "Force Extra Texture",
-							desc = "It will override the default extra texture, but will take care of rare/elite/boss units.",
+							name = L["Force Extra Texture"],
+							desc = L["It will override the default extra texture, but will take care of rare/elite/boss units."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.target.forceExtra
 							end,
@@ -717,12 +718,12 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:InitializeTargetPortrait()
 							end,
 							values = {
-								none = "None",
-								player = "Player",
-								rare = "Rare",
-								elite = "Elite",
-								rareelite = "Rare Elite",
-								boss = "Boss",
+								none = L["None"],
+								player = L["Player"],
+								rare = L["Rare"],
+								elite = L["Elite"],
+								rareelite = L["Rare Elite"],
+								boss = L["Boss"],
 							},
 						},
 					},
@@ -731,12 +732,12 @@ BLINKIISPORTRAITS.options = {
 					order = 3,
 					type = "group",
 					inline = true,
-					name = "Anchor",
+					name = L["Anchor"],
 					args = {
 						frame_select = {
 							order = 1,
 							type = "select",
-							name = "Parent Frame",
+							name = L["Parent Frame"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.target.unitframe
 							end,
@@ -750,7 +751,7 @@ BLINKIISPORTRAITS.options = {
 						anchor_select = {
 							order = 2,
 							type = "select",
-							name = "Anchor Point",
+							name = L["Anchor Point"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.target.point.relativePoint
 							end,
@@ -770,14 +771,14 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:InitializeTargetPortrait()
 							end,
 							values = {
-								LEFT = "LEFT",
-								RIGHT = "RIGHT",
-								CENTER = "CENTER",
+								LEFT = L["LEFT"],
+								RIGHT = L["RIGHT"],
+								CENTER = L["CENTER"],
 							},
 						},
 						offset_x_range = {
 							order = 3,
-							name = "X offset",
+							name = L["X offset"],
 							type = "range",
 							min = -256,
 							max = 256,
@@ -794,7 +795,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						range_ofsY = {
 							order = 4,
-							name = "Y offset",
+							name = L["Y offset"],
 							type = "range",
 							min = -256,
 							max = 256,
@@ -815,12 +816,12 @@ BLINKIISPORTRAITS.options = {
 					order = 4,
 					type = "group",
 					inline = true,
-					name = "Frame Level/ Strata",
+					name = L["Frame Level/ Strata"],
 					args = {
 						strata_select = {
 							order = 1,
 							type = "select",
-							name = "Frame Strata",
+							name = L["Frame Strata"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.target.strata
 							end,
@@ -832,7 +833,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						level_range = {
 							order = 2,
-							name = "Frame Level",
+							name = L["Frame Level"],
 							type = "range",
 							min = 0,
 							max = 1000,
@@ -854,13 +855,13 @@ BLINKIISPORTRAITS.options = {
 		focus_group = {
 			order = 5,
 			type = "group",
-			name = "Focus",
+			name = L["Focus"],
 			args = {
 				enable_toggle = {
 					order = 1,
 					type = "toggle",
-					name = "Enable",
-					desc = "Enable Focus Portrait.",
+					name = L["Enable"],
+					desc = L["Enable Focus Portrait."],
 					get = function(info)
 						return BLINKIISPORTRAITS.db.profile.focus.enable
 					end,
@@ -878,13 +879,13 @@ BLINKIISPORTRAITS.options = {
 					order = 2,
 					type = "group",
 					inline = true,
-					name = "General",
+					name = L["General"],
 					args = {
 						styles_select = {
 							order = 1,
 							type = "select",
-							name = "Style",
-							desc = "Select a portrait texture style.",
+							name = L["Style"],
+							desc = L["Select a portrait texture style."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.focus.texture
 							end,
@@ -896,7 +897,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						size_range = {
 							order = 2,
-							name = "Size",
+							name = L["Size"],
 							type = "range",
 							min = 16,
 							max = 512,
@@ -914,8 +915,8 @@ BLINKIISPORTRAITS.options = {
 						cast_toggle = {
 							order = 3,
 							type = "toggle",
-							name = "Cast Icon",
-							desc = "Enable Cast Icons.",
+							name = L["Cast Icon"],
+							desc = L["Enable Cast Icons."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.focus.cast
 							end,
@@ -927,8 +928,8 @@ BLINKIISPORTRAITS.options = {
 						extra_toggle = {
 							order = 4,
 							type = "toggle",
-							name = "Enable Extra Texture",
-							desc = "Shows the Extra Texture (rare/elite) for the Focus Portrait.",
+							name = L["Enable Extra Texture"],
+							desc = L["Shows the Extra Texture (rare/elite) for the Focus Portrait."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.focus.extra
 							end,
@@ -940,8 +941,8 @@ BLINKIISPORTRAITS.options = {
 						unitcolor_toggle = {
 							order = 5,
 							type = "toggle",
-							name = "Unitcolor for Extra",
-							desc = "Use the unit color for the Extra (Rare/Elite) Texture.",
+							name = L["Unitcolor for Extra"],
+							desc = L["Use the unit color for the Extra (Rare/Elite) Texture."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.focus.unitcolor
 							end,
@@ -953,8 +954,8 @@ BLINKIISPORTRAITS.options = {
 						force_extra_toggle = {
 							order = 6,
 							type = "select",
-							name = "Force Extra Texture",
-							desc = "It will override the default extra texture, but will take care of rare/elite/boss units.",
+							name = L["Force Extra Texture"],
+							desc = L["It will override the default extra texture, but will take care of rare/elite/boss units."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.focus.forceExtra
 							end,
@@ -963,12 +964,12 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:InitializeFocusPortrait()
 							end,
 							values = {
-								none = "None",
-								player = "Player",
-								rare = "Rare",
-								elite = "Elite",
-								rareelite = "Rare Elite",
-								boss = "Boss",
+								none = L["None"],
+								player = L["Player"],
+								rare = L["Rare"],
+								elite = L["Elite"],
+								rareelite = L["Rare Elite"],
+								boss = L["Boss"],
 							},
 						},
 					},
@@ -977,12 +978,12 @@ BLINKIISPORTRAITS.options = {
 					order = 3,
 					type = "group",
 					inline = true,
-					name = "Anchor",
+					name = L["Anchor"],
 					args = {
 						frame_select = {
 							order = 1,
 							type = "select",
-							name = "Parent Frame",
+							name = L["Parent Frame"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.focus.unitframe
 							end,
@@ -996,7 +997,7 @@ BLINKIISPORTRAITS.options = {
 						anchor_select = {
 							order = 2,
 							type = "select",
-							name = "Anchor Point",
+							name = L["Anchor Point"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.focus.point.relativePoint
 							end,
@@ -1016,14 +1017,14 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:InitializeFocusPortrait()
 							end,
 							values = {
-								LEFT = "LEFT",
-								RIGHT = "RIGHT",
-								CENTER = "CENTER",
+								LEFT = L["LEFT"],
+								RIGHT = L["RIGHT"],
+								CENTER = L["CENTER"],
 							},
 						},
 						offset_x_range = {
 							order = 3,
-							name = "X offset",
+							name = L["X offset"],
 							type = "range",
 							min = -256,
 							max = 256,
@@ -1040,7 +1041,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						range_ofsY = {
 							order = 4,
-							name = "Y offset",
+							name = L["Y offset"],
 							type = "range",
 							min = -256,
 							max = 256,
@@ -1061,12 +1062,12 @@ BLINKIISPORTRAITS.options = {
 					order = 4,
 					type = "group",
 					inline = true,
-					name = "Frame Level/ Strata",
+					name = L["Frame Level/ Strata"],
 					args = {
 						strata_select = {
 							order = 1,
 							type = "select",
-							name = "Frame Strata",
+							name = L["Frame Strata"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.focus.strata
 							end,
@@ -1078,7 +1079,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						level_range = {
 							order = 2,
-							name = "Frame Level",
+							name = L["Frame Level"],
 							type = "range",
 							min = 0,
 							max = 1000,
@@ -1100,13 +1101,13 @@ BLINKIISPORTRAITS.options = {
 		targettarget_group = {
 			order = 6,
 			type = "group",
-			name = "Target of Target",
+			name = L["Target of Target"],
 			args = {
 				enable_toggle = {
 					order = 1,
 					type = "toggle",
-					name = "Enable",
-					desc = "Enable Target of Target Portrait.",
+					name = L["Enable"],
+					desc = L["Enable Target of Target Portrait."],
 					get = function(info)
 						return BLINKIISPORTRAITS.db.profile.targettarget.enable
 					end,
@@ -1124,13 +1125,13 @@ BLINKIISPORTRAITS.options = {
 					order = 2,
 					type = "group",
 					inline = true,
-					name = "General",
+					name = L["General"],
 					args = {
 						styles_select = {
 							order = 1,
 							type = "select",
-							name = "Style",
-							desc = "Select a portrait texture style.",
+							name = L["Style"],
+							desc = L["Select a portrait texture style."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.targettarget.texture
 							end,
@@ -1142,7 +1143,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						size_range = {
 							order = 2,
-							name = "Size",
+							name = L["Size"],
 							type = "range",
 							min = 16,
 							max = 512,
@@ -1160,8 +1161,8 @@ BLINKIISPORTRAITS.options = {
 						cast_toggle = {
 							order = 3,
 							type = "toggle",
-							name = "Cast Icon",
-							desc = "Enable Cast Icons.",
+							name = L["Cast Icon"],
+							desc = L["Enable Cast Icons."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.targettarget.cast
 							end,
@@ -1173,8 +1174,8 @@ BLINKIISPORTRAITS.options = {
 						extra_toggle = {
 							order = 4,
 							type = "toggle",
-							name = "Enable Extra Texture",
-							desc = "Shows the Extra Texture (rare/elite) for the Target of Target Portrait.",
+							name = L["Enable Extra Texture"],
+							desc = L["Shows the Extra Texture (rare/elite) for the Target of Target Portrait."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.targettarget.extra
 							end,
@@ -1186,8 +1187,8 @@ BLINKIISPORTRAITS.options = {
 						unitcolor_toggle = {
 							order = 5,
 							type = "toggle",
-							name = "Unitcolor for Extra",
-							desc = "Use the unit color for the Extra (Rare/Elite) Texture.",
+							name = L["Unitcolor for Extra"],
+							desc = L["Use the unit color for the Extra (Rare/Elite) Texture."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.targettarget.unitcolor
 							end,
@@ -1199,8 +1200,8 @@ BLINKIISPORTRAITS.options = {
 						force_extra_toggle = {
 							order = 6,
 							type = "select",
-							name = "Force Extra Texture",
-							desc = "It will override the default extra texture, but will take care of rare/elite/boss units.",
+							name = L["Force Extra Texture"],
+							desc = L["It will override the default extra texture, but will take care of rare/elite/boss units."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.targettarget.forceExtra
 							end,
@@ -1209,12 +1210,12 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
 							end,
 							values = {
-								none = "None",
-								player = "Player",
-								rare = "Rare",
-								elite = "Elite",
-								rareelite = "Rare Elite",
-								boss = "Boss",
+								none = L["None"],
+								player = L["Player"],
+								rare = L["Rare"],
+								elite = L["Elite"],
+								rareelite = L["Rare Elite"],
+								boss = L["Boss"],
 							},
 						},
 					},
@@ -1223,12 +1224,12 @@ BLINKIISPORTRAITS.options = {
 					order = 3,
 					type = "group",
 					inline = true,
-					name = "Anchor",
+					name = L["Anchor"],
 					args = {
 						frame_select = {
 							order = 1,
 							type = "select",
-							name = "Parent Frame",
+							name = L["Parent Frame"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.targettarget.unitframe
 							end,
@@ -1242,7 +1243,7 @@ BLINKIISPORTRAITS.options = {
 						anchor_select = {
 							order = 2,
 							type = "select",
-							name = "Anchor Point",
+							name = L["Anchor Point"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.targettarget.point.relativePoint
 							end,
@@ -1262,14 +1263,14 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
 							end,
 							values = {
-								LEFT = "LEFT",
-								RIGHT = "RIGHT",
-								CENTER = "CENTER",
+								LEFT = L["LEFT"],
+								RIGHT = L["RIGHT"],
+								CENTER = L["CENTER"],
 							},
 						},
 						offset_x_range = {
 							order = 3,
-							name = "X offset",
+							name = L["X offset"],
 							type = "range",
 							min = -256,
 							max = 256,
@@ -1286,7 +1287,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						range_ofsY = {
 							order = 4,
-							name = "Y offset",
+							name = L["Y offset"],
 							type = "range",
 							min = -256,
 							max = 256,
@@ -1307,12 +1308,12 @@ BLINKIISPORTRAITS.options = {
 					order = 4,
 					type = "group",
 					inline = true,
-					name = "Frame Level/ Strata",
+					name = L["Frame Level/ Strata"],
 					args = {
 						strata_select = {
 							order = 1,
 							type = "select",
-							name = "Frame Strata",
+							name = L["Frame Strata"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.targettarget.strata
 							end,
@@ -1324,7 +1325,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						level_range = {
 							order = 2,
-							name = "Frame Level",
+							name = L["Frame Level"],
 							type = "range",
 							min = 0,
 							max = 1000,
@@ -1346,13 +1347,13 @@ BLINKIISPORTRAITS.options = {
 		pet_group = {
 			order = 7,
 			type = "group",
-			name = "Pet",
+			name = L["Pet"],
 			args = {
 				enable_toggle = {
 					order = 1,
 					type = "toggle",
-					name = "Enable",
-					desc = "Enable Pet Portrait.",
+					name = L["Enable"],
+					desc = L["Enable Pet Portrait."],
 					get = function(info)
 						return BLINKIISPORTRAITS.db.profile.pet.enable
 					end,
@@ -1370,13 +1371,13 @@ BLINKIISPORTRAITS.options = {
 					order = 2,
 					type = "group",
 					inline = true,
-					name = "General",
+					name = L["General"],
 					args = {
 						styles_select = {
 							order = 1,
 							type = "select",
-							name = "Style",
-							desc = "Select a portrait texture style.",
+							name = L["Style"],
+							desc = L["Select a portrait texture style."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.pet.texture
 							end,
@@ -1388,7 +1389,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						size_range = {
 							order = 2,
-							name = "Size",
+							name = L["Size"],
 							type = "range",
 							min = 16,
 							max = 512,
@@ -1406,8 +1407,8 @@ BLINKIISPORTRAITS.options = {
 						cast_toggle = {
 							order = 3,
 							type = "toggle",
-							name = "Cast Icon",
-							desc = "Enable Cast Icons.",
+							name = L["Cast Icon"],
+							desc = L["Enable Cast Icons."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.pet.cast
 							end,
@@ -1419,8 +1420,8 @@ BLINKIISPORTRAITS.options = {
 						extra_toggle = {
 							order = 4,
 							type = "toggle",
-							name = "Enable Extra Texture",
-							desc = "Shows the Extra Texture (rare/elite) for the Pet Portrait.",
+							name = L["Enable Extra Texture"],
+							desc = L["Shows the Extra Texture (rare/elite) for the Pet Portrait."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.pet.extra
 							end,
@@ -1432,8 +1433,8 @@ BLINKIISPORTRAITS.options = {
 						unitcolor_toggle = {
 							order = 5,
 							type = "toggle",
-							name = "Unitcolor for Extra",
-							desc = "Use the unit color for the Extra (Rare/Elite) Texture.",
+							name = L["Unitcolor for Extra"],
+							desc = L["Use the unit color for the Extra (Rare/Elite) Texture."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.pet.unitcolor
 							end,
@@ -1445,8 +1446,8 @@ BLINKIISPORTRAITS.options = {
 						force_extra_toggle = {
 							order = 6,
 							type = "select",
-							name = "Force Extra Texture",
-							desc = "It will override the default extra texture, but will take care of rare/elite/boss units.",
+							name = L["Force Extra Texture"],
+							desc = L["It will override the default extra texture, but will take care of rare/elite/boss units."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.pet.forceExtra
 							end,
@@ -1455,12 +1456,12 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:InitializePetPortrait()
 							end,
 							values = {
-								none = "None",
-								player = "Player",
-								rare = "Rare",
-								elite = "Elite",
-								rareelite = "Rare Elite",
-								boss = "Boss",
+								none = L["None"],
+								player = L["Player"],
+								rare = L["Rare"],
+								elite = L["Elite"],
+								rareelite = L["Rare Elite"],
+								boss = L["Boss"],
 							},
 						},
 					},
@@ -1469,12 +1470,12 @@ BLINKIISPORTRAITS.options = {
 					order = 3,
 					type = "group",
 					inline = true,
-					name = "Anchor",
+					name = L["Anchor"],
 					args = {
 						frame_select = {
 							order = 1,
 							type = "select",
-							name = "Parent Frame",
+							name = L["Parent Frame"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.pet.unitframe
 							end,
@@ -1488,7 +1489,7 @@ BLINKIISPORTRAITS.options = {
 						anchor_select = {
 							order = 2,
 							type = "select",
-							name = "Anchor Point",
+							name = L["Anchor Point"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.pet.point.relativePoint
 							end,
@@ -1508,14 +1509,14 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:InitializePetPortrait()
 							end,
 							values = {
-								LEFT = "LEFT",
-								RIGHT = "RIGHT",
-								CENTER = "CENTER",
+								LEFT = L["LEFT"],
+								RIGHT = L["RIGHT"],
+								CENTER = L["CENTER"],
 							},
 						},
 						offset_x_range = {
 							order = 3,
-							name = "X offset",
+							name = L["X offset"],
 							type = "range",
 							min = -256,
 							max = 256,
@@ -1532,7 +1533,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						range_ofsY = {
 							order = 4,
-							name = "Y offset",
+							name = L["Y offset"],
 							type = "range",
 							min = -256,
 							max = 256,
@@ -1553,12 +1554,12 @@ BLINKIISPORTRAITS.options = {
 					order = 4,
 					type = "group",
 					inline = true,
-					name = "Frame Level/ Strata",
+					name = L["Frame Level/ Strata"],
 					args = {
 						strata_select = {
 							order = 1,
 							type = "select",
-							name = "Frame Strata",
+							name = L["Frame Strata"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.pet.strata
 							end,
@@ -1570,7 +1571,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						level_range = {
 							order = 2,
-							name = "Frame Level",
+							name = L["Frame Level"],
 							type = "range",
 							min = 0,
 							max = 1000,
@@ -1592,13 +1593,13 @@ BLINKIISPORTRAITS.options = {
 		party_group = {
 			order = 8,
 			type = "group",
-			name = "Party",
+			name = L["Party"],
 			args = {
 				enable_toggle = {
 					order = 1,
 					type = "toggle",
-					name = "Enable",
-					desc = "Enable Party Portrait.",
+					name = L["Enable"],
+					desc = L["Enable Party Portrait."],
 					get = function(info)
 						return BLINKIISPORTRAITS.db.profile.party.enable
 					end,
@@ -1616,13 +1617,13 @@ BLINKIISPORTRAITS.options = {
 					order = 2,
 					type = "group",
 					inline = true,
-					name = "General",
+					name = L["General"],
 					args = {
 						styles_select = {
 							order = 1,
 							type = "select",
-							name = "Style",
-							desc = "Select a portrait texture style.",
+							name = L["Style"],
+							desc = L["Select a portrait texture style."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.party.texture
 							end,
@@ -1634,7 +1635,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						size_range = {
 							order = 2,
-							name = "Size",
+							name = L["Size"],
 							type = "range",
 							min = 16,
 							max = 512,
@@ -1652,8 +1653,8 @@ BLINKIISPORTRAITS.options = {
 						cast_toggle = {
 							order = 3,
 							type = "toggle",
-							name = "Cast Icon",
-							desc = "Enable Cast Icons.",
+							name = L["Cast Icon"],
+							desc = L["Enable Cast Icons."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.party.cast
 							end,
@@ -1665,8 +1666,8 @@ BLINKIISPORTRAITS.options = {
 						extra_toggle = {
 							order = 4,
 							type = "toggle",
-							name = "Enable Extra Texture",
-							desc = "Shows the Extra Texture (rare/elite) for the Party Portrait.",
+							name = L["Enable Extra Texture"],
+							desc = L["Shows the Extra Texture (rare/elite) for the Party Portrait."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.party.extra
 							end,
@@ -1678,8 +1679,8 @@ BLINKIISPORTRAITS.options = {
 						unitcolor_toggle = {
 							order = 5,
 							type = "toggle",
-							name = "Unitcolor for Extra",
-							desc = "Use the unit color for the Extra (Rare/Elite) Texture.",
+							name = L["Unitcolor for Extra"],
+							desc = L["Use the unit color for the Extra (Rare/Elite) Texture."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.party.unitcolor
 							end,
@@ -1691,8 +1692,8 @@ BLINKIISPORTRAITS.options = {
 						force_extra_toggle = {
 							order = 6,
 							type = "select",
-							name = "Force Extra Texture",
-							desc = "It will override the default extra texture, but will take care of rare/elite/boss units.",
+							name = L["Force Extra Texture"],
+							desc = L["It will override the default extra texture, but will take care of rare/elite/boss units."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.party.forceExtra
 							end,
@@ -1701,12 +1702,12 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:InitializePartyPortrait()
 							end,
 							values = {
-								none = "None",
-								player = "Player",
-								rare = "Rare",
-								elite = "Elite",
-								rareelite = "Rare Elite",
-								boss = "Boss",
+								none = L["None"],
+								player = L["Player"],
+								rare = L["Rare"],
+								elite = L["Elite"],
+								rareelite = L["Rare Elite"],
+								boss = L["Boss"],
 							},
 						},
 					},
@@ -1715,12 +1716,12 @@ BLINKIISPORTRAITS.options = {
 					order = 3,
 					type = "group",
 					inline = true,
-					name = "Anchor",
+					name = L["Anchor"],
 					args = {
 						frame_select = {
 							order = 1,
 							type = "select",
-							name = "Parent Frame",
+							name = L["Parent Frame"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.party.unitframe
 							end,
@@ -1734,7 +1735,7 @@ BLINKIISPORTRAITS.options = {
 						anchor_select = {
 							order = 2,
 							type = "select",
-							name = "Anchor Point",
+							name = L["Anchor Point"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.party.point.relativePoint
 							end,
@@ -1754,14 +1755,14 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:InitializePartyPortrait()
 							end,
 							values = {
-								LEFT = "LEFT",
-								RIGHT = "RIGHT",
-								CENTER = "CENTER",
+								LEFT = L["LEFT"],
+								RIGHT = L["RIGHT"],
+								CENTER = L["CENTER"],
 							},
 						},
 						offset_x_range = {
 							order = 3,
-							name = "X offset",
+							name = L["X offset"],
 							type = "range",
 							min = -256,
 							max = 256,
@@ -1778,7 +1779,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						range_ofsY = {
 							order = 4,
-							name = "Y offset",
+							name = L["Y offset"],
 							type = "range",
 							min = -256,
 							max = 256,
@@ -1799,12 +1800,12 @@ BLINKIISPORTRAITS.options = {
 					order = 4,
 					type = "group",
 					inline = true,
-					name = "Frame Level/ Strata",
+					name = L["Frame Level/ Strata"],
 					args = {
 						strata_select = {
 							order = 1,
 							type = "select",
-							name = "Frame Strata",
+							name = L["Frame Strata"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.party.strata
 							end,
@@ -1816,7 +1817,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						level_range = {
 							order = 2,
-							name = "Frame Level",
+							name = L["Frame Level"],
 							type = "range",
 							min = 0,
 							max = 1000,
@@ -1838,13 +1839,13 @@ BLINKIISPORTRAITS.options = {
 		boss_group = {
 			order = 9,
 			type = "group",
-			name = "Boss",
+			name = L["Boss"],
 			args = {
 				enable_toggle = {
 					order = 1,
 					type = "toggle",
-					name = "Enable",
-					desc = "Enable Boss Portrait.",
+					name = L["Enable"],
+					desc = L["Enable Boss Portrait."],
 					get = function(info)
 						return BLINKIISPORTRAITS.db.profile.boss.enable
 					end,
@@ -1862,13 +1863,13 @@ BLINKIISPORTRAITS.options = {
 					order = 2,
 					type = "group",
 					inline = true,
-					name = "General",
+					name = L["General"],
 					args = {
 						styles_select = {
 							order = 1,
 							type = "select",
-							name = "Style",
-							desc = "Select a portrait texture style.",
+							name = L["Style"],
+							desc = L["Select a portrait texture style."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.boss.texture
 							end,
@@ -1880,7 +1881,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						size_range = {
 							order = 2,
-							name = "Size",
+							name = L["Size"],
 							type = "range",
 							min = 16,
 							max = 512,
@@ -1898,8 +1899,8 @@ BLINKIISPORTRAITS.options = {
 						cast_toggle = {
 							order = 3,
 							type = "toggle",
-							name = "Cast Icon",
-							desc = "Enable Cast Icons.",
+							name = L["Cast Icon"],
+							desc = L["Enable Cast Icons."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.boss.cast
 							end,
@@ -1911,8 +1912,8 @@ BLINKIISPORTRAITS.options = {
 						extra_toggle = {
 							order = 4,
 							type = "toggle",
-							name = "Enable Extra Texture",
-							desc = "Shows the Extra Texture (rare/elite) for the Boss Portrait.",
+							name = L["Enable Extra Texture"],
+							desc = L["Shows the Extra Texture (rare/elite) for the Boss Portrait."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.boss.extra
 							end,
@@ -1924,8 +1925,8 @@ BLINKIISPORTRAITS.options = {
 						unitcolor_toggle = {
 							order = 5,
 							type = "toggle",
-							name = "Unitcolor for Extra",
-							desc = "Use the unit color for the Extra (Rare/Elite) Texture.",
+							name = L["Unitcolor for Extra"],
+							desc = L["Use the unit color for the Extra (Rare/Elite) Texture."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.boss.unitcolor
 							end,
@@ -1940,12 +1941,12 @@ BLINKIISPORTRAITS.options = {
 					order = 3,
 					type = "group",
 					inline = true,
-					name = "Anchor",
+					name = L["Anchor"],
 					args = {
 						frame_select = {
 							order = 1,
 							type = "select",
-							name = "Parent Frame",
+							name = L["Parent Frame"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.boss.unitframe
 							end,
@@ -1959,7 +1960,7 @@ BLINKIISPORTRAITS.options = {
 						anchor_select = {
 							order = 2,
 							type = "select",
-							name = "Anchor Point",
+							name = L["Anchor Point"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.boss.point.relativePoint
 							end,
@@ -1979,14 +1980,14 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:InitializeBossPortrait()
 							end,
 							values = {
-								LEFT = "LEFT",
-								RIGHT = "RIGHT",
-								CENTER = "CENTER",
+								LEFT = L["LEFT"],
+								RIGHT = L["RIGHT"],
+								CENTER = L["CENTER"],
 							},
 						},
 						offset_x_range = {
 							order = 3,
-							name = "X offset",
+							name = L["X offset"],
 							type = "range",
 							min = -256,
 							max = 256,
@@ -2003,7 +2004,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						range_ofsY = {
 							order = 4,
-							name = "Y offset",
+							name = L["Y offset"],
 							type = "range",
 							min = -256,
 							max = 256,
@@ -2024,12 +2025,12 @@ BLINKIISPORTRAITS.options = {
 					order = 4,
 					type = "group",
 					inline = true,
-					name = "Frame Level/ Strata",
+					name = L["Frame Level/ Strata"],
 					args = {
 						strata_select = {
 							order = 1,
 							type = "select",
-							name = "Frame Strata",
+							name = L["Frame Strata"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.boss.strata
 							end,
@@ -2041,7 +2042,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						level_range = {
 							order = 2,
-							name = "Frame Level",
+							name = L["Frame Level"],
 							type = "range",
 							min = 0,
 							max = 1000,
@@ -2063,13 +2064,13 @@ BLINKIISPORTRAITS.options = {
 		arena_group = {
 			order = 10,
 			type = "group",
-			name = "Arena",
+			name = L["Arena"],
 			args = {
 				enable_toggle = {
 					order = 1,
 					type = "toggle",
-					name = "Enable",
-					desc = "Enable Arena Portrait.",
+					name = L["Enable"],
+					desc = L["Enable Arena Portrait."],
 					get = function(info)
 						return BLINKIISPORTRAITS.db.profile.arena.enable
 					end,
@@ -2087,13 +2088,13 @@ BLINKIISPORTRAITS.options = {
 					order = 2,
 					type = "group",
 					inline = true,
-					name = "General",
+					name = L["General"],
 					args = {
 						styles_select = {
 							order = 1,
 							type = "select",
-							name = "Style",
-							desc = "Select a portrait texture style.",
+							name = L["Style"],
+							desc = L["Select a portrait texture style."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.arena.texture
 							end,
@@ -2105,7 +2106,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						size_range = {
 							order = 2,
-							name = "Size",
+							name = L["Size"],
 							type = "range",
 							min = 16,
 							max = 512,
@@ -2123,8 +2124,8 @@ BLINKIISPORTRAITS.options = {
 						cast_toggle = {
 							order = 3,
 							type = "toggle",
-							name = "Cast Icon",
-							desc = "Enable Cast Icons.",
+							name = L["Cast Icon"],
+							desc = L["Enable Cast Icons."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.arena.cast
 							end,
@@ -2136,8 +2137,8 @@ BLINKIISPORTRAITS.options = {
 						extra_toggle = {
 							order = 4,
 							type = "toggle",
-							name = "Enable Extra Texture",
-							desc = "Shows the Extra Texture (rare/elite) for the Arena Portrait.",
+							name = L["Enable Extra Texture"],
+							desc = L["Shows the Extra Texture (rare/elite) for the Arena Portrait."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.arena.extra
 							end,
@@ -2149,8 +2150,8 @@ BLINKIISPORTRAITS.options = {
 						unitcolor_toggle = {
 							order = 5,
 							type = "toggle",
-							name = "Unitcolor for Extra",
-							desc = "Use the unit color for the Extra (Rare/Elite) Texture.",
+							name = L["Unitcolor for Extra"],
+							desc = L["Use the unit color for the Extra (Rare/Elite) Texture."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.arena.unitcolor
 							end,
@@ -2165,12 +2166,12 @@ BLINKIISPORTRAITS.options = {
 					order = 3,
 					type = "group",
 					inline = true,
-					name = "Anchor",
+					name = L["Anchor"],
 					args = {
 						frame_select = {
 							order = 1,
 							type = "select",
-							name = "Parent Frame",
+							name = L["Parent Frame"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.arena.unitframe
 							end,
@@ -2184,7 +2185,7 @@ BLINKIISPORTRAITS.options = {
 						anchor_select = {
 							order = 2,
 							type = "select",
-							name = "Anchor Point",
+							name = L["Anchor Point"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.arena.point.relativePoint
 							end,
@@ -2204,14 +2205,14 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:InitializeArenaPortrait()
 							end,
 							values = {
-								LEFT = "LEFT",
-								RIGHT = "RIGHT",
-								CENTER = "CENTER",
+								LEFT = L["LEFT"],
+								RIGHT = L["RIGHT"],
+								CENTER = L["CENTER"],
 							},
 						},
 						offset_x_range = {
 							order = 3,
-							name = "X offset",
+							name = L["X offset"],
 							type = "range",
 							min = -256,
 							max = 256,
@@ -2228,7 +2229,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						range_ofsY = {
 							order = 4,
-							name = "Y offset",
+							name = L["Y offset"],
 							type = "range",
 							min = -256,
 							max = 256,
@@ -2249,12 +2250,12 @@ BLINKIISPORTRAITS.options = {
 					order = 4,
 					type = "group",
 					inline = true,
-					name = "Frame Level/ Strata",
+					name = L["Frame Level/ Strata"],
 					args = {
 						strata_select = {
 							order = 1,
 							type = "select",
-							name = "Frame Strata",
+							name = L["Frame Strata"],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.arena.strata
 							end,
@@ -2266,7 +2267,7 @@ BLINKIISPORTRAITS.options = {
 						},
 						level_range = {
 							order = 2,
-							name = "Frame Level",
+							name = L["Frame Level"],
 							type = "range",
 							min = 0,
 							max = 1000,
@@ -2288,20 +2289,20 @@ BLINKIISPORTRAITS.options = {
 		extra_group = {
 			order = 11,
 			type = "group",
-			name = "Extra",
-			desc = "Texture Style settings for Extra texture (Rare/Elite/Boss/player).",
+			name = L["Extra"],
+			desc = L["Texture Style settings for Extra texture (Rare/Elite/Boss/player)."],
 			args = {
 				texture_group = {
 					order = 1,
 					type = "group",
 					inline = true,
-					name = "Texture Styles",
+					name = L["Texture Styles"],
 					args = {
 						rare_select = {
 							order = 1,
 							type = "select",
-							name = "Rare",
-							desc = "Select a extra texture style for rare units.",
+							name = L["Rare"],
+							desc = L["Select a extra texture style for rare units."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.misc.rare
 							end,
@@ -2314,8 +2315,8 @@ BLINKIISPORTRAITS.options = {
 						elite_select = {
 							order = 2,
 							type = "select",
-							name = "Elite",
-							desc = "Select a extra texture style for elite units.",
+							name = L["Elite"],
+							desc = L["Select a extra texture style for elite units."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.misc.elite
 							end,
@@ -2328,8 +2329,8 @@ BLINKIISPORTRAITS.options = {
 						rareelite_select = {
 							order = 3,
 							type = "select",
-							name = "Rare Elite",
-							desc = "Select a extra texture style for rare elite units.",
+							name = L["Rare Elite"],
+							desc = L["Select a extra texture style for rare elite units."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.misc.rareelite
 							end,
@@ -2342,8 +2343,8 @@ BLINKIISPORTRAITS.options = {
 						boss_select = {
 							order = 4,
 							type = "select",
-							name = "Boss",
-							desc = "Select a extra texture style for boss units.",
+							name = L["Boss"],
+							desc = L["Select a extra texture style for boss units."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.misc.boss
 							end,
@@ -2356,8 +2357,8 @@ BLINKIISPORTRAITS.options = {
 						player_select = {
 							order = 5,
 							type = "select",
-							name = "Player",
-							desc = "Select a extra texture style for player.",
+							name = L["Player"],
+							desc = L["Select a extra texture style for player."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.misc.player
 							end,
@@ -2370,7 +2371,7 @@ BLINKIISPORTRAITS.options = {
 						description = {
 							order = 6,
 							type = "description",
-							name = "TIP: If you use the Blizzard textures and change the classification color to white, you will see the extra texture with the original colors.",
+							name = L["TIP: If you use the Blizzard textures and change the classification color to white, you will see the extra texture with the original colors."],
 						},
 					},
 				},
@@ -2378,13 +2379,13 @@ BLINKIISPORTRAITS.options = {
 					order = 4,
 					type = "group",
 					inline = true,
-					name = "Settings",
+					name = L["Settings"],
 					args = {
 						extratop_toggle = {
 							order = 1,
 							type = "toggle",
-							name = "Set Extra on Top",
-							desc = "Shows the extra (rare/elite) texture on a higher layer.",
+							name = L["Set Extra on Top"],
+							desc = L["Shows the extra (rare/elite) texture on a higher layer."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.misc.extratop
 							end,
@@ -2400,12 +2401,12 @@ BLINKIISPORTRAITS.options = {
 		color_group = {
 			order = 12,
 			type = "group",
-			name = "Color",
+			name = L["Color"],
 			args = {
 				apply_execute = {
 					order = 1,
 					type = "execute",
-					name = "Apply",
+					name = L["Apply"],
 					func = function()
 						BLINKIISPORTRAITS:LoadPortraits()
 					end,
@@ -2413,7 +2414,7 @@ BLINKIISPORTRAITS.options = {
 				reset_class_execute = {
 					order = 2,
 					type = "execute",
-					name = "Reset class colors",
+					name = L["Reset class colors"],
 					func = function()
 						BLINKIISPORTRAITS.db.profile.colors.class = CopyTable(BLINKIISPORTRAITS.defaults.profile.colors.class)
 					end,
@@ -2421,7 +2422,7 @@ BLINKIISPORTRAITS.options = {
 				reset_colors_execute = {
 					order = 3,
 					type = "execute",
-					name = "Reset all colors",
+					name = L["Reset all colors"],
 					func = function()
 						BLINKIISPORTRAITS.db.profile.colors = CopyTable(BLINKIISPORTRAITS.defaults.profile.colors)
 					end,
@@ -2430,13 +2431,13 @@ BLINKIISPORTRAITS.options = {
 					order = 4,
 					type = "group",
 					inline = true,
-					name = "Settings",
+					name = L["Settings"],
 					args = {
 						default_toggle = {
 							order = 1,
 							type = "toggle",
-							name = "Use Default color",
-							desc = "Forces the default color for all texture.",
+							name = L["Use Default color"],
+							desc = L["Forces the default color for all texture."],
 							get = function(info)
 								return BLINKIISPORTRAITS.db.profile.misc.force_default
 							end,
@@ -2451,12 +2452,12 @@ BLINKIISPORTRAITS.options = {
 					order = 5,
 					type = "group",
 					inline = true,
-					name = "Misc",
+					name = L["Misc"],
 					args = {
 						default_color = {
 							type = "color",
 							order = 1,
-							name = "Default",
+							name = L["Default"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.misc.default
@@ -2470,7 +2471,7 @@ BLINKIISPORTRAITS.options = {
 						death_color = {
 							type = "color",
 							order = 2,
-							name = "Death",
+							name = L["Death"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.misc.death
@@ -2487,12 +2488,12 @@ BLINKIISPORTRAITS.options = {
 					order = 6,
 					type = "group",
 					inline = true,
-					name = "Class",
+					name = L["Class"],
 					args = {
 						DEATHKNIGHT_color = {
 							type = "color",
 							order = 1,
-							name = "Death Knight",
+							name = L["Death Knight"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.class.DEATHKNIGHT
@@ -2506,7 +2507,7 @@ BLINKIISPORTRAITS.options = {
 						DEMONHUNTER_color = {
 							type = "color",
 							order = 2,
-							name = "Demon Hunter",
+							name = L["Demon Hunter"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.class.DEMONHUNTER
@@ -2520,7 +2521,7 @@ BLINKIISPORTRAITS.options = {
 						DRUID_color = {
 							type = "color",
 							order = 3,
-							name = "Druid",
+							name = L["Druid"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.class.DRUID
@@ -2534,7 +2535,7 @@ BLINKIISPORTRAITS.options = {
 						EVOKER_color = {
 							type = "color",
 							order = 4,
-							name = "Evoker",
+							name = L["Evoker"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.class.EVOKER
@@ -2548,7 +2549,7 @@ BLINKIISPORTRAITS.options = {
 						HUNTER_color = {
 							type = "color",
 							order = 5,
-							name = "Hunter",
+							name = L["Hunter"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.class.HUNTER
@@ -2562,7 +2563,7 @@ BLINKIISPORTRAITS.options = {
 						MAGE_color = {
 							type = "color",
 							order = 6,
-							name = "Mage",
+							name = L["Mage"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.class.MAGE
@@ -2576,7 +2577,7 @@ BLINKIISPORTRAITS.options = {
 						MONK_color = {
 							type = "color",
 							order = 7,
-							name = "Monk",
+							name = L["Monk"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.class.MONK
@@ -2590,7 +2591,7 @@ BLINKIISPORTRAITS.options = {
 						PALADIN_color = {
 							type = "color",
 							order = 8,
-							name = "Paladin",
+							name = L["Paladin"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.class.PALADIN
@@ -2604,7 +2605,7 @@ BLINKIISPORTRAITS.options = {
 						PRIEST_color = {
 							type = "color",
 							order = 9,
-							name = "Priest",
+							name = L["Priest"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.class.PRIEST
@@ -2618,7 +2619,7 @@ BLINKIISPORTRAITS.options = {
 						ROGUE_color = {
 							type = "color",
 							order = 10,
-							name = "Rouge",
+							name = L["Rouge"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.class.ROGUE
@@ -2632,7 +2633,7 @@ BLINKIISPORTRAITS.options = {
 						SHAMAN_color = {
 							type = "color",
 							order = 11,
-							name = "Shaman",
+							name = L["Shaman"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.class.SHAMAN
@@ -2646,7 +2647,7 @@ BLINKIISPORTRAITS.options = {
 						WARLOCK_color = {
 							type = "color",
 							order = 12,
-							name = "Warlock",
+							name = L["Warlock"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.class.WARLOCK
@@ -2660,7 +2661,7 @@ BLINKIISPORTRAITS.options = {
 						WARRIOR_color = {
 							type = "color",
 							order = 13,
-							name = "Warrior",
+							name = L["Warrior"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.class.WARRIOR
@@ -2677,12 +2678,12 @@ BLINKIISPORTRAITS.options = {
 					order = 7,
 					type = "group",
 					inline = true,
-					name = "Classification",
+					name = L["Classification"],
 					args = {
 						rare_color = {
 							type = "color",
 							order = 1,
-							name = "Rare",
+							name = L["Rare"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.classification.rare
@@ -2696,7 +2697,7 @@ BLINKIISPORTRAITS.options = {
 						elite_color = {
 							type = "color",
 							order = 2,
-							name = "Elite",
+							name = L["Elite"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.classification.elite
@@ -2710,7 +2711,7 @@ BLINKIISPORTRAITS.options = {
 						rareelite_color = {
 							type = "color",
 							order = 3,
-							name = "Rare Elite",
+							name = L["Rare Elite"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.classification.rareelite
@@ -2724,7 +2725,7 @@ BLINKIISPORTRAITS.options = {
 						boss_color = {
 							type = "color",
 							order = 4,
-							name = "Boss",
+							name = L["Boss"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.classification.boss
@@ -2738,7 +2739,7 @@ BLINKIISPORTRAITS.options = {
 						player_color = {
 							type = "color",
 							order = 5,
-							name = "Player",
+							name = L["Player"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.classification.player
@@ -2755,12 +2756,12 @@ BLINKIISPORTRAITS.options = {
 					order = 8,
 					type = "group",
 					inline = true,
-					name = "Reaction",
+					name = L["Reaction"],
 					args = {
 						enemy_color = {
 							type = "color",
 							order = 1,
-							name = "Enemy",
+							name = L["Enemy"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.reaction.enemy
@@ -2774,7 +2775,7 @@ BLINKIISPORTRAITS.options = {
 						neutral_color = {
 							type = "color",
 							order = 2,
-							name = "Neutral",
+							name = L["Neutral"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.reaction.neutral
@@ -2788,7 +2789,7 @@ BLINKIISPORTRAITS.options = {
 						friendly_color = {
 							type = "color",
 							order = 3,
-							name = "Friendly",
+							name = L["Friendly"],
 							hasAlpha = true,
 							get = function(info)
 								local t = BLINKIISPORTRAITS.db.profile.colors.reaction.friendly
@@ -2806,13 +2807,13 @@ BLINKIISPORTRAITS.options = {
 		classicons_group = {
 			order = 13,
 			type = "group",
-			name = "Class Icons",
+			name = L["Class Icons"],
 			args = {
 				classIcon_select = {
 					order = 1,
 					type = "select",
-					name = "Class icon",
-					desc = "Enable and select a class icon style for the portrait.",
+					name = L["Class icon"],
+					desc = L["Enable and select a class icon style for the portrait."],
 					get = function(info)
 						return BLINKIISPORTRAITS.db.profile.misc.class_icon
 					end,
@@ -2828,26 +2829,26 @@ BLINKIISPORTRAITS.options = {
 						for k, v in pairs(BLINKIISPORTRAITS.media.custom) do
 							if type(v) == "table" then t[k] = v.name end
 						end
-						t.none = "None"
+						t.none = L["None"]
 						return t
 					end,
 				},
 				customicons_group = {
 					order = 2,
 					type = "group",
-					name = "custom Class Icons",
+					name = L["custom Class Icons"],
 					inline = true,
 					args = {
 						add_new_group = {
 							order = 1,
 							type = "group",
-							name = "Add new Icons",
+							name = L["Add new Icons"],
 							inline = true,
 							args = {
 								icon_path_input = {
 									order = 1,
-									name = "Icon Path",
-									desc = "The path should be in your Addons folder, example: MyIcons\\MyClassIcons.tga",
+									name = L["Icon Path"],
+									desc = L["The path should be in your Addons folder, example: MyIcons\\MyClassIcons.tga"],
 									type = "input",
 									width = "smal",
 									get = function(info)
@@ -2859,8 +2860,8 @@ BLINKIISPORTRAITS.options = {
 								},
 								icon_name_input = {
 									order = 2,
-									name = "Icon Name",
-									desc = "Name for your custom class Icons",
+									name = L["Icon Name"],
+									desc = L["Name for your custom class Icons"],
 									type = "input",
 									width = "smal",
 									get = function(info)
@@ -2873,10 +2874,10 @@ BLINKIISPORTRAITS.options = {
 								add_execute = {
 									order = 3,
 									type = "execute",
-									name = "Add",
+									name = L["Add"],
 									func = function()
 										if custom_classicons.name == "blizzard" or custom_classicons.name == "hd" or custom_classicons.name == "new" then
-											custom_classicons.name = "Custom " .. custom_classicons.name
+											custom_classicons.name = L["Custom "] .. custom_classicons.name
 										end
 
 										if custom_classicons.path and custom_classicons.path:match("%S") and custom_classicons.name and custom_classicons.name:match("%S") then
@@ -2901,13 +2902,13 @@ BLINKIISPORTRAITS.options = {
 						delete_group = {
 							order = 2,
 							type = "group",
-							name = "Delete",
+							name = L["Delete"],
 							inline = true,
 							args = {
 								delete_icon_select = {
 									order = 1,
 									type = "select",
-									name = "Delete icons",
+									name = L["Delete icons"],
 									get = function() end,
 									set = function(info, value)
 										StaticPopup_Show("BLINKIISPORTRAITS_DELETE_ICON", value, nil, value)
@@ -2934,19 +2935,19 @@ BLINKIISPORTRAITS.options = {
 		profile_group = {
 			order = 14,
 			type = "group",
-			name = "Profile",
+			name = L["Profile"],
 			childGroups = "tab",
 			args = {
 				profile = {},
 				import = {
 					order = 110,
 					type = "group",
-					name = "Import",
+					name = L["Import"],
 					args = {
 						import_button = {
 							order = 1,
 							type = "execute",
-							name = "Import",
+							name = L["Import"],
 							disabled = function()
 								return not importInfos.success
 							end,
@@ -2968,7 +2969,7 @@ BLINKIISPORTRAITS.options = {
 						import = {
 							order = 2,
 							type = "input",
-							name = "Import",
+							name = L["Import"],
 							multiline = true,
 							width = "full",
 							get = function()
@@ -2999,7 +3000,7 @@ BLINKIISPORTRAITS.options = {
 
 								-- check the import string
 								if not strmatch(import, "^" .. "!BP") then
-									importInfos.error = "ERROR 1 - This is not a Blinkii´s Portraits profile!"
+									importInfos.error = L["ERROR 1 - This is not a Blinkii´s Portraits profile!"]
 									return
 								end
 
@@ -3007,19 +3008,19 @@ BLINKIISPORTRAITS.options = {
 
 								local decoded = LibDeflate:DecodeForPrint(profileImport)
 								if not decoded then
-									importInfos.error = "ERROR 2 - Import string is corrupted!"
+									importInfos.error = L["ERROR 2 - Import string is corrupted!"]
 									return
 								end
 
 								local decompressed = LibDeflate:DecompressDeflate(decoded)
 								if not decompressed then
-									importInfos.error = "ERROR 3 - Import string is corrupted!"
+									importInfos.error = L["ERROR 3 - Import string is corrupted!"]
 									return
 								end
 
 								local success, outputDB = LibSerialize:Deserialize(decompressed)
 								if not success then
-									importInfos.error = "ERROR 4 - Import string is corrupted!"
+									importInfos.error = L["ERROR 4 - Import string is corrupted!"]
 									return
 								end
 
@@ -3039,12 +3040,12 @@ BLINKIISPORTRAITS.options = {
 				export = {
 					order = 120,
 					type = "group",
-					name = "Export",
+					name = L["Export"],
 					args = {
 						export_button = {
 							order = 1,
 							type = "execute",
-							name = "Export",
+							name = L["Export"],
 							func = function()
 								-- get profile infos
 								exportProfile.author = exportProfile.author or "Unknown"
@@ -3068,7 +3069,7 @@ BLINKIISPORTRAITS.options = {
 						export = {
 							order = 2,
 							type = "input",
-							name = "Export String",
+							name = L["Export String"],
 							multiline = true,
 							width = "full",
 							set = false,
@@ -3080,12 +3081,12 @@ BLINKIISPORTRAITS.options = {
 							order = 3,
 							type = "description",
 							fontSize = "medium",
-							name = "This is where you can fill in your optional profile information.",
+							name = L["This is where you can fill in your optional profile information."],
 						},
 						author = {
 							order = 4,
 							type = "input",
-							name = "Author",
+							name = L["Author"],
 							multiline = false,
 							width = "smal",
 							get = false,
@@ -3104,7 +3105,7 @@ BLINKIISPORTRAITS.options = {
 						name = {
 							order = 6,
 							type = "input",
-							name = "Profile Name",
+							name = L["Profile Name"],
 							multiline = false,
 							width = "smal",
 							get = false,
@@ -3123,7 +3124,7 @@ BLINKIISPORTRAITS.options = {
 						version = {
 							order = 8,
 							type = "input",
-							name = "Profile Version",
+							name = L["Profile Version"],
 							multiline = false,
 							width = "smal",
 							get = false,
@@ -3146,18 +3147,18 @@ BLINKIISPORTRAITS.options = {
 		about = {
 			order = 15,
 			type = "group",
-			name = "About",
+			name = L["About"],
 			args = {
 				help = {
 					order = 1,
 					type = "group",
 					inline = true,
-					name = "Help",
+					name = L["Help"],
 					args = {
 						contact = {
 							order = 1,
 							type = "execute",
-							name = "Contact",
+							name = L["Contact"],
 							func = function()
 								StaticPopup_Show("BLINKIISPORTRAITS_EDITBOX", nil, nil, "mmediatag@gmx.de")
 							end,

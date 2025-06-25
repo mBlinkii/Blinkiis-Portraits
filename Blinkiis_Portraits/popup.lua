@@ -1,9 +1,10 @@
 local ReloadUI = ReloadUI
+local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits")
 
 StaticPopupDialogs["BLINKIISPORTRAITS_RL"] = {
-	text = "Some settings require you to reload the interface. Do you want to do that now?",
-	button1 = "Yes",
-	button2 = "No",
+	text = L["Some settings require you to reload the interface. Do you want to do that now?"],
+	button1 = L["Yes"],
+	button2 = L["No"],
 	OnAccept = function()
 		ReloadUI()
 	end,
@@ -14,9 +15,9 @@ StaticPopupDialogs["BLINKIISPORTRAITS_RL"] = {
 }
 
 StaticPopupDialogs["BLINKIISPORTRAITS_DELETE_ICON"] = {
-	text = "Are you sure you want to delete this |cffff0000%s|r icon?",
-	button1 = "Yes",
-	button2 = "No",
+	text = L["Are you sure you want to delete this |cffff0000%s|r icon?"],
+	button1 = L["Yes"],
+	button2 = L["No"],
 	OnAccept = function(self, data)
 		BLINKIISPORTRAITS.db.global.custom_classicons[data] = nil
 	end,

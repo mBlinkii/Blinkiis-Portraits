@@ -1,9 +1,11 @@
 ## Interface: 110107
 ## Version: 1.34
 ## Title: |CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits
+## Title-zhCN: |CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r 头像
 ## Author: Blinkii
 ## Notes: Portraits for ElvUI and SUF.
 ## Notes-deDE: Portraits für ElvUI und SUF.
+## Notes-zhCN: 为 ElvUI 和 SUF 设计的头像。
 ## IconTexture: Interface\AddOns\Blinkiis_Portraits\media\icon
 ## AddonCompartmentFunc: BLINKIISPORTRAITS_OnAddonCompartmentClick
 ## AddonCompartmentFuncOnEnter: BLINKIISPORTRAITS_OnAddonCompartmentOnEnter
@@ -29,8 +31,11 @@ libs\Ace3\AceComm-3.0\AceComm-3.0.xml
 libs\Ace3\AceTab-3.0\AceTab-3.0.xml
 libs\Ace3\AceSerializer-3.0\AceSerializer-3.0.xml
 
+
 libs\LibDeflate\lib.xml
 libs\LibSerialize\lib.xml
+
+Locales\Locales.xml
 
 core.lua
 options.lua
