@@ -34,7 +34,7 @@ libs\Ace3\AceSerializer-3.0\AceSerializer-3.0.xml
 libs\LibDeflate\lib.xml
 libs\LibSerialize\lib.xml
 
-Locales\Locales.xml
+locales\load_localization.xml
 
 core.lua
 options.lua
