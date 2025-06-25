@@ -2812,7 +2812,7 @@ BLINKIISPORTRAITS.options = {
 				classIcon_select = {
 					order = 1,
 					type = "select",
-					name = L["Class icon"],
+					name = L["Class Icons"],
 					desc = L["Enable and select a class icon style for the portrait."],
 					get = function(info)
 						return BLINKIISPORTRAITS.db.profile.misc.class_icon
@@ -3000,7 +3000,7 @@ BLINKIISPORTRAITS.options = {
 
 								-- check the import string
 								if not strmatch(import, "^" .. "!BP") then
-									importInfos.error = L["ERROR 1 - This is not a Blinkii´s Portraits profile!"]
+									importInfos.error = L["ERROR 1 - This is not a Blinkiis Portraits profile!"]
 									return
 								end
 

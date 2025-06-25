@@ -1,4 +1,5 @@
-local L = LibStub("AceLocale-3.0"):NewLocale("Blinkiis_Portraits", "enUS", true)
+﻿local L = LibStub("AceLocale-3.0"):NewLocale("Blinkiis_Portraits", "ptBR")
+if not L then return end
 
 -------- core.lua --------
 L["|CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits"] = "|CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits"
