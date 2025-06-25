@@ -3,9 +3,9 @@
 ## Title: |CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits - Classic
 ## Title-zhCN: |CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r 头像 - 经典
 ## Author: Blinkii
-## Notes: Portraits for ElvUI and SUF.
-## Notes-deDE: Portraits für ElvUI und SUF.
-## Notes-zhCN: 为 ElvUI 和 SUF 设计的头像。
+## Notes: Portraits for ElvUI, Cell, PB4, UUF, NDui and SUF.
+## Notes-deDE: Portraits für ElvUI, Cell, PB4, UUF, NDui und SUF.
+## Notes-zhCN: 为 ElvUI, Cell, PB4, UUF, NDui 和 SUF 设计的头像。
 ## IconTexture: Interface\AddOns\Blinkiis_Portraits\media\icon
 ## AddonCompartmentFunc: BLINKIISPORTRAITS_OnAddonCompartmentClick
 ## AddonCompartmentFuncOnEnter: BLINKIISPORTRAITS_OnAddonCompartmentOnEnter
