@@ -3,6 +3,11 @@ local LibSerialize = LibStub("LibSerialize")
 local LibDeflate = LibStub("LibDeflate")
 local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits")
 
+local credits = {
+	"Huchang47",
+	"Cbogolin",
+}
+
 local form = {
 	blizz = L["Blizz"],
 	blizz_up = L["Blizz Up"],
@@ -3168,7 +3173,7 @@ BLINKIISPORTRAITS.options = {
 							type = "execute",
 							name = "GitHub",
 							func = function()
-							StaticPopup_Show("BLINKIISPORTRAITS_EDITBOX", nil, nil, "https://github.com/mBlinkii/Blinkiis-Portraits")
+								StaticPopup_Show("BLINKIISPORTRAITS_EDITBOX", nil, nil, "https://github.com/mBlinkii/Blinkiis-Portraits")
 							end,
 						},
 						discord = {

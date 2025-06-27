@@ -1,9 +1,17 @@
 local UnitGUID = UnitGUID
 local UnitExists = UnitExists
+local C_Timer_After = C_Timer.After
+
 local function OnEvent(portrait, event, eventUnit)
 	local unit = portrait.isCellParentFrame and portrait.parentFrame._unit or portrait.parentFrame.unit
 	unit = (portrait.demo and not UnitExists(unit)) and "player" or unit
 	unit = (unit == portrait.type) and "player" or unit
+
+	if event == "PORTRAITS_UPDATED" then
+		C_Timer_After(0.5, function ()
+			OnEvent(portrait, event, portrait.isCellParentFrame and portrait.parentFrame._unit or portrait.parentFrame.unit)
+		end)
+	end
 
 	if not unit or not UnitExists(unit) or ((event == "PORTRAITS_UPDATED" or event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_HEALTH") and unit ~= eventUnit) then return end
 
