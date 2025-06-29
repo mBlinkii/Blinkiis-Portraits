@@ -60,7 +60,18 @@ function BLINKIISPORTRAITS:LoadDB()
 	self.db = LibStub("AceDB-3.0"):New("BlinkiisPortraitsDB", BLINKIISPORTRAITS.defaults, true)
 end
 
+local function CheckAddons()
+	BLINKIISPORTRAITS.SUF = IsAddOnLoaded("ShadowedUnitFrames")
+	BLINKIISPORTRAITS.ELVUI = IsAddOnLoaded("ElvUI")
+	BLINKIISPORTRAITS.PB4 = IsAddOnLoaded("PitBull4")
+	BLINKIISPORTRAITS.Cell = IsAddOnLoaded("Cell") and IsAddOnLoaded("Cell_UnitFrames")
+	BLINKIISPORTRAITS.UUF = IsAddOnLoaded("UnhaltedUF")
+	BLINKIISPORTRAITS.NDUI = IsAddOnLoaded("NDui")
+end
+
 function BLINKIISPORTRAITS:LoadPortraits()
+	CheckAddons()
+
 	BLINKIISPORTRAITS:InitializeArenaPortrait()
 	BLINKIISPORTRAITS:InitializeBossPortrait()
 	BLINKIISPORTRAITS:InitializeFocusPortrait()
@@ -99,12 +110,7 @@ local function IsSUFParent()
 end
 
 function BLINKIISPORTRAITS:OnInitialize()
-	BLINKIISPORTRAITS.SUF = IsAddOnLoaded("ShadowedUnitFrames")
-	BLINKIISPORTRAITS.ELVUI = IsAddOnLoaded("ElvUI")
-	BLINKIISPORTRAITS.PB4 = IsAddOnLoaded("PitBull4")
-	BLINKIISPORTRAITS.Cell = IsAddOnLoaded("Cell") and IsAddOnLoaded("Cell_UnitFrames")
-	BLINKIISPORTRAITS.UUF = IsAddOnLoaded("UnhaltedUF")
-	BLINKIISPORTRAITS.NDUI = IsAddOnLoaded("NDui")
+	CheckAddons()
 
 	BLINKIISPORTRAITS:LoadDB()
 	BLINKIISPORTRAITS:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -126,9 +132,6 @@ function BLINKIISPORTRAITS:OnInitialize()
 			BLINKIISPORTRAITS.SUF_Hook = true
 		end
 	end
-
-	-- add options
-	--BLINKIISPORTRAITS:LoadOptions()
 
 	-- elvui demo mode
 	if BLINKIISPORTRAITS.ELVUI and ElvUI then
