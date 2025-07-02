@@ -1,5 +1,18 @@
 # Changelog
 
+## [ver. 1.36] - 02.07.2025
+### UPDATE
+- UPDATE - Loading behavior for NDui.
+- UPDATE - For Mists.
+
+## [ver. 1.35] - 27.06.2025
+### UPDATE
+- UPDATE - Optimized Party Portraits update function.
+### NEW
+- NEW - Add Localizations for zhCn & zhTW, big thx to huchang47.
+- NEW - Add Localizations for deDE.
+- NEW - Support for NDui.
+
 ## [ver. 1.35] - 27.06.2025
 ### UPDATE
 - UPDATE - Optimized Party Portraits update function.
