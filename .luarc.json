@@ -19521,7 +19521,8 @@
         "UIDropDownMenu_CreateInfo",
         "UIDropDownMenu_AddButton",
         "UIDropDownMenu_Initialize",
-        "ShadowUF"
+        "ShadowUF",
+        "WOW_PROJECT_MISTS_CLASSIC"
   ],
   "diagnostics.disable": ["deprecated", "inject-field", "undefined-field",
         "cast-local-type"]
