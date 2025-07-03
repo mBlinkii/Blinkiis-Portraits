@@ -28,12 +28,12 @@ local function OnEvent(portrait, event, eventUnit, arg2)
 
 		if color then portrait.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
 
-		BLINKIISPORTRAITS:UpdatePortrait(portrait, event, portrait.demo and unit)
+		BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
 		BLINKIISPORTRAITS:UpdateExtraTexture(portrait, portrait.db.unitcolor and color, portrait.db.forceExtra)
 
 		portrait.forceUpdate = false
 	else
-		BLINKIISPORTRAITS:UpdatePortrait(portrait, event, portrait.demo and unit)
+		BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
 	end
 
 	if not InCombatLockdown() and portrait:GetAttribute("unit") ~= unit then portrait:SetAttribute("unit", unit) end
