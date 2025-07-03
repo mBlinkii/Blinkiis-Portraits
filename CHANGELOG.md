@@ -1,5 +1,11 @@
 # Changelog
 
+## [ver. 1.37] - 03.07.2025
+### FIX 
+- FIX - Bug with enabled Class icons on Target Units
+### NEW
+- NEW - Add Localizations for ruRU, big thx to ZamestoTV.
+
 ## [ver. 1.36] - 02.07.2025
 ### UPDATE
 - UPDATE - Loading behavior for NDui.
