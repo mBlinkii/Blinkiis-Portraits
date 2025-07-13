@@ -16,6 +16,92 @@ local mediaClass = BLINKIISPORTRAITS.media.class
 local playerFaction = nil
 
 -- portrait texture update functions
+local function Update(portrait, event, eventUnit)
+	local unit = portrait.isCellParentFrame and portrait.parentFrame._unit or portrait.parentFrame.unit
+	if not eventUnit or not UnitIsUnit((unit or portrait.unit), eventUnit) then return end
+
+	local guid = UnitGUID(unit)
+	local isAvailable = UnitIsConnected(unit) and UnitIsVisible(unit)
+	local hasStateChanged = ((event == "ForceUpdate") or (portrait.guid ~= guid) or (portrait.state ~= isAvailable))
+
+	if hasStateChanged then
+		local class = select(2, UnitClass(unit))
+		local isPlayer = UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit))
+
+		portrait.isPlayer = isPlayer
+		portrait.unitClass = class
+		portrait.lastGUID = guid
+		portrait.state = isAvailable
+		portrait.unit = unit
+
+		local color = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead, isPlayer, class)
+		if color then portrait.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
+
+		BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
+		BLINKIISPORTRAITS:UpdateExtraTexture(portrait, portrait.db.unitcolor and color, portrait.db.forceExtra)
+
+		portrait.forceUpdate = false
+
+		if not InCombatLockdown() and portrait:GetAttribute("unit") ~= unit then portrait:SetAttribute("unit", unit) end
+	end
+end
+
+local function VehicleUpdate(portrait, _, unit, arg2)
+	if portrait.realUnit == "player" then
+		unit = (UnitInVehicle("player") and arg2) and UnitExists("pet") and "pet" or "player"
+	elseif portrait.realUnit == "pet" then
+		unit = (UnitInVehicle("player") and arg2) and "player" or "pet"
+	end
+
+	Update(portrait, "ForceUpdate", unit )
+end
+
+local function ForceUpdate(portrait, _, unit)
+	Update(portrait, "ForceUpdate", unit or portrait.unit)
+end
+
+local eventHandlers = {
+	-- portrait updates
+	PORTRAITS_UPDATED = ForceUpdate,
+	UNIT_CONNECTION = Update,
+	UNIT_PORTRAIT_UPDATE = Update,
+	PARTY_MEMBER_ENABLE = Update,
+	ForceUpdate = Update,
+
+	-- vehicle updates
+	UNIT_ENTERED_VEHICLE = VehicleUpdate,
+	UNIT_EXITING_VEHICLE = VehicleUpdate,
+	UNIT_EXITED_VEHICLE = VehicleUpdate,
+	VEHICLE_UPDATE = VehicleUpdate,
+
+	-- target/ focus updates
+	PLAYER_TARGET_CHANGED = ForceUpdate,
+	PLAYER_FOCUS_CHANGED = ForceUpdate,
+	UNIT_TARGET = ForceUpdate,
+
+	-- party
+	GROUP_ROSTER_UPDATE = ForceUpdate,
+
+	-- arena
+	ARENA_OPPONENT_UPDATE = Update,
+	UNIT_TARGETABLE_CHANGED = Update,
+	ARENA_PREP_OPPONENT_SPECIALIZATIONS = ForceUpdate,
+	INSTANCE_ENCOUNTER_ENGAGE_UNIT = ForceUpdate,
+	UPDATE_ACTIVE_BATTLEFIELD = ForceUpdate,
+
+	-- death updates
+	UNIT_HEALTH = function(portrait, _, unit)
+		portrait.isDead = BLINKIISPORTRAITS:UpdateDeathStatus(unit)
+	end,
+}
+
+local function OnEvent(portrait, event, eventUnit, arg)
+	local unit = portrait.isCellParentFrame and portrait.parentFrame._unit or portrait.parentFrame.unit
+	portrait.unit = unit
+
+	if eventHandlers[event] then eventHandlers[event](portrait, event, eventUnit, arg) end
+end
+
 function BLINKIISPORTRAITS:Mirror(texture, mirror, texCoords)
 	if texCoords then
 		local coords = texCoords
@@ -97,11 +183,10 @@ function BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
 end
 
 -- color functions
-function BLINKIISPORTRAITS:GetUnitColor(unit, isDead)
+function BLINKIISPORTRAITS:GetUnitColor(unit, isDead, isPlayer, class)
 	if not unit then return end
 
 	local colors = BLINKIISPORTRAITS.db.profile.colors
-	local isPlayer = UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit))
 
 	if isDead then return colors.misc.death, isPlayer end
 
@@ -115,8 +200,7 @@ function BLINKIISPORTRAITS:GetUnitColor(unit, isDead)
 			local reactionType = (playerFaction == unitFaction) and "friendly" or "enemy"
 			return colors.reaction[reactionType], isPlayer
 		else
-			local _, class = UnitClass(unit)
-			return colors.class[class], isPlayer, class
+			return class and colors.class[class] or colors.misc.default
 		end
 	else
 		local reaction = (unit == "pet") and UnitReaction("player", unit) or UnitReaction(unit, "player")
@@ -436,10 +520,10 @@ function BLINKIISPORTRAITS:InitPortrait(portrait, events)
 		if not portrait.eventsSet then
 			BLINKIISPORTRAITS:RegisterEvents(portrait, events)
 
-			portrait:SetScript("OnEvent", portrait.func)
+			portrait:SetScript("OnEvent", OnEvent)
 			portrait.eventsSet = true
 		end
-		portrait:func(portrait)
+		OnEvent(portrait, "ForceUpdate", portrait.unit)
 
 		UpdateZoom(portrait.portrait, portrait.size)
 	end

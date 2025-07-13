@@ -1,53 +1,11 @@
-local UnitGUID = UnitGUID
-local UnitExists = UnitExists
-
-local function OnEvent(portrait, event, eventUnit, arg2)
-	local unit = portrait.isCellParentFrame and portrait.parentFrame._unit or portrait.parentFrame.unit
-	unit = (portrait.demo and not UnitExists(unit)) and "player" or (portrait.unit or unit)
-
-	if not unit or not UnitExists(unit) or ((event == "PORTRAITS_UPDATED" or event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_HEALTH") and unit ~= eventUnit) then return end
-
-	if event == "VEHICLE_UPDATE" or event == "UNIT_EXITING_VEHICLE" or event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE" or event == "PET_UI_UPDATE" then
-		unit = (UnitInVehicle("player") and arg2) and UnitExists("pet") and "pet" or "player"
-	end
-
-	portrait.unit = unit
-
-	if event == "UNIT_HEALTH" then
-		portrait.isDead = BLINKIISPORTRAITS:UpdateDeathStatus(unit)
-		return
-	end
-
-	local guid = UnitGUID(unit)
-
-	if portrait.lastGUID ~= guid or portrait.forceUpdate then
-		local color, isPlayer, class = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead)
-
-		portrait.isPlayer = isPlayer
-		portrait.unitClass = class
-		portrait.lastGUID = guid
-
-		if color then portrait.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
-
-		BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
-		BLINKIISPORTRAITS:UpdateExtraTexture(portrait, portrait.db.unitcolor and color, portrait.db.extra and "player")
-
-		portrait.forceUpdate = false
-	else
-		BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
-	end
-
-	if not InCombatLockdown() and portrait:GetAttribute("unit") ~= unit then portrait:SetAttribute("unit", unit) end
-end
-
 function BLINKIISPORTRAITS:InitializePlayerPortrait()
 	if not BLINKIISPORTRAITS.db.profile.player.enable then return end
 
 	local unitframe, parentFrame = BLINKIISPORTRAITS:GetUnitFrames("player", BLINKIISPORTRAITS.db.profile.player.unitframe)
-	--print("Initializing Player Portrait with unitframe:", unitframe, "and parentFrame:", parentFrame)
+
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits
-		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_ENTERED_VEHICLE", "UNIT_EXITING_VEHICLE", "UNIT_EXITED_VEHICLE", "VEHICLE_UPDATE" }
+		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_CONNECTION", "UNIT_ENTERED_VEHICLE", "UNIT_EXITING_VEHICLE", "UNIT_EXITED_VEHICLE", "VEHICLE_UPDATE" }
 		local parent = _G[unitframe]
 
 		if parent then
@@ -69,7 +27,7 @@ function BLINKIISPORTRAITS:InitializePlayerPortrait()
 				portraits[unit].point = BLINKIISPORTRAITS.db.profile[type].point
 				portraits[unit].useClassIcon = BLINKIISPORTRAITS.db.profile.misc.class_icon ~= "none"
 				portraits[unit].demo = BLINKIISPORTRAITS.SUF and not ShadowUF.db.profile.locked
-				portraits[unit].func = OnEvent
+				portraits[unit].realUnit = "player"
 
 				portraits[unit].isPlayer = nil
 				portraits[unit].unitClass = nil

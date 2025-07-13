@@ -34,6 +34,7 @@ BLINKIISPORTRAITS.defaults.profile.player = {
 	extra = false,
 	level = 20,
 	mirror = false,
+	forceExtra = "none",
 	point = { point = "RIGHT", relativePoint = "LEFT", x = 0, y = 0 },
 	size = 90,
 	strata = "AUTO",

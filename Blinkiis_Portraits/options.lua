@@ -469,6 +469,7 @@ BLINKIISPORTRAITS.options = {
 							end,
 							set = function(info, value)
 								BLINKIISPORTRAITS.db.profile.player.extra = value
+								BLINKIISPORTRAITS.db.profile.player.forceExtra = value and "player" or "none"
 								BLINKIISPORTRAITS:InitializePlayerPortrait()
 							end,
 						},

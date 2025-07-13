@@ -1,40 +1,4 @@
-local UnitGUID = UnitGUID
-local UnitExists = UnitExists
 
-local function OnEvent(portrait, event, eventUnit)
-	local unit = portrait.isCellParentFrame and portrait.parentFrame._unit or portrait.parentFrame.unit
-	unit = (portrait.demo and not UnitExists(unit)) and "player" or unit
-	unit = (unit == portrait.type) and "player" or unit
-
-	if not unit or not UnitExists(unit) or ((event == "PORTRAITS_UPDATED" or event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_HEALTH") and unit ~= eventUnit) then return end
-
-	portrait.unit = unit
-
-	if event == "UNIT_HEALTH" then
-		portrait.isDead = BLINKIISPORTRAITS:UpdateDeathStatus(unit)
-		return
-	end
-
-	local guid = UnitGUID(unit)
-	if portrait.lastGUID ~= guid or portrait.forceUpdate then
-		local color, isPlayer, class = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead)
-
-		portrait.isPlayer = isPlayer
-		portrait.unitClass = class
-		portrait.lastGUID = guid
-
-		if color then portrait.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
-
-		BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
-		BLINKIISPORTRAITS:UpdateExtraTexture(portrait, portrait.db.unitcolor and color, portrait.db.extra)
-
-		portrait.forceUpdate = false
-	else
-		BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
-	end
-
-	if not InCombatLockdown() and portrait:GetAttribute("unit") ~= unit then portrait:SetAttribute("unit", unit) end
-end
 
 function BLINKIISPORTRAITS:InitializeArenaPortrait(demo)
 	if not BLINKIISPORTRAITS.db.profile.arena.enable then return end
@@ -43,7 +7,9 @@ function BLINKIISPORTRAITS:InitializeArenaPortrait(demo)
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits
 		local events =
-			{ "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_NAME_UPDATE", "UPDATE_ACTIVE_BATTLEFIELD", "GROUP_ROSTER_UPDATE", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE" }
+			{ "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_CONNECTION", "ARENA_OPPONENT_UPDATE", "UPDATE_ACTIVE_BATTLEFIELD", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE" }
+
+			if BLINKIISPORTRAITS.Retail then tinsert(events, "ARENA_PREP_OPPONENT_SPECIALIZATIONS") end
 
 		for i = 1, 5 do
 			local parent = _G[unitframe .. i]
@@ -66,7 +32,7 @@ function BLINKIISPORTRAITS:InitializeArenaPortrait(demo)
 					portraits[unit].size = BLINKIISPORTRAITS.db.profile[type].size
 					portraits[unit].point = BLINKIISPORTRAITS.db.profile[type].point
 					portraits[unit].useClassIcon = BLINKIISPORTRAITS.db.profile.misc.class_icon ~= "none"
-					portraits[unit].func = OnEvent
+					portraits[unit].realUnit = "arena"
 
 					if demo then
 						portraits[unit].demo = not portraits[unit].demo
