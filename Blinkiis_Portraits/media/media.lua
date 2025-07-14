@@ -1,4 +1,4 @@
-local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits")
+local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits", true)
 
 local texCoords = {
 	WARRIOR = { 0, 0, 0, 0.125, 0.125, 0, 0.125, 0.125 },
@@ -187,6 +187,16 @@ BLINKIISPORTRAITS.media = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\class_transparent.tga",
 			texCoords = texCoords,
 			name = L["New Style"]
+		},
+		simple = {
+			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\simple.tga",
+			texCoords = texCoords,
+			name = L["Simple"]
+		},
+		simple_border = {
+			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\simple_border.tga",
+			texCoords = texCoords,
+			name = L["Simple with Border"]
 		},
 	},
 }

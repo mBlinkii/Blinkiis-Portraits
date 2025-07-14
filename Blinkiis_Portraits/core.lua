@@ -1,7 +1,7 @@
 local _G = _G
 local GetAddOnMetadata = _G.C_AddOns and _G.C_AddOns.GetAddOnMetadata or _G.GetAddOnMetadata
 local IsAddOnLoaded = _G.C_AddOns and _G.C_AddOns.IsAddOnLoaded or IsAddOnLoaded
-local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits")
+local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits", true)
 
 -- addon name and namespace
 local addonName, _ = ...

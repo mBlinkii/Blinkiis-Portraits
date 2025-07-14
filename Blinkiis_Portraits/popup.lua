@@ -1,5 +1,5 @@
 local ReloadUI = ReloadUI
-local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits")
+local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits", true)
 
 StaticPopupDialogs["BLINKIISPORTRAITS_RL"] = {
 	text = L["Some settings require you to reload the interface. Do you want to do that now?"],

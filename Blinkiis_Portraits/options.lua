@@ -1,7 +1,7 @@
 local CopyTable = CopyTable
 local LibSerialize = LibStub("LibSerialize")
 local LibDeflate = LibStub("LibDeflate")
-local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits")
+local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits", true)
 
 local credits = {
 	"Huchang47",

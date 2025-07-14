@@ -223,3 +223,5 @@ L["Are you sure you want to delete this |cffff0000%s|r icon?"] = "Вы увер�
 L["Blizzard"] = "Blizzard"
 L["Blizzard HD"] = "Blizzard HD"
 L["New Style"] = "Новый стиль"
+L["Simple"] = "Простой"
+L["Simple with Border"] = "Простой с бордюром"
