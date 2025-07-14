@@ -44,14 +44,59 @@ local function Update(portrait, event, eventUnit)
 end
 
 local function VehicleUpdate(portrait, _, unit, arg2)
+	print("VehicleUpdate", unit, arg2, portrait.realUnit)
 	if portrait.realUnit == "player" then
-		unit = (UnitInVehicle("player") and arg2) and UnitExists("pet") and "pet" or "player"
+		unit = (UnitInVehicle("player") and arg2) and "pet" or "player" --UnitExists("pet") and "pet" or "player"
 	elseif portrait.realUnit == "pet" then
 		unit = (UnitInVehicle("player") and arg2) and "player" or "pet"
 	end
+	print("VehicleUpdate unit", unit)
 
 	Update(portrait, "ForceUpdate", unit)
 end
+
+local debounceTimers = {
+    player = nil,
+    pet = nil
+}
+
+local latestArgs = {
+    player = nil,
+    pet = nil
+}
+
+local function DebouncedVehicleUpdate(portrait, _, unit, arg2)
+    local realUnit = portrait.realUnit
+	local isInVehicle = (UnitInVehicle("player") or arg2)
+
+    -- Cache arguments
+    latestArgs[realUnit] = {portrait = portrait, unit = unit, isInVehicle = isInVehicle}
+
+    -- Cancel previous timer
+    if debounceTimers[realUnit] then
+        debounceTimers[realUnit]:Cancel()
+    end
+
+    -- Start timer (e.g. 0.3 second delay)
+    debounceTimers[realUnit] = C_Timer.NewTimer(0.3, function()
+        local args = latestArgs[realUnit]
+        local p, u, iV = args.portrait, args.unit, args.isInVehicle
+
+       -- print("VehicleUpdate", u, iV, p.realUnit)
+
+        if p.realUnit == "player" then
+            u = iV and "pet" or "player"
+        elseif p.realUnit == "pet" then
+            u = iV and "player" or "pet"
+        end
+
+       -- print("VehicleUpdate unit", u)
+        Update(p, "ForceUpdate", u)
+    end)
+end
+
+
+
 
 local function ForceUpdate(portrait, _, unit)
 	Update(portrait, "ForceUpdate", unit or portrait.unit)
@@ -66,10 +111,10 @@ local eventHandlers = {
 	ForceUpdate = Update,
 
 	-- vehicle updates
-	UNIT_ENTERED_VEHICLE = VehicleUpdate,
-	UNIT_EXITING_VEHICLE = VehicleUpdate,
-	UNIT_EXITED_VEHICLE = VehicleUpdate,
-	VEHICLE_UPDATE = VehicleUpdate,
+	UNIT_ENTERED_VEHICLE = DebouncedVehicleUpdate,
+	UNIT_EXITING_VEHICLE = DebouncedVehicleUpdate,
+	UNIT_EXITED_VEHICLE = DebouncedVehicleUpdate,
+	VEHICLE_UPDATE = DebouncedVehicleUpdate,
 
 	-- target/ focus updates
 	PLAYER_TARGET_CHANGED = function(portrait, event, unit)
