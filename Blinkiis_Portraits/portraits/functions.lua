@@ -53,7 +53,7 @@ local function VehicleUpdate(portrait, _, unit, arg2)
 		unit = (UnitInVehicle("player") and arg2) and "player" or "pet"
 	end
 
-	Update(portrait, "ForceUpdate", unit )
+	Update(portrait, "ForceUpdate", unit)
 end
 
 local function ForceUpdate(portrait, _, unit)
@@ -75,9 +75,15 @@ local eventHandlers = {
 	VEHICLE_UPDATE = VehicleUpdate,
 
 	-- target/ focus updates
-	PLAYER_TARGET_CHANGED = ForceUpdate,
-	PLAYER_FOCUS_CHANGED = ForceUpdate,
-	UNIT_TARGET = ForceUpdate,
+	PLAYER_TARGET_CHANGED = function(portrait, event, unit)
+		Update(portrait, event, unit or portrait.unit)
+	end,
+	PLAYER_FOCUS_CHANGED = function(portrait, event, unit)
+		Update(portrait, event, unit or portrait.unit)
+	end,
+	UNIT_TARGET = function(portrait, event)
+		Update(portrait, event, portrait.unit)
+	end,
 
 	-- party
 	GROUP_ROSTER_UPDATE = ForceUpdate,
