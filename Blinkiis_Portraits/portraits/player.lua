@@ -32,7 +32,6 @@ function BLINKIISPORTRAITS:InitializePlayerPortrait()
 				portraits[unit].isPlayer = nil
 				portraits[unit].unitClass = nil
 				portraits[unit].lastGUID = nil
-				portraits[unit].forceUpdate = true
 
 				BLINKIISPORTRAITS:UpdateTexturesFiles(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
 				BLINKIISPORTRAITS:UpdateSize(portraits[unit])

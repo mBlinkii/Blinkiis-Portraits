@@ -1,13 +1,10 @@
-
-
 function BLINKIISPORTRAITS:InitializePartyPortrait(demo)
 	if not BLINKIISPORTRAITS.db.profile.party.enable then return end
 
 	local unitframe, parentFrame = BLINKIISPORTRAITS:GetUnitFrames("party", BLINKIISPORTRAITS.db.profile.party.unitframe)
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits
-		local events =
-			{ "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_CONNECTION", "PARTY_MEMBER_ENABLE", "GROUP_ROSTER_UPDATE", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE" }
+		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_CONNECTION", "PARTY_MEMBER_ENABLE", "GROUP_ROSTER_UPDATE", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE", }
 
 		for i = 1, 5 do
 			local parent = _G[unitframe .. i]
@@ -41,7 +38,6 @@ function BLINKIISPORTRAITS:InitializePartyPortrait(demo)
 					portraits[unit].isPlayer = nil
 					portraits[unit].unitClass = nil
 					portraits[unit].lastGUID = nil
-					portraits[unit].forceUpdate = true
 
 					BLINKIISPORTRAITS:UpdateTexturesFiles(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
 					BLINKIISPORTRAITS:UpdateSize(portraits[unit])

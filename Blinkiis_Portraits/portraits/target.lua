@@ -1,5 +1,3 @@
-
-
 function BLINKIISPORTRAITS:InitializeTargetPortrait()
 	if not BLINKIISPORTRAITS.db.profile.target.enable then return end
 
@@ -33,7 +31,6 @@ function BLINKIISPORTRAITS:InitializeTargetPortrait()
 				portraits[unit].isPlayer = nil
 				portraits[unit].unitClass = nil
 				portraits[unit].lastGUID = nil
-				portraits[unit].forceUpdate = true
 
 				BLINKIISPORTRAITS:UpdateTexturesFiles(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
 				BLINKIISPORTRAITS:UpdateSize(portraits[unit])

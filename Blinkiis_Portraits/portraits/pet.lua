@@ -1,13 +1,10 @@
-
 function BLINKIISPORTRAITS:InitializePetPortrait()
 	if not BLINKIISPORTRAITS.db.profile.pet.enable then return end
 
 	local unitframe, parentFrame = BLINKIISPORTRAITS:GetUnitFrames("pet", BLINKIISPORTRAITS.db.profile.pet.unitframe)
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits
-		-- "PET_UI_UPDATE" "UNIT_PET"
-		local events =
-			{ "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_EXITED_VEHICLE", "VEHICLE_UPDATE", "UNIT_EXITING_VEHICLE", "UNIT_ENTERED_VEHICLE" }
+		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_EXITED_VEHICLE", "VEHICLE_UPDATE", "UNIT_EXITING_VEHICLE", "UNIT_ENTERED_VEHICLE" }
 		local parent = _G[unitframe]
 
 		if parent then
@@ -34,7 +31,6 @@ function BLINKIISPORTRAITS:InitializePetPortrait()
 				portraits[unit].isPlayer = nil
 				portraits[unit].unitClass = nil
 				portraits[unit].lastGUID = nil
-				portraits[unit].forceUpdate = true
 
 				BLINKIISPORTRAITS:UpdateTexturesFiles(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
 				BLINKIISPORTRAITS:UpdateSize(portraits[unit])

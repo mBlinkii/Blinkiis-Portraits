@@ -1,15 +1,12 @@
-
-
 function BLINKIISPORTRAITS:InitializeArenaPortrait(demo)
 	if not BLINKIISPORTRAITS.db.profile.arena.enable then return end
 
 	local unitframe, parentFrame = BLINKIISPORTRAITS:GetUnitFrames("arena", BLINKIISPORTRAITS.db.profile.arena.unitframe)
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits
-		local events =
-			{ "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_CONNECTION", "ARENA_OPPONENT_UPDATE", "UPDATE_ACTIVE_BATTLEFIELD", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE" }
+		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_CONNECTION", "ARENA_OPPONENT_UPDATE", "UPDATE_ACTIVE_BATTLEFIELD", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE", }
 
-			if BLINKIISPORTRAITS.Retail then tinsert(events, "ARENA_PREP_OPPONENT_SPECIALIZATIONS") end
+		if BLINKIISPORTRAITS.Retail then tinsert(events, "ARENA_PREP_OPPONENT_SPECIALIZATIONS") end
 
 		for i = 1, 5 do
 			local parent = _G[unitframe .. i]
@@ -43,7 +40,6 @@ function BLINKIISPORTRAITS:InitializeArenaPortrait(demo)
 					portraits[unit].isPlayer = nil
 					portraits[unit].unitClass = nil
 					portraits[unit].lastGUID = nil
-					portraits[unit].forceUpdate = true
 
 					BLINKIISPORTRAITS:UpdateTexturesFiles(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
 					BLINKIISPORTRAITS:UpdateSize(portraits[unit])

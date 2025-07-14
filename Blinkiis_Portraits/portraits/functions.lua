@@ -1,4 +1,3 @@
-local IsAddOnLoaded = _G.C_AddOns and _G.C_AddOns.IsAddOnLoaded or IsAddOnLoaded
 local UnitIsPlayer = UnitIsPlayer
 local UnitClass = UnitClass
 local UnitReaction = UnitReaction
@@ -39,8 +38,6 @@ local function Update(portrait, event, eventUnit)
 
 		BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
 		BLINKIISPORTRAITS:UpdateExtraTexture(portrait, portrait.db.unitcolor and color, portrait.db.forceExtra)
-
-		portrait.forceUpdate = false
 
 		if not InCombatLockdown() and portrait:GetAttribute("unit") ~= unit then portrait:SetAttribute("unit", unit) end
 	end
