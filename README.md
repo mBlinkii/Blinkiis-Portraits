@@ -9,7 +9,7 @@
     <a href="https://discord.gg/AE9XebMU49">💬 Join Discord</a> • 
     <a href="https://ko-fi.com/blinkii">☕ Support via Ko-Fi</a>
   </p>
-  <img src="https://img.shields.io/github/downloads/mBlinkii/blinkiis-portraits/total" alt="Downloads">
+  <br/><br/>
   <h3 align="center"><strong>Blinkiis Portraits</strong></h3>
 
   <p align="center">
@@ -63,4 +63,4 @@ If you like the project, feel free to leave a ⭐ on GitHub!
 
 ## 📜 License
 
-This project is licensed under the [MIT License](https://github.com/mBlinkii/Blinkiis-Portraits/blob/main/LICENSE.txt). Use freely and share with the community.
+This project is licensed under the All rights reserved (https://github.com/mBlinkii/Blinkiis-Portraits/blob/main/LICENSE.txt). Use freely and share with the community.
