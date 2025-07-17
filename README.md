@@ -2,20 +2,19 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/mBlinkii/Blinkiis-Portraits/refs/heads/main/icon.png" alt="Logo" width="80" height="80">
   <br/><br/>
+    <p align="center">
+    <a href="https://www.curseforge.com/wow/addons/blinkiis-portraits">🔗 CurseForge</a> • 
+    <a href="https://github.com/mBlinkii/Blinkiis-Portraits/issues">🐞 Report a Bug</a> • 
+    <a href="https://github.com/mBlinkii/Blinkiis-Portraits/issues">💡 Request a Feature</a> • 
+    <a href="https://discord.gg/AE9XebMU49">💬 Join Discord</a> • 
+    <a href="https://ko-fi.com/blinkii">☕ Support via Ko-Fi</a>
+  </p>
   <img src="https://img.shields.io/github/downloads/mBlinkii/blinkiis-portraits/total" alt="Downloads">
   <h3 align="center"><strong>Blinkiis Portraits</strong></h3>
 
   <p align="center">
     A lightweight addon for <strong>ElvUI</strong>, <strong>SUF</strong>, <strong>Cell</strong>, <strong>PitBull 4</strong>, <strong>UUF</strong> and <strong>NDui</strong> that adds customizable 2D portraits to your World of Warcraft interface.<br/>
     From clean and classic to quirky and colorful — with a wide range of styles and textures, there's something for everyone to personalize their UI!
-  </p>
-
-  <p align="center">
-    <a href="https://www.curseforge.com/wow/addons/blinkiis-portraits">🔗 CurseForge</a> • 
-    <a href="https://github.com/mBlinkii/Blinkiis-Portraits/issues">🐞 Report a Bug</a> • 
-    <a href="https://github.com/mBlinkii/Blinkiis-Portraits/issues">💡 Request a Feature</a> • 
-    <a href="https://discord.gg/AE9XebMU49">💬 Join Discord</a> • 
-    <a href="https://ko-fi.com/blinkii">☕ Support via Ko-Fi</a>
   </p>
 </div>
 
