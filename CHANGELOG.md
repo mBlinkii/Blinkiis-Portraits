@@ -1,5 +1,13 @@
 # Changelog
 
+## [ver. 1.38] - 17.07.2025
+### FIX 
+- FIX - Possible fix for the bug with Player & Pet portrait in a Vehicle
+- FIX - Wrong Party portraits
+### UPDATE
+- UPDATE - Portrait Update events
+- UPDATE - Logo and Icon
+
 ## [ver. 1.37] - 03.07.2025
 ### FIX 
 - FIX - Bug with enabled Class icons on Target Units
