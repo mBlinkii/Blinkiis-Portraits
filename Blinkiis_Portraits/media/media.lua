@@ -128,6 +128,11 @@ BLINKIISPORTRAITS.media = {
 			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\oval_mask.tga",
 			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\oval_extra.tga",
 		},
+		oval_horizontal = {
+			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\oval_b.tga",
+			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\oval_b_mask.tga",
+			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\oval_b_extra.tga",
+		},
 	},
 	extra = {
 		extra_a = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_a.tga",
@@ -181,27 +186,27 @@ BLINKIISPORTRAITS.media = {
 		blizzard = {
 			texture = "Interface\\WorldStateFrame\\Icons-Classes",
 			texCoords = CLASS_ICON_TCOORDS,
-			name = L["Blizzard"]
+			name = L["Blizzard"],
 		},
 		hd = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\class_round.tga",
 			texCoords = texCoords,
-			name = L["Blizzard HD"]
+			name = L["Blizzard HD"],
 		},
 		new = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\class_transparent.tga",
 			texCoords = texCoords,
-			name = L["New Style"]
+			name = L["New Style"],
 		},
 		simple = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\simple.tga",
 			texCoords = texCoords,
-			name = L["Simple"]
+			name = L["Simple"],
 		},
 		simple_border = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\simple_border.tga",
 			texCoords = texCoords,
-			name = L["Simple with Border"]
+			name = L["Simple with Border"],
 		},
 	},
 }
@@ -214,7 +219,7 @@ function BLINKIISPORTRAITS:UpdateCustomClassIcons()
 			BLINKIISPORTRAITS.media.class[k] = {
 				texture = "Interface\\Addons\\" .. v.texture,
 				name = v.name,
-				texCoords = v.texCoords or texCoords
+				texCoords = v.texCoords or texCoords,
 			}
 		end
 	end

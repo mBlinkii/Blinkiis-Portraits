@@ -27,6 +27,7 @@ local form = {
 	square = L["Square"],
 	square_round = L["Square Round"],
 	oval = L["Oval"],
+	oval_horizontal = L["Oval Horizontal"],
 }
 local extra = {
 	extra_a = L["Extra A"],

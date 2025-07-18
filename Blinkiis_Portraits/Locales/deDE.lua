@@ -165,6 +165,7 @@ L["Page Mirror"] = "Seite gespiegelt"
 L["Square"] = "Quadrat"
 L["Square Round"] = "Quadrat Rund"
 L["Oval"] = "Oval"
+L["Oval Horizontal"] = "Oval Horizontal"
 
 L["Extra A"] = "Extra A"
 L["Extra B"] = "Extra B"
