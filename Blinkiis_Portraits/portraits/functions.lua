@@ -37,7 +37,13 @@ local function Update(portrait, event, eventUnit)
 			"UUF:",
 			BLINKIISPORTRAITS.UUF,
 			"NDUI:",
-			BLINKIISPORTRAITS.NDUI
+			BLINKIISPORTRAITS.NDUI,
+			"WOW Version:",
+			BLINKIISPORTRAITS.Mists,
+			BLINKIISPORTRAITS.Cata,
+			BLINKIISPORTRAITS.Wrath,
+			BLINKIISPORTRAITS.Retail,
+			BLINKIISPORTRAITS.Classic
 		)
 		return
 	end
