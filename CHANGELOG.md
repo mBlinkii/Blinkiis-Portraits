@@ -1,5 +1,14 @@
 # Changelog
 
+## [ver. 1.39] - 18.07.2025
+### FIX 
+- FIX - Prevent Nil errors in combination with SUF
+- FIX - SUF Portrait update events
+### NEW
+- NEW - Texture Oval
+- NEW - Texture Oval Horizontal
+- NEW - Texture Rectangular
+
 ## [ver. 1.38] - 17.07.2025
 ### FIX 
 - FIX - Possible fix for the bug with Player & Pet portrait in a Vehicle
