@@ -31,8 +31,8 @@ function BLINKIISPORTRAITS:InitializePartyPortrait(demo)
 
 					if demo then
 						portraits[unit].demo = not portraits[unit].demo
-					else
-						portraits[unit].demo = BLINKIISPORTRAITS.SUF and not ShadowUF.db.profile.locked
+					elseif BLINKIISPORTRAITS.SUF then
+						portraits[unit].demo = not ShadowUF.db.profile.locked
 					end
 
 					portraits[unit].isPlayer = nil

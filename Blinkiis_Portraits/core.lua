@@ -105,7 +105,7 @@ local function IsSUFParent()
 	local units = { "player", "target", "targettarget", "focus", "party", "boss", "arena" }
 
 	for _, unit in ipairs(units) do
-		if BLINKIISPORTRAITS.db.profile[unit].unitframe == "suf" then return true end
+		if BLINKIISPORTRAITS.db.profile[unit].unitframe == "suf" or "auto" then return true end
 	end
 	return false
 end
@@ -130,6 +130,7 @@ function BLINKIISPORTRAITS:OnInitialize()
 			hooksecurefunc(ShadowUF.Units, "UninitializeFrame", BLINKIISPORTRAITS.DelayedUpdate)
 			hooksecurefunc(ShadowUF.Units, "CheckGroupedUnitStatus", BLINKIISPORTRAITS.DelayedUpdate)
 			hooksecurefunc(ShadowUF.Units, "CheckUnitStatus", BLINKIISPORTRAITS.DelayedUpdate)
+			hooksecurefunc(ShadowUF.modules.movers, "Update", BLINKIISPORTRAITS.DelayedUpdate)
 			BLINKIISPORTRAITS.SUF_Hook = true
 		end
 	end

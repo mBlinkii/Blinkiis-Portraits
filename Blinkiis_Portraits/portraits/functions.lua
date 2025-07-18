@@ -16,37 +16,9 @@ local playerFaction = nil
 
 -- portrait texture update functions
 local function Update(portrait, event, eventUnit)
-	--local unit = portrait.isCellParentFrame and portrait.parentFrame._unit or portrait.parentFrame.unit
-	if not portrait.unit or not eventUnit or not UnitIsUnit(portrait.unit, eventUnit) then
-		BLINKIISPORTRAITS:Print(
-			"ERROR",
-			"EventUnit:",
-			eventUnit,
-			"Portrait Unit:",
-			portrait.unit,
-			"SUF:",
-			BLINKIISPORTRAITS.SUF,
-			"ELVUI:",
-			BLINKIISPORTRAITS.ELVUI,
-			"PB4:",
-			BLINKIISPORTRAITS.PB4,
-			"Cell:",
-			BLINKIISPORTRAITS.Cell,
-			"UUF:",
-			BLINKIISPORTRAITS.UUF,
-			"NDUI:",
-			BLINKIISPORTRAITS.NDUI,
-			"WOW Version:",
-			BLINKIISPORTRAITS.Mists,
-			BLINKIISPORTRAITS.Cata,
-			BLINKIISPORTRAITS.Wrath,
-			BLINKIISPORTRAITS.Retail,
-			BLINKIISPORTRAITS.Classic
-		)
-		return
-	end
+	if not portrait.unit or not eventUnit or not UnitIsUnit(portrait.unit, eventUnit) then return end
 
-	local unit = portrait.unit
+	local unit = (portrait.demo and not UnitExists(portrait.unit)) and "player" or portrait.unit
 	local guid = UnitGUID(unit)
 	local isAvailable = UnitIsConnected(unit) and UnitIsVisible(unit)
 	local hasStateChanged = ((event == "ForceUpdate") or (portrait.guid ~= guid) or (portrait.state ~= isAvailable))
