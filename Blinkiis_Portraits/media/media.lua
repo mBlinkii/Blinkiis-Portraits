@@ -133,6 +133,11 @@ BLINKIISPORTRAITS.media = {
 			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\oval_b_mask.tga",
 			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\oval_b_extra.tga",
 		},
+		rectangular = {
+			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\rectangular.tga",
+			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\rectangular_mask.tga",
+			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\rectangular_extra.tga",
+		},
 	},
 	extra = {
 		extra_a = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_a.tga",

@@ -167,6 +167,7 @@ L["Square"] = "Квадрат"
 L["Square Round"] = "Квадрат закруглённый"
 L["Oval"] = "Овал"
 L["Oval Horizontal"] = "Овал Горизонтальный"
+L["Rectangular"] = "Прямоугольный"
 
 L["Extra A"] = "Дополнительно A"
 L["Extra B"] = "Дополнительно B"

@@ -171,6 +171,7 @@ L["Square"] = "矩形"
 L["Square Round"] = "圆角矩形"
 L["Oval"] = "椭圆形"
 L["Oval Horizontal"] = "椭圆形水平"
+L["Rectangular"] = "矩形"
 
 L["Extra A"] = "扩展 A"
 L["Extra B"] = "扩展 B"
