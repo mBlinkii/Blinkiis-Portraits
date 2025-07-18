@@ -26,6 +26,7 @@ local form = {
 	page_mirror = L["Page Mirror"],
 	square = L["Square"],
 	square_round = L["Square Round"],
+	oval = L["Oval"],
 }
 local extra = {
 	extra_a = L["Extra A"],

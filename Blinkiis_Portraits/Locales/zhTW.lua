@@ -169,6 +169,7 @@ L["Page"] = "纸张形"
 L["Page Mirror"] = "纸张形反向"
 L["Square"] = "矩形"
 L["Square Round"] = "圆角矩形"
+L["Oval"] = "椭圆形"
 
 L["Extra A"] = "扩展 A"
 L["Extra B"] = "扩展 B"
