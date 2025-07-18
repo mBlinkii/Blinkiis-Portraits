@@ -17,7 +17,30 @@ local playerFaction = nil
 -- portrait texture update functions
 local function Update(portrait, event, eventUnit)
 	local unit = portrait.isCellParentFrame and portrait.parentFrame._unit or portrait.parentFrame.unit
-	if not eventUnit or not UnitIsUnit((unit or portrait.unit), eventUnit) then return end
+	if not unit or not eventUnit or not UnitIsUnit((unit or portrait.unit), eventUnit) then
+		BLINKIISPORTRAITS:Print(
+			"ERROR",
+			"UNIT:",
+			unit,
+			"EventUnit:",
+			eventUnit,
+			"Portrait Unit:",
+			portrait.unit,
+			"SUF:",
+			BLINKIISPORTRAITS.SUF,
+			"ELVUI:",
+			BLINKIISPORTRAITS.ELVUI,
+			"PB4:",
+			BLINKIISPORTRAITS.PB4,
+			"Cell:",
+			BLINKIISPORTRAITS.Cell,
+			"UUF:",
+			BLINKIISPORTRAITS.UUF,
+			"NDUI:",
+			BLINKIISPORTRAITS.NDUI
+		)
+		return
+	end
 
 	local guid = UnitGUID(unit)
 	local isAvailable = UnitIsConnected(unit) and UnitIsVisible(unit)
@@ -56,47 +79,43 @@ local function VehicleUpdate(portrait, _, unit, arg2)
 end
 
 local debounceTimers = {
-    player = nil,
-    pet = nil
+	player = nil,
+	pet = nil,
 }
 
 local latestArgs = {
-    player = nil,
-    pet = nil
+	player = nil,
+	pet = nil,
 }
 
 local function DebouncedVehicleUpdate(portrait, _, unit, arg2)
-    local realUnit = portrait.realUnit
+	local realUnit = portrait.realUnit
 	local isInVehicle = (UnitInVehicle("player") or arg2)
 
-    -- Cache arguments
-    latestArgs[realUnit] = {portrait = portrait, unit = unit, isInVehicle = isInVehicle}
+	-- Cache arguments
+	latestArgs[realUnit] = { portrait = portrait, unit = unit, isInVehicle = isInVehicle }
 
-    -- Cancel previous timer
-    if debounceTimers[realUnit] then
-        debounceTimers[realUnit]:Cancel()
-    end
+	-- Cancel previous timer
+	if debounceTimers[realUnit] then debounceTimers[realUnit]:Cancel() end
 
-    -- Start timer (e.g. 0.3 second delay)
-    debounceTimers[realUnit] = C_Timer.NewTimer(0.3, function()
-        local args = latestArgs[realUnit]
-        local p, u, iV = args.portrait, args.unit, args.isInVehicle
+	-- Start timer (e.g. 0.3 second delay)
+	debounceTimers[realUnit] = C_Timer.NewTimer(0.3, function()
+		local args = latestArgs[realUnit]
+		if args == nil then return end
+		local p, u, iV = args.portrait, args.unit, args.isInVehicle
 
-       -- print("VehicleUpdate", u, iV, p.realUnit)
+		-- print("VehicleUpdate", u, iV, p.realUnit)
 
-        if p.realUnit == "player" then
-            u = iV and "pet" or "player"
-        elseif p.realUnit == "pet" then
-            u = iV and "player" or "pet"
-        end
+		if p.realUnit == "player" then
+			u = iV and "pet" or "player"
+		elseif p.realUnit == "pet" then
+			u = iV and "player" or "pet"
+		end
 
-       -- print("VehicleUpdate unit", u)
-        Update(p, "ForceUpdate", u)
-    end)
+		-- print("VehicleUpdate unit", u)
+		Update(p, "ForceUpdate", u)
+	end)
 end
-
-
-
 
 local function ForceUpdate(portrait, _, unit)
 	Update(portrait, "ForceUpdate", unit or portrait.unit)
