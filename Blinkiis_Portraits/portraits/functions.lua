@@ -16,110 +16,65 @@ local playerFaction = nil
 
 -- portrait texture update functions
 local function Update(portrait, event, eventUnit)
-	if not portrait.unit or not eventUnit or not UnitIsUnit(portrait.unit, eventUnit) then return end
+    if not portrait.unit then return end
 
-	local unit = (portrait.demo and not UnitExists(portrait.unit)) and "player" or portrait.unit
-	local guid = UnitGUID(unit)
-	local isAvailable = UnitIsConnected(unit) and UnitIsVisible(unit)
-	local hasStateChanged = ((event == "ForceUpdate") or (portrait.guid ~= guid) or (portrait.state ~= isAvailable))
+    local unit = (portrait.demo and not UnitExists(portrait.unit)) and "player" or portrait.unit
+    local guid = UnitGUID(unit)
+    local isAvailable = UnitIsConnected(unit) and UnitIsVisible(unit)
+    local hasStateChanged = ((event == "ForceUpdate") or (portrait.guid ~= guid) or (portrait.state ~= isAvailable))
 
-	if hasStateChanged then
-		local class = select(2, UnitClass(unit))
-		local isPlayer = UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit))
+    if hasStateChanged then
+        local class = select(2, UnitClass(unit))
+        local isPlayer = UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit))
 
-		portrait.isPlayer = isPlayer
-		portrait.unitClass = class
-		portrait.lastGUID = guid
-		portrait.state = isAvailable
-		portrait.unit = unit
+        portrait.isPlayer = isPlayer
+        portrait.unitClass = class
+        portrait.lastGUID = guid
+        portrait.state = isAvailable
+        portrait.unit = unit
 
-		local color = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead, isPlayer, class)
-		if color then portrait.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
+        local color = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead, isPlayer, class)
+        if color then portrait.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
 
-		BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
-		BLINKIISPORTRAITS:UpdateExtraTexture(portrait, portrait.db.unitcolor and color, portrait.db.forceExtra)
+        BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
+        BLINKIISPORTRAITS:UpdateExtraTexture(portrait, portrait.db.unitcolor and color, portrait.db.forceExtra)
 
-		if not InCombatLockdown() and portrait:GetAttribute("unit") ~= unit then portrait:SetAttribute("unit", unit) end
-	end
+        if not InCombatLockdown() and portrait:GetAttribute("unit") ~= unit then portrait:SetAttribute("unit", unit) end
+    end
 end
 
-local debounceTimers = {
-	player = nil,
-	pet = nil,
-}
-
-local latestArgs = {
-	player = nil,
-	pet = nil,
-}
-
-local function VehicleUpdate(portrait, _, unit, arg2)
-	local realUnit = portrait.realUnit
-	local isInVehicle = (UnitInVehicle("player") or arg2)
-
-	-- Cache arguments
-	latestArgs[realUnit] = { portrait = portrait, unit = unit, isInVehicle = isInVehicle }
-
-	-- Cancel previous timer
-	if debounceTimers[realUnit] then debounceTimers[realUnit]:Cancel() end
-
-	-- Start timer (e.g. 0.3 second delay)
-	debounceTimers[realUnit] = C_Timer.NewTimer(0.3, function()
-		local args = latestArgs[realUnit]
-		if args == nil then return end
-		local p, u, iV = args.portrait, args.unit, args.isInVehicle
-
-		-- print("VehicleUpdate", u, iV, p.realUnit)
-
-		if p.realUnit == "player" then
-			u = iV and "pet" or "player"
-		elseif p.realUnit == "pet" then
-			u = iV and "player" or "pet"
-		end
-
-		-- print("VehicleUpdate unit", u)
-		Update(p, "ForceUpdate", u)
-	end)
-end
-
-local function ForceUpdate(portrait, _, unit)
-	Update(portrait, "ForceUpdate", unit or portrait.unit)
+local function SimpleUpdate(portrait, event, unit, arg2)
+	Update(portrait, event, portrait.unit)
 end
 
 local eventHandlers = {
 	-- portrait updates
-	PORTRAITS_UPDATED = ForceUpdate,
+	PORTRAITS_UPDATED = SimpleUpdate,
 	UNIT_CONNECTION = Update,
 	UNIT_PORTRAIT_UPDATE = Update,
 	PARTY_MEMBER_ENABLE = Update,
 	ForceUpdate = Update,
 
 	-- vehicle updates
-	UNIT_ENTERED_VEHICLE = VehicleUpdate,
-	UNIT_EXITING_VEHICLE = VehicleUpdate,
-	UNIT_EXITED_VEHICLE = VehicleUpdate,
-	VEHICLE_UPDATE = VehicleUpdate,
+	UNIT_ENTERED_VEHICLE = SimpleUpdate,
+	UNIT_EXITING_VEHICLE = SimpleUpdate,
+	UNIT_EXITED_VEHICLE = SimpleUpdate,
+	VEHICLE_UPDATE = SimpleUpdate,
 
 	-- target/ focus updates
-	PLAYER_TARGET_CHANGED = function(portrait, event, unit)
-		Update(portrait, event, unit or portrait.unit)
-	end,
-	PLAYER_FOCUS_CHANGED = function(portrait, event, unit)
-		Update(portrait, event, unit or portrait.unit)
-	end,
-	UNIT_TARGET = function(portrait, event)
-		Update(portrait, event, portrait.unit)
-	end,
+	PLAYER_TARGET_CHANGED = SimpleUpdate,
+	PLAYER_FOCUS_CHANGED = SimpleUpdate,
+	UNIT_TARGET = SimpleUpdate,
 
 	-- party
-	GROUP_ROSTER_UPDATE = ForceUpdate,
+	GROUP_ROSTER_UPDATE = SimpleUpdate,
 
 	-- arena
 	ARENA_OPPONENT_UPDATE = Update,
 	UNIT_TARGETABLE_CHANGED = Update,
-	ARENA_PREP_OPPONENT_SPECIALIZATIONS = ForceUpdate,
-	INSTANCE_ENCOUNTER_ENGAGE_UNIT = ForceUpdate,
-	UPDATE_ACTIVE_BATTLEFIELD = ForceUpdate,
+	ARENA_PREP_OPPONENT_SPECIALIZATIONS = SimpleUpdate,
+	INSTANCE_ENCOUNTER_ENGAGE_UNIT = SimpleUpdate,
+	UPDATE_ACTIVE_BATTLEFIELD = SimpleUpdate,
 
 	-- death updates
 	UNIT_HEALTH = function(portrait, _, unit)
