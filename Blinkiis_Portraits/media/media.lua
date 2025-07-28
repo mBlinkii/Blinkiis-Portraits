@@ -195,12 +195,17 @@ BLINKIISPORTRAITS.media = {
 		blizz_boss_neutral = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_blizz_boss_neutral.tga",
 
 		dragon = "Interface\\Addons\\Blinkiis_Portraits\\media\\dragon.tga",
+
+		snake = "Interface\\Addons\\Blinkiis_Portraits\\media\\snake.tga",
+
 		dogs = "Interface\\Addons\\Blinkiis_Portraits\\media\\dogs.tga",
 		dogs_color = "Interface\\Addons\\Blinkiis_Portraits\\media\\dogs_color.tga",
 		dog_pack = "Interface\\Addons\\Blinkiis_Portraits\\media\\dog_pack.tga",
 		dog_pack_color = "Interface\\Addons\\Blinkiis_Portraits\\media\\dog_pack_color.tga",
+
 		space = "Interface\\Addons\\Blinkiis_Portraits\\media\\space.tga",
 		space_color = "Interface\\Addons\\Blinkiis_Portraits\\media\\space_color.tga",
+
 		climbing_plant = "Interface\\Addons\\Blinkiis_Portraits\\media\\climbing_plant.tga",
 		climbing_plant_v2 = "Interface\\Addons\\Blinkiis_Portraits\\media\\climbing_plant_v2.tga",
 

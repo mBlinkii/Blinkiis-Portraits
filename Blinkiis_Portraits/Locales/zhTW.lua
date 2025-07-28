@@ -7,8 +7,7 @@ L["|CFFF7DC6FVer. %s|r"] = "|CFFF7DC6F版本 %s|r"
 
 -------- options.lua --------
 L["General"] = "通用"
-L["The profile you tried to import already exists. Choose a new name or accept to overwrite the existing profile."] =
-	"您尝试导入的配置文件已存在。请选择新名称或接受覆盖现有配置文件。"
+L["The profile you tried to import already exists. Choose a new name or accept to overwrite the existing profile."] = "您尝试导入的配置文件已存在。请选择新名称或接受覆盖现有配置文件。"
 L["Misc"] = "杂项"
 L["Zoom/ Offset"] = "缩放/偏移"
 L["Desaturate"] = "降低饱和度"
@@ -16,8 +15,7 @@ L["Will always desaturate the portraits."] = "总是降低头像的饱和度。"
 L["Custom Textures"] = "自定义纹理"
 L["Enable"] = "启用"
 L["Enable Custom Textures for Portrait."] = "启用自定义纹理。"
-L["Put your custom textures in the Addon folder and add the path here (example MyMediaFolder\\MyTexture.tga)."] =
-	"请将自定义纹理放入插件文件夹并在此处添加路径（示例 MyMediaFolder\\MyTexture.tga）。"
+L["Put your custom textures in the Addon folder and add the path here (example MyMediaFolder\\MyTexture.tga)."] = "请将自定义纹理放入插件文件夹并在此处添加路径（示例 MyMediaFolder\\MyTexture.tga）。"
 L["Texture"] = "纹理"
 L["Mask"] = "遮罩"
 L["Extra Mask"] = "扩展遮罩"
@@ -68,8 +66,7 @@ L["Select a extra texture style for elite units."] = "为精英单位选择扩�
 L["Select a extra texture style for rare elite units."] = "为稀有精英单位选择扩展纹理样式。"
 L["Select a extra texture style for boss units."] = "为首领单位选择扩展纹理样式。"
 L["Select a extra texture style for player."] = "为玩家单位选择扩展纹理样式。"
-L["TIP: If you use the Blizzard textures and change the classification color to white, you will see the extra texture with the original colors."] =
-	"提示：如果您使用的是暴雪纹理，并且将分类颜色更改为白色，您将看到扩展纹理的原始颜色。"
+L["TIP: If you use the Blizzard textures and change the classification color to white, you will see the extra texture with the original colors."] = "提示：如果您使用的是暴雪纹理，并且将分类颜色更改为白色，您将看到扩展纹理的原始颜色。"
 L["Settings"] = "设置"
 L["Shows the Extra Texture (rare/elite) for the Target of Target Portrait."] = "显示目标的目标头像的扩展纹理（稀有/精英）。"
 L["Pet"] = "宠物"

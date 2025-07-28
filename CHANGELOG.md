@@ -1,5 +1,12 @@
 # Changelog
 
+## [ver. 1.40] - 28.07.2025
+### FIX 
+- FIX - The portraits sometimes do not update correctly.
+### NEW
+- NEW - Moon
+- NEW - Extra Textures, Snake, Dragon Dogs, Plants, Comet
+
 ## [ver. 1.39] - 18.07.2025
 ### FIX 
 - FIX - Prevent Nil errors in combination with SUF
