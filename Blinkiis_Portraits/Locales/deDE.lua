@@ -108,6 +108,7 @@ L["Neutral"] = "Neutral"
 L["Friendly"] = "Freundlich"
 L["Class Icons"] = "Klassen-Symbole"
 L["Enable and select a class icon style for the portrait."] = "Aktiviere und wähle einen Klassen-Symbol-Stil für das Porträt."
+L["Custom Class Icons"] = "Benutzerdefinierte Klassen-Symbole"
 L["Add new Icons"] = "Neue Symbole hinzufügen"
 L["Icon Path"] = "Symbol-Pfad"
 L["The path should be in your Addons folder, example: MyIcons\\MyClassIcons.tga"] = "Der Pfad sollte sich im Addons-Ordner befinden, Beispiel: MyIcons\\MyClassIcons.tga"
@@ -167,6 +168,7 @@ L["Square Round"] = "Quadrat Rund"
 L["Oval"] = "Oval"
 L["Oval Horizontal"] = "Oval Horizontal"
 L["Rectangular"] = "Rechteckig"
+L["Moon"] = "Mond"
 
 L["Extra A"] = "Extra A"
 L["Extra B"] = "Extra B"
@@ -214,6 +216,21 @@ L["Blizz Silver"] = "Blizz Silber"
 L["Blizz Boss"] = "Blizz Boss"
 L["Blizz Neutral"] = "Blizz Neutral"
 L["Blizz Boss Neutral"] = "Blizz Boss Neutral"
+
+L["Dragon"] = "Drache"
+
+L["Snake"] = "Schlange"
+
+L["Dogs"] = "Hunde"
+L["Dogs Color"] = "Hunde Farbe"
+L["Dog Pack"] = "Hunderudel"
+L["Dog Pack Color"] = "Hunderudel Farbe"
+
+L["Space"] = "Weltall"
+L["Space Color"] = "Weltall Farbe"
+
+L["Climbing Plant"] = "Rankenpflanze"
+L["Climbing Plant V2"] = "Rankenpflanze V2"
 
 -------- popup.lua --------
 L["Some settings require you to reload the interface. Do you want to do that now?"] = "Einige Einstellungen erfordern, dass die Benutzeroberfläche neu geladen wird. Möchtest du das jetzt tun?"

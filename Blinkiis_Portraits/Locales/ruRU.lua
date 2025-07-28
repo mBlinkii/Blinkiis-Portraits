@@ -108,7 +108,7 @@ L["Neutral"] = "Нейтральный"
 L["Friendly"] = "Дружественный"
 L["Class Icons"] = "Иконки классов"
 L["Enable and select a class icon style for the portrait."] = "Включить и выбрать стиль иконки класса для портрета."
-L["custom Class Icons"] = "Пользовательские иконки классов"
+L["Custom Class Icons"] = "Пользовательские иконки классов"
 L["Add new Icons"] = "Добавить новые иконки"
 L["Icon Path"] = "Путь к иконке"
 L["The path should be in your Addons folder, example: MyIcons\\MyClassIcons.tga"] = "Путь должен быть в папке аддонов, например: MyIcons\\MyClassIcons.tga"
@@ -168,6 +168,7 @@ L["Square Round"] = "Квадрат закруглённый"
 L["Oval"] = "Овал"
 L["Oval Horizontal"] = "Овал Горизонтальный"
 L["Rectangular"] = "Прямоугольный"
+L["Moon"] = "Луна"
 
 L["Extra A"] = "Дополнительно A"
 L["Extra B"] = "Дополнительно B"
@@ -215,6 +216,21 @@ L["Blizz Silver"] = "Blizz Серебро"
 L["Blizz Boss"] = "Blizz Босс"
 L["Blizz Neutral"] = "Blizz Нейтральный"
 L["Blizz Boss Neutral"] = "Blizz Босс Нейтральный"
+
+L["Dragon"] = "Дракон"
+
+L["Snake"] = "Змея"
+
+L["Dogs"] = "Собаки"
+L["Dogs Color"] = "Цвет Собаки"
+L["Dog Pack"] = "Собачья стая"
+L["Dog Pack Color"] = "Цвет Собачьей стаи"
+
+L["Space"] = "Космос"
+L["Space Color"] = "Цвет Космоса"
+
+L["Climbing Plant"] = "Вьющиеся растения"
+L["Climbing Plant V2"] = "Вьющиеся растения V2"
 
 -------- popup.lua --------
 L["Some settings require you to reload the interface. Do you want to do that now?"] = "Некоторые настройки требуют перезагрузки интерфейса. Хотите сделать это сейчас?"

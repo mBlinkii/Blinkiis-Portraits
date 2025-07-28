@@ -76,6 +76,7 @@ local eventHandlers = {
 	INSTANCE_ENCOUNTER_ENGAGE_UNIT = SimpleUpdate,
 	UPDATE_ACTIVE_BATTLEFIELD = SimpleUpdate,
 
+
 	-- death updates
 	UNIT_HEALTH = function(portrait, _, unit)
 		portrait.isDead = BLINKIISPORTRAITS:UpdateDeathStatus(unit)

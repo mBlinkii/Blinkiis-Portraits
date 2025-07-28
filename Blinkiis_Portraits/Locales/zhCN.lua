@@ -2,14 +2,12 @@ local L = LibStub("AceLocale-3.0"):NewLocale("Blinkiis_Portraits", "zhCN")
 if not L then return end
 
 -------- core.lua --------
-L["|CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits"] =
-	"|CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r 头像"
+L["|CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits"] = "|CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r 头像"
 L["|CFFF7DC6FVer. %s|r"] = "|CFFF7DC6F版本 %s|r"
 
 -------- options.lua --------
 L["General"] = "通用"
-L["The profile you tried to import already exists. Choose a new name or accept to overwrite the existing profile."] =
-	"您尝试导入的配置文件已存在。请选择新名称或接受覆盖现有配置文件。"
+L["The profile you tried to import already exists. Choose a new name or accept to overwrite the existing profile."] = "您尝试导入的配置文件已存在。请选择新名称或接受覆盖现有配置文件。"
 L["Misc"] = "杂项"
 L["Zoom/ Offset"] = "缩放/偏移"
 L["Desaturate"] = "降低饱和度"
@@ -17,8 +15,7 @@ L["Will always desaturate the portraits."] = "总是降低头像的饱和度。"
 L["Custom Textures"] = "自定义纹理"
 L["Enable"] = "启用"
 L["Enable Custom Textures for Portrait."] = "启用自定义纹理。"
-L["Put your custom textures in the Addon folder and add the path here (example MyMediaFolder\\MyTexture.tga)."] =
-	"请将自定义纹理放入插件文件夹并在此处添加路径（示例 MyMediaFolder\\MyTexture.tga）。"
+L["Put your custom textures in the Addon folder and add the path here (example MyMediaFolder\\MyTexture.tga)."] = "请将自定义纹理放入插件文件夹并在此处添加路径（示例 MyMediaFolder\\MyTexture.tga）。"
 L["Texture"] = "纹理"
 L["Mask"] = "遮罩"
 L["Extra Mask"] = "扩展遮罩"
@@ -69,8 +66,7 @@ L["Select a extra texture style for elite units."] = "为精英单位选择扩�
 L["Select a extra texture style for rare elite units."] = "为稀有精英单位选择扩展纹理样式。"
 L["Select a extra texture style for boss units."] = "为首领单位选择扩展纹理样式。"
 L["Select a extra texture style for player."] = "为玩家单位选择扩展纹理样式。"
-L["TIP: If you use the Blizzard textures and change the classification color to white, you will see the extra texture with the original colors."] =
-	"提示：如果您使用的是暴雪纹理，并且将分类颜色更改为白色，您将看到扩展纹理的原始颜色。"
+L["TIP: If you use the Blizzard textures and change the classification color to white, you will see the extra texture with the original colors."] = "提示：如果您使用的是暴雪纹理，并且将分类颜色更改为白色，您将看到扩展纹理的原始颜色。"
 L["Settings"] = "设置"
 L["Shows the Extra Texture (rare/elite) for the Target of Target Portrait."] = "显示目标的目标头像的扩展纹理（稀有/精英）。"
 L["Pet"] = "宠物"
@@ -112,7 +108,7 @@ L["Neutral"] = "中立"
 L["Friendly"] = "友善"
 L["Class Icons"] = "职业图标"
 L["Enable and select a class icon style for the portrait."] = "启用并为头像选择职业图标样式。"
-L["custom Class Icons"] = "自定义职业图标"
+L["Custom Class Icons"] = "自定义职业图标"
 L["Add new Icons"] = "添加新图标"
 L["Icon Path"] = "图标路径"
 L["The path should be in your Addons folder, example: MyIcons\\MyClassIcons.tga"] = "图标路径应该在您的插件文件夹中，例如：MyIcons\\MyClassIcons.tga"
@@ -172,6 +168,7 @@ L["Square Round"] = "圆角矩形"
 L["Oval"] = "椭圆形"
 L["Oval Horizontal"] = "椭圆形水平"
 L["Rectangular"] = "矩形"
+L["Moon"] = "月亮形"
 
 L["Extra A"] = "扩展 A"
 L["Extra B"] = "扩展 B"
@@ -219,6 +216,21 @@ L["Blizz Silver"] = "暴雪银色"
 L["Blizz Boss"] = "暴雪首领"
 L["Blizz Neutral"] = "暴雪中立"
 L["Blizz Boss Neutral"] = "暴雪中立首领"
+
+L["Dragon"] = "龙"
+
+L["Snake"] = "蛇"
+
+L["Dogs"] = "狗"
+L["Dogs Color"] = "狗颜色"
+L["Dog Pack"] = "狗群"
+L["Dog Pack Color"] = "狗群颜色"
+
+L["Space"] = "太空"
+L["Space Color"] = "太空颜色"
+
+L["Climbing Plant"] = "攀爬植物"
+L["Climbing Plant V2"] = "攀爬植物 V2"
 
 -------- popup.lua --------
 L["Some settings require you to reload the interface. Do you want to do that now?"] = "某些设置需要你重新加载界面。你现在要这么做吗？"

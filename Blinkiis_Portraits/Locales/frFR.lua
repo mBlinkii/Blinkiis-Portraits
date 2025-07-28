@@ -108,7 +108,7 @@ L["Neutral"] = "Neutral"
 L["Friendly"] = "Friendly"
 L["Class Icons"] = "Class Icons"
 L["Enable and select a class icon style for the portrait."] = "Enable and select a class icon style for the portrait."
-L["custom Class Icons"] = "custom Class Icons"
+L["Custom Class Icons"] = "Custom Class Icons"
 L["Add new Icons"] = "Add new Icons"
 L["Icon Path"] = "Icon Path"
 L["The path should be in your Addons folder, example: MyIcons\\MyClassIcons.tga"] = "The path should be in your Addons folder, example: MyIcons\\MyClassIcons.tga"
@@ -168,6 +168,7 @@ L["Square Round"] = "Square Round"
 L["Oval"] = "Oval"
 L["Oval Horizontal"] = "Oval Horizontal"
 L["Rectangular"] = "Rectangular"
+L["Moon"] = "Moon"
 
 L["Extra A"] = "Extra A"
 L["Extra B"] = "Extra B"
@@ -215,6 +216,21 @@ L["Blizz Silver"] = "Blizz Silver"
 L["Blizz Boss"] = "Blizz Boss"
 L["Blizz Neutral"] = "Blizz Neutral"
 L["Blizz Boss Neutral"] = "Blizz Boss Neutral"
+
+L["Dragon"] = "Dragon"
+
+L["Snake"] = "Snake"
+
+L["Dogs"] = "Dogs"
+L["Dogs Color"] = "Dogs Color"
+L["Dog Pack"] = "Dog Pack"
+L["Dog Pack Color"] = "Dog Pack Color"
+
+L["Space"] = "Space"
+L["Space Color"] = "Space Color"
+
+L["Climbing Plant"] = "Climbing Plant"
+L["Climbing Plant V2"] = "Climbing Plant V2"
 
 -------- popup.lua --------
 L["Some settings require you to reload the interface. Do you want to do that now?"] = "Some settings require you to reload the interface. Do you want to do that now?"

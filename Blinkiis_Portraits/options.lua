@@ -29,6 +29,7 @@ local form = {
 	oval = L["Oval"],
 	oval_horizontal = L["Oval Horizontal"],
 	rectangular = L["Rectangular"],
+	moon = L["Moon"],
 }
 local extra = {
 	extra_a = L["Extra A"],
@@ -77,6 +78,20 @@ local extra = {
 	blizz_boss = L["Blizz Boss"],
 	blizz_neutral = L["Blizz Neutral"],
 	blizz_boss_neutral = L["Blizz Boss Neutral"],
+
+	dragon = L["Dragon"],
+	snake = L["Snake"],
+
+	dogs = L["Dogs"],
+	dogs_color = L["Dogs Color"],
+	dog_pack = L["Dog Pack"],
+	dog_pack_color = L["Dog Pack Color"],
+
+	space = L["Space"],
+	space_color = L["Space Color"],
+
+	climbing_plant = L["Climbing Plant"],
+	climbing_plant_v2 = L["Climbing Plant V2"],
 }
 
 local frameStrata = {
@@ -2845,7 +2860,7 @@ BLINKIISPORTRAITS.options = {
 				customicons_group = {
 					order = 2,
 					type = "group",
-					name = L["custom Class Icons"],
+					name = L["Custom Class Icons"],
 					inline = true,
 					args = {
 						add_new_group = {
