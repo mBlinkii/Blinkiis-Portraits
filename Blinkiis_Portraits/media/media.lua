@@ -209,6 +209,8 @@ BLINKIISPORTRAITS.media = {
 		climbing_plant = "Interface\\Addons\\Blinkiis_Portraits\\media\\climbing_plant.tga",
 		climbing_plant_v2 = "Interface\\Addons\\Blinkiis_Portraits\\media\\climbing_plant_v2.tga",
 
+		elite = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_elite.tga",
+
 	},
 	class = {
 		blizzard = {

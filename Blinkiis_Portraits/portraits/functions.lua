@@ -16,6 +16,7 @@ local playerFaction = nil
 
 -- portrait texture update functions
 local function Update(portrait, event, eventUnit)
+	--if portrait.type == "party" then print(event, portrait.type, portrait.unit, portrait.parentFrame._unit or portrait.parentFrame.unit) end
     if not portrait.unit then return end
 
     local unit = (portrait.demo and not UnitExists(portrait.unit)) and "player" or portrait.unit

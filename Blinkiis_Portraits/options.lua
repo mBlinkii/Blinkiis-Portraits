@@ -92,6 +92,8 @@ local extra = {
 
 	climbing_plant = L["Climbing Plant"],
 	climbing_plant_v2 = L["Climbing Plant V2"],
+
+	elite = L["Elite"],
 }
 
 local frameStrata = {
