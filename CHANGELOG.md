@@ -1,5 +1,11 @@
 # Changelog
 
+## [ver. 1.41] - 06.08.2025
+### UPDATE 
+- UPDATE - TOC Retail Game Version
+### NEW
+- NEW - Extra Texture Elite
+
 ## [ver. 1.40] - 28.07.2025
 ### FIX 
 - FIX - The portraits sometimes do not update correctly.
