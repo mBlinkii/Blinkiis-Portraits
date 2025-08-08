@@ -17,31 +17,31 @@ local playerFaction = nil
 -- portrait texture update functions
 local function Update(portrait, event, eventUnit)
 	--if portrait.type == "party" then print(event, portrait.type, portrait.unit, portrait.parentFrame._unit or portrait.parentFrame.unit) end
-    if not portrait.unit then return end
+	if not portrait.unit then return end
 
-    local unit = (portrait.demo and not UnitExists(portrait.unit)) and "player" or portrait.unit
-    local guid = UnitGUID(unit)
-    local isAvailable = UnitIsConnected(unit) and UnitIsVisible(unit)
-    local hasStateChanged = ((event == "ForceUpdate") or (portrait.guid ~= guid) or (portrait.state ~= isAvailable))
+	local unit = (portrait.demo and not UnitExists(portrait.unit)) and "player" or portrait.unit
+	local guid = UnitGUID(unit)
+	local isAvailable = UnitIsConnected(unit) and UnitIsVisible(unit)
+	local hasStateChanged = ((event == "ForceUpdate") or (portrait.guid ~= guid) or (portrait.state ~= isAvailable))
 
-    if hasStateChanged then
-        local class = select(2, UnitClass(unit))
-        local isPlayer = UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit))
+	if hasStateChanged then
+		local class = select(2, UnitClass(unit))
+		local isPlayer = UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit))
 
-        portrait.isPlayer = isPlayer
-        portrait.unitClass = class
-        portrait.lastGUID = guid
-        portrait.state = isAvailable
-        portrait.unit = unit
+		portrait.isPlayer = isPlayer
+		portrait.unitClass = class
+		portrait.lastGUID = guid
+		portrait.state = isAvailable
+		portrait.unit = unit
 
-        local color = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead, isPlayer, class)
-        if color then portrait.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
+		local color = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead, isPlayer, class)
+		if color then portrait.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
 
-        BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
-        BLINKIISPORTRAITS:UpdateExtraTexture(portrait, portrait.db.unitcolor and color, portrait.db.forceExtra)
+		BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
+		BLINKIISPORTRAITS:UpdateExtraTexture(portrait, portrait.db.unitcolor and color, portrait.db.forceExtra)
 
-        if not InCombatLockdown() and portrait:GetAttribute("unit") ~= unit then portrait:SetAttribute("unit", unit) end
-    end
+		if not InCombatLockdown() and portrait:GetAttribute("unit") ~= unit then portrait:SetAttribute("unit", unit) end
+	end
 end
 
 local function SimpleUpdate(portrait, event, unit, arg2)
@@ -55,6 +55,17 @@ local eventHandlers = {
 	UNIT_PORTRAIT_UPDATE = Update,
 	PARTY_MEMBER_ENABLE = Update,
 	ForceUpdate = Update,
+
+	-- cast icon updates
+	UNIT_SPELLCAST_CHANNEL_START = SimpleUpdate,
+	UNIT_SPELLCAST_START = SimpleUpdate,
+
+	UNIT_SPELLCAST_CHANNEL_STOP = SimpleUpdate,
+	UNIT_SPELLCAST_INTERRUPTED = SimpleUpdate,
+	UNIT_SPELLCAST_STOP = SimpleUpdate,
+
+	UNIT_SPELLCAST_EMPOWER_START = SimpleUpdate,
+	UNIT_SPELLCAST_EMPOWER_STOP = SimpleUpdate,
 
 	-- vehicle updates
 	UNIT_ENTERED_VEHICLE = SimpleUpdate,
@@ -76,7 +87,6 @@ local eventHandlers = {
 	ARENA_PREP_OPPONENT_SPECIALIZATIONS = SimpleUpdate,
 	INSTANCE_ENCOUNTER_ENGAGE_UNIT = SimpleUpdate,
 	UPDATE_ACTIVE_BATTLEFIELD = SimpleUpdate,
-
 
 	-- death updates
 	UNIT_HEALTH = function(portrait, _, unit)
