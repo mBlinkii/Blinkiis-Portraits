@@ -313,14 +313,14 @@ local function GetUnitFrame(unit, type)
 			arena = "SUFHeaderarenaUnitButton",
 		},
 		cell = {
-			player = "CUF_Player",
-			target = "CUF_Target",
-			pet = "CUF_Pet",
-			targettarget = "CUF_TargetTarget",
-			focus = BLINKIISPORTRAITS.Classic and nil or "CUF_Focus",
+			player = BLINKIISPORTRAITS.Cell_UF and "CUF_Player",
+			target = BLINKIISPORTRAITS.Cell_UF and "CUF_Target",
+			pet = BLINKIISPORTRAITS.Cell_UF and "CUF_Pet",
+			targettarget = BLINKIISPORTRAITS.Cell_UF and "CUF_TargetTarget",
+			focus = BLINKIISPORTRAITS.Classic and nil or (BLINKIISPORTRAITS.Cell_UF and "CUF_Focus"),
 			party = "CellPartyFrameHeaderUnitButton",
-			boss = "CUF_Boss",
-			arena = "CUF_Arena",
+			boss = BLINKIISPORTRAITS.Cell_UF and "CUF_Boss",
+			arena = BLINKIISPORTRAITS.Cell_UF and "CUF_Arena",
 		},
 		pb4 = {
 			singleUnits = function()
