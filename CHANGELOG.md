@@ -1,5 +1,12 @@
 # Changelog
 
+## [ver. 1.42] - 09.08.2025
+### FIX 
+- FIX - Cast Icons not working.
+### UPDATE
+- UPDATE - Code cleanup
+- Update - Split requirements Cell and Cell UF
+
 ## [ver. 1.41] - 06.08.2025
 ### UPDATE 
 - UPDATE - TOC Retail Game Version
