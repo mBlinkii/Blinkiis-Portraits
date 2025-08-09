@@ -15,6 +15,36 @@ local mediaClass = BLINKIISPORTRAITS.media.class
 local playerFaction = nil
 
 -- portrait texture update functions
+local function GetCastIcon(unit)
+	return select(3, UnitCastingInfo(unit)) or select(3, UnitChannelInfo(unit))
+end
+
+local function UpdatePortrait(portrait, unit)
+	if portrait.isCasting then
+		local castIcon = GetCastIcon(unit)
+		if castIcon then
+			portrait.portrait:SetTexture(castIcon)
+			return
+		else
+			portrait.isCasting = false
+		end
+	end
+
+	local forceDesaturate = BLINKIISPORTRAITS.db.profile.misc.desaturate
+
+	if portrait.useClassIcon and (portrait.isPlayer or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit or portrait.unit))) then
+		portrait.unitClass = portrait.unitClass or select(2, UnitClass(portrait.unit))
+		portrait.texCoords = portrait.classIcons.texCoords[portrait.unitClass]
+		portrait.portrait:SetTexture(portrait.classIcons.texture, "CLAMP", "CLAMP", "TRILINEAR")
+	else
+		SetPortraitTexture(portrait.portrait, unit or portrait.unit, true)
+	end
+
+	BLINKIISPORTRAITS:UpdateDesaturated(portrait, (forceDesaturate or portrait.isDead))
+
+	BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, (portrait.isPlayer and portrait.useClassIcon) and portrait.texCoords)
+end
+
 local function Update(portrait, event, eventUnit)
 	--if portrait.type == "party" then print(event, portrait.type, portrait.unit, portrait.parentFrame._unit or portrait.parentFrame.unit) end
 	if not portrait.unit then return end
@@ -37,11 +67,25 @@ local function Update(portrait, event, eventUnit)
 		local color = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead, isPlayer, class)
 		if color then portrait.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
 
-		BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
+		UpdatePortrait(portrait, unit)
 		BLINKIISPORTRAITS:UpdateExtraTexture(portrait, portrait.db.unitcolor and color, portrait.db.forceExtra)
 
 		if not InCombatLockdown() and portrait:GetAttribute("unit") ~= unit then portrait:SetAttribute("unit", unit) end
 	end
+end
+
+local function CastStart(portrait, _, unit)
+	portrait.isCasting = true
+	local castIcon = GetCastIcon(unit)
+	if castIcon then
+		portrait.portrait:SetTexture(castIcon)
+		if portrait.useClassIcon and portrait.texCoords then BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, { 0, 1, 0, 1 }) end
+	end
+end
+
+local function CastStop(portrait, event, unit)
+	portrait.isCasting = false
+	UpdatePortrait(portrait, unit)
 end
 
 local function SimpleUpdate(portrait, event, unit, arg2)
@@ -57,15 +101,15 @@ local eventHandlers = {
 	ForceUpdate = Update,
 
 	-- cast icon updates
-	UNIT_SPELLCAST_CHANNEL_START = SimpleUpdate,
-	UNIT_SPELLCAST_START = SimpleUpdate,
+	UNIT_SPELLCAST_CHANNEL_START = CastStart,
+	UNIT_SPELLCAST_START = CastStart,
 
-	UNIT_SPELLCAST_CHANNEL_STOP = SimpleUpdate,
-	UNIT_SPELLCAST_INTERRUPTED = SimpleUpdate,
-	UNIT_SPELLCAST_STOP = SimpleUpdate,
+	UNIT_SPELLCAST_CHANNEL_STOP = CastStop,
+	UNIT_SPELLCAST_INTERRUPTED = CastStop,
+	UNIT_SPELLCAST_STOP = CastStop,
 
-	UNIT_SPELLCAST_EMPOWER_START = SimpleUpdate,
-	UNIT_SPELLCAST_EMPOWER_STOP = SimpleUpdate,
+	UNIT_SPELLCAST_EMPOWER_START = CastStart,
+	UNIT_SPELLCAST_EMPOWER_STOP = CastStop,
 
 	-- vehicle updates
 	UNIT_ENTERED_VEHICLE = SimpleUpdate,
@@ -160,25 +204,6 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, force)
 	else
 		portrait.extra:Hide()
 	end
-end
-
-function BLINKIISPORTRAITS:UpdatePortrait(portrait, event, unit)
-	local showCastIcon = portrait.db.cast and BLINKIISPORTRAITS:UpdateCastIcon(portrait, event)
-	local forceDesaturate = BLINKIISPORTRAITS.db.profile.misc.desaturate
-
-	if not showCastIcon then
-		if portrait.useClassIcon and (portrait.isPlayer or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit or portrait.unit))) then
-			portrait.unitClass = portrait.unitClass or select(2, UnitClass(portrait.unit))
-			portrait.texCoords = portrait.classIcons.texCoords[portrait.unitClass]
-			portrait.portrait:SetTexture(portrait.classIcons.texture, "CLAMP", "CLAMP", "TRILINEAR")
-		else
-			SetPortraitTexture(portrait.portrait, unit or portrait.unit, true)
-		end
-
-		BLINKIISPORTRAITS:UpdateDesaturated(portrait, (forceDesaturate or portrait.isDead))
-	end
-
-	BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, (portrait.isPlayer and portrait.useClassIcon) and portrait.texCoords)
 end
 
 -- color functions
@@ -526,45 +551,6 @@ function BLINKIISPORTRAITS:InitPortrait(portrait, events)
 
 		UpdateZoom(portrait.portrait, portrait.size)
 	end
-end
-
--- cast functions
-local castStartEvents = {
-	UNIT_SPELLCAST_START = true,
-	UNIT_SPELLCAST_CHANNEL_START = true,
-	UNIT_SPELLCAST_EMPOWER_START = true,
-}
-
-local castStopEvents = {
-	UNIT_SPELLCAST_INTERRUPTED = true,
-	UNIT_SPELLCAST_STOP = true,
-	UNIT_SPELLCAST_CHANNEL_STOP = true,
-	UNIT_SPELLCAST_EMPOWER_STOP = true,
-}
-
-local function GetCastIcon(unit)
-	return select(3, UnitCastingInfo(unit)) or select(3, UnitChannelInfo(unit))
-end
-
-function BLINKIISPORTRAITS:UpdateCastIcon(portrait, event)
-	portrait.castStarted = castStartEvents[event] or false
-	portrait.castStopped = castStopEvents[event] or false
-
-	if portrait.castStarted or (portrait.isCasting and not portrait.castStopped) then
-		portrait.isCasting = true
-		portrait.empowering = (event == "UNIT_SPELLCAST_EMPOWER_START") or false
-		local texture = GetCastIcon(portrait.unit)
-		if texture then
-			portrait.portrait:SetTexture(texture)
-			return true
-		end
-		return false
-	elseif portrait.castStopped or (portrait.isCasting and not GetCastIcon(portrait.unit)) then
-		portrait.isCasting = false
-		return false
-	end
-
-	return false
 end
 
 local castEvents = { "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_STOP" }
