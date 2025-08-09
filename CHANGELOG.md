@@ -5,7 +5,7 @@
 - FIX - Cast Icons not working.
 ### UPDATE
 - UPDATE - Code cleanup
-- Update - Split requirements Cell and Cell UF
+- UPDATE - Split requirements Cell and Cell UF
 
 ## [ver. 1.41] - 06.08.2025
 ### UPDATE 
