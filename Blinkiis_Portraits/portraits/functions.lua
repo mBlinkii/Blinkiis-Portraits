@@ -53,8 +53,9 @@ local function Update(portrait, event, eventUnit)
 	local guid = UnitGUID(unit)
 	local isAvailable = UnitIsConnected(unit) and UnitIsVisible(unit)
 	local hasStateChanged = ((event == "ForceUpdate") or (portrait.guid ~= guid) or (portrait.state ~= isAvailable))
+	local isDead = UnitIsDead(unit)
 
-	if hasStateChanged then
+	if hasStateChanged or isDead then
 		local class = select(2, UnitClass(unit))
 		local isPlayer = UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit))
 
@@ -63,6 +64,7 @@ local function Update(portrait, event, eventUnit)
 		portrait.lastGUID = guid
 		portrait.state = isAvailable
 		portrait.unit = unit
+		portrait.isDead = isDead
 
 		local color = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead, isPlayer, class)
 		if color then portrait.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
@@ -124,6 +126,7 @@ local eventHandlers = {
 
 	-- party
 	GROUP_ROSTER_UPDATE = SimpleUpdate,
+	UNIT_NAME_UPDATE = SimpleUpdate,
 
 	-- arena
 	ARENA_OPPONENT_UPDATE = Update,
@@ -131,11 +134,6 @@ local eventHandlers = {
 	ARENA_PREP_OPPONENT_SPECIALIZATIONS = SimpleUpdate,
 	INSTANCE_ENCOUNTER_ENGAGE_UNIT = SimpleUpdate,
 	UPDATE_ACTIVE_BATTLEFIELD = SimpleUpdate,
-
-	-- death updates
-	UNIT_HEALTH = function(portrait, _, unit)
-		portrait.isDead = BLINKIISPORTRAITS:UpdateDeathStatus(unit)
-	end,
 }
 
 local function OnEvent(portrait, event, eventUnit, arg)
@@ -243,17 +241,6 @@ function BLINKIISPORTRAITS:UpdateDesaturated(portrait, isDead)
 		portrait.portrait:SetDesaturated(false)
 		portrait.isDesaturated = false
 	end
-end
-
--- unit status functions
-function BLINKIISPORTRAITS:UpdateDeathStatus(portrait, unit)
-	local isDead = (UnitExists(unit) and UnitIsDead(unit))
-	if isDead then
-		local deathColor = BLINKIISPORTRAITS.db.profile.colors.misc.death
-		BLINKIISPORTRAITS:UpdateDesaturated(portrait, isDead)
-		portrait.texture:SetVertexColor(deathColor.r, deathColor.g, deathColor.b, deathColor.a or 1)
-	end
-	return isDead
 end
 
 -- update settings functions
@@ -467,12 +454,6 @@ function BLINKIISPORTRAITS:RegisterEvents(portrait, events, cast)
 		tinsert(portrait.events, event)
 	end
 
-	-- death check
-	if portrait.type == "party" then
-		portrait:RegisterEvent("UNIT_HEALTH")
-	else
-		portrait:RegisterUnitEvent("UNIT_HEALTH", portrait.unit)
-	end
 	tinsert(portrait.events, "UNIT_HEALTH")
 end
 
