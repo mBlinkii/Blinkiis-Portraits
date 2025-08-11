@@ -15,7 +15,7 @@ function BLINKIISPORTRAITS:InitializePetPortrait()
 
 			if portraits[unit] then
 				if BLINKIISPORTRAITS.db.profile[type].unitframe ~= "auto" then portraits[unit]:SetParent(_G[unitframe]) end
-				local isCellParentFrame = (parentFrame == "cell") and BLINKIISPORTRAITS.Cell
+				local isCellParentFrame = (parentFrame == "cell") and BLINKIISPORTRAITS.Cell_UF
 				portraits[unit].events = {}
 				portraits[unit].parentFrame = parent
 				portraits[unit].isCellParentFrame = isCellParentFrame

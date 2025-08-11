@@ -423,6 +423,8 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
 		type = "uuf"
 	elseif BLINKIISPORTRAITS.NDUI and (parent == "auto" or parent == "ndui") then
 		type = "ndui"
+	elseif BLINKIISPORTRAITS.Cell_UF and (parent == "auto" or parent == "cell") then
+		type = "cell"
 	end
 
 	if type then
