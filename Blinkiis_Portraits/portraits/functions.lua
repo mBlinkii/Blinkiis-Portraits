@@ -53,9 +53,9 @@ local function Update(portrait, event, eventUnit)
 	local guid = UnitGUID(unit)
 	local isAvailable = UnitIsConnected(unit) and UnitIsVisible(unit)
 	local hasStateChanged = ((event == "ForceUpdate") or (portrait.guid ~= guid) or (portrait.state ~= isAvailable))
-	local isDead = UnitIsDead(unit)
+	--local isDead = UnitIsDead(unit)
 
-	if hasStateChanged or isDead then
+	if hasStateChanged then
 		local class = select(2, UnitClass(unit))
 		local isPlayer = UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit))
 
@@ -64,7 +64,7 @@ local function Update(portrait, event, eventUnit)
 		portrait.lastGUID = guid
 		portrait.state = isAvailable
 		portrait.unit = unit
-		portrait.isDead = isDead
+		--portrait.isDead = isDead
 
 		local color = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead, isPlayer, class)
 		if color then portrait.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
@@ -92,6 +92,13 @@ end
 
 local function SimpleUpdate(portrait, event, unit, arg2)
 	Update(portrait, event, portrait.unit)
+end
+
+local function DeathCheck(portrait)
+    local isDead = UnitIsDead(portrait.unit)
+    if portrait.isDead == isDead then return end
+    portrait.isDead = isDead
+    Update(portrait, "ForceUpdate")
 end
 
 local eventHandlers = {
@@ -127,6 +134,9 @@ local eventHandlers = {
 	-- party
 	GROUP_ROSTER_UPDATE = SimpleUpdate,
 	UNIT_NAME_UPDATE = SimpleUpdate,
+
+	-- death check
+	UNIT_HEALTH = DeathCheck,
 
 	-- arena
 	ARENA_OPPONENT_UPDATE = Update,
@@ -456,16 +466,15 @@ function BLINKIISPORTRAITS:RegisterEvents(portrait, events, cast)
 		tinsert(portrait.events, event)
 	end
 
-	tinsert(portrait.events, "UNIT_HEALTH")
+	if portrait.type ~= "party" then
+		portrait:RegisterUnitEvent("UNIT_HEALTH", portrait.unit)
+	else
+		portrait:RegisterEvent("UNIT_HEALTH")
+	end
 end
 
 function BLINKIISPORTRAITS:RemovePortrait(frame)
-	if frame and frame.events then
-		for _, event in pairs(frame.events) do
-			frame:UnregisterEvent(event)
-		end
-	end
-
+	frame:UnregisterAllEvents()
 	frame:Hide()
 	frame = nil
 end
