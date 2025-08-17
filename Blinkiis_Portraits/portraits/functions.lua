@@ -94,7 +94,8 @@ local function SimpleUpdate(portrait, event, unit, arg2)
 	Update(portrait, event, portrait.unit)
 end
 
-local function DeathCheck(portrait, event)
+local function DeathCheck(portrait, event, unit)
+	if portrait.unit ~= unit then return end
 	local isDead = UnitIsDead(portrait.unit)
 	if portrait.isDead == isDead then return end
 	portrait.isDead = isDead
@@ -103,7 +104,7 @@ end
 
 local function DelayedUpdate(portrait, event, unit, arg2)
 	if portrait._delayedUpdateTimer then portrait._delayedUpdateTimer:Cancel() end
-	portrait._delayedUpdateTimer = C_Timer.NewTimer(0.2, function()
+	portrait._delayedUpdateTimer = C_Timer.NewTimer(0.6, function()
 		Update(portrait, event, portrait.unit)
 		portrait._delayedUpdateTimer = nil
 	end)
@@ -155,7 +156,6 @@ local eventHandlers = {
 }
 
 local function OnEvent(portrait, event, eventUnit, arg)
-	print(portrait, event, eventUnit, arg)
 	local unit = portrait.isCellParentFrame and portrait.parentFrame._unit or portrait.parentFrame.unit
 	portrait.unit = unit
 
