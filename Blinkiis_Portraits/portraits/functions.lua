@@ -53,9 +53,9 @@ local function Update(portrait, event, eventUnit)
 	local guid = UnitGUID(unit)
 	local isAvailable = UnitIsConnected(unit) and UnitIsVisible(unit)
 	local hasStateChanged = ((event == "ForceUpdate") or (portrait.guid ~= guid) or (portrait.state ~= isAvailable))
-	--local isDead = UnitIsDead(unit)
+	local isDead = event == "UNIT_HEALTH" and portrait.isDead or UnitIsDead(unit)
 
-	if hasStateChanged then
+	if hasStateChanged or isDead then
 		local class = select(2, UnitClass(unit))
 		local isPlayer = UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit))
 
@@ -64,7 +64,7 @@ local function Update(portrait, event, eventUnit)
 		portrait.lastGUID = guid
 		portrait.state = isAvailable
 		portrait.unit = unit
-		--portrait.isDead = isDead
+		portrait.isDead = isDead
 
 		local color = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead, isPlayer, class)
 		if color then portrait.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
@@ -94,11 +94,19 @@ local function SimpleUpdate(portrait, event, unit, arg2)
 	Update(portrait, event, portrait.unit)
 end
 
-local function DeathCheck(portrait)
-    local isDead = UnitIsDead(portrait.unit)
-    if portrait.isDead == isDead then return end
-    portrait.isDead = isDead
-    Update(portrait, "ForceUpdate")
+local function DeathCheck(portrait, event)
+	local isDead = UnitIsDead(portrait.unit)
+	if portrait.isDead == isDead then return end
+	portrait.isDead = isDead
+	Update(portrait, event)
+end
+
+local function DelayedUpdate(portrait, event, unit, arg2)
+	if portrait._delayedUpdateTimer then portrait._delayedUpdateTimer:Cancel() end
+	portrait._delayedUpdateTimer = C_Timer.NewTimer(0.2, function()
+		Update(portrait, event, portrait.unit)
+		portrait._delayedUpdateTimer = nil
+	end)
 end
 
 local eventHandlers = {
@@ -121,7 +129,7 @@ local eventHandlers = {
 	UNIT_SPELLCAST_EMPOWER_STOP = CastStop,
 
 	-- vehicle updates
-	UNIT_ENTERED_VEHICLE = SimpleUpdate,
+	UNIT_ENTERED_VEHICLE = DelayedUpdate,
 	UNIT_EXITING_VEHICLE = SimpleUpdate,
 	UNIT_EXITED_VEHICLE = SimpleUpdate,
 	VEHICLE_UPDATE = SimpleUpdate,
@@ -147,6 +155,7 @@ local eventHandlers = {
 }
 
 local function OnEvent(portrait, event, eventUnit, arg)
+	print(portrait, event, eventUnit, arg)
 	local unit = portrait.isCellParentFrame and portrait.parentFrame._unit or portrait.parentFrame.unit
 	portrait.unit = unit
 
