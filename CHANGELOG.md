@@ -1,5 +1,13 @@
 # Changelog
 
+## [ver. 1.44] - 25.08.2025
+### FIX 
+- FIX - Not Showing Player and Target Portraits, if Cell is loaded on Auto setup
+- FIX - Death status does not update correctly
+### UPDATE
+- UPDATE - Optimized Vehicle - Portrait changes
+- UPDATE - Split requirements Cell and Cell UF
+
 ## [ver. 1.42] - 09.08.2025
 ### FIX 
 - FIX - Cast Icons not working.
