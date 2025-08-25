@@ -430,7 +430,7 @@ end
 
 function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
 	local type
-	if BLINKIISPORTRAITS.Cell and (parent == "auto" or parent == "cell") then
+	if unit == "party" and BLINKIISPORTRAITS.Cell and (parent == "auto" or parent == "cell") then
 		type = "cell"
 	elseif BLINKIISPORTRAITS.ELVUI and (parent == "auto" or parent == "elvui") then
 		type = "elvui"
@@ -449,7 +449,7 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
 	if type then
 		return GetUnitFrame(unit, type), type
 	else
-		if BLINKIISPORTRAITS.Cell then
+		if BLINKIISPORTRAITS.Cell or BLINKIISPORTRAITS.Cell_UF then
 			return GetUnitFrame(unit, "cell"), "cell"
 		elseif BLINKIISPORTRAITS.ELVUI then
 			return GetUnitFrame(unit, "elvui"), "elvui"
