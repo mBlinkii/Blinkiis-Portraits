@@ -1,6 +1,6 @@
 # Changelog
 
-## [ver. 1.44] - 25.08.2025
+## [ver. 1.43] - 25.08.2025
 ### FIX 
 - FIX - Not Showing Player and Target Portraits, if Cell is loaded on Auto setup
 - FIX - Death status does not update correctly
