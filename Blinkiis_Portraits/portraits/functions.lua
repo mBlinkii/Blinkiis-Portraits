@@ -192,6 +192,7 @@ function BLINKIISPORTRAITS:UpdateTextures(portrait)
 	BLINKIISPORTRAITS:Mirror(portrait.extra, mirror)
 end
 
+local extraTypes = { rare = true, elite = true, rareelite = true, boss = true }
 function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, force)
 	if not (portrait.extra and portrait.db.extra) then
 		if portrait.extra then portrait.extra:Hide() end
@@ -199,24 +200,27 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, force)
 	end
 
 	local npcID = portrait.lastGUID and select(6, strsplit("-", portrait.lastGUID))
+	if portrait.type == "boss" and npcID and not BLINKIISPORTRAITS.CachedBossIDs[npcID] then BLINKIISPORTRAITS.CachedBossIDs[npcID] = true end
 
-	if (portrait.type == "boss" and npcID) and not BLINKIISPORTRAITS.CachedBossIDs[npcID] then BLINKIISPORTRAITS.CachedBossIDs[npcID] = true end
+	local isBoss = portrait.type == "boss" or (npcID and BLINKIISPORTRAITS.CachedBossIDs[npcID])
+	local c = isBoss and "boss" or UnitClassification(portrait.unit)
+	if c == "worldboss" then c = "boss" end
 
-	local c = portrait.type == "boss" and "boss" or ((BLINKIISPORTRAITS.CachedBossIDs[npcID] and "boss") or UnitClassification(portrait.unit))
-	c = c == "worldboss" and "boss" or c
-	local isExtraUnit = c == "rare" or c == "elite" or c == "rareelite" or c == "boss"
-	if not isExtraUnit and (force and force ~= "none") then c = force end
+	local isExtraUnit = extraTypes[c]
 
-	if ((force and force ~= "none") or isExtraUnit) and not color then
-		if BLINKIISPORTRAITS.db.profile.misc.force_reaction then
-			local colorReaction = BLINKIISPORTRAITS.db.profile.colors.reaction
-			local reaction = UnitReaction(portrait.unit, "player")
-			local reactionType = reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly") or "enemy"
-			color = colorReaction[reactionType]
-		else
-			local colorClassification = BLINKIISPORTRAITS.db.profile.colors.classification
-			color = colorClassification[c]
-		end
+	if not isExtraUnit and force and force ~= "none" then
+		c = force
+		isExtraUnit = true
+	end
+
+	if isExtraUnit and not color then
+		color = BLINKIISPORTRAITS.db.profile.misc.force_reaction
+				and (function()
+					local reaction = UnitReaction(portrait.unit, "player")
+					local reactionType = (reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly")) or "enemy"
+					return BLINKIISPORTRAITS.db.profile.colors.reaction[reactionType]
+				end)()
+			or BLINKIISPORTRAITS.db.profile.colors.classification[c]
 	end
 
 	if color then
