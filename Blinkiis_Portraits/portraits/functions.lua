@@ -198,7 +198,7 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, force)
 		return
 	end
 
-	local npcID = select(6, strsplit("-", portrait.lastGUID))
+	local npcID = portrait.lastGUID and select(6, strsplit("-", portrait.lastGUID))
 
 	if (portrait.type == "boss" and npcID) and not BLINKIISPORTRAITS.CachedBossIDs[npcID] then BLINKIISPORTRAITS.CachedBossIDs[npcID] = true end
 
