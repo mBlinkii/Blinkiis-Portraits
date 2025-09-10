@@ -183,3 +183,4 @@ BLINKIISPORTRAITS.defaults.profile.colors = {
 BLINKIISPORTRAITS.defaults.global = {}
 
 BLINKIISPORTRAITS.defaults.global.custom_classicons = {}
+BLINKIISPORTRAITS.defaults.global.BossIDs ={}

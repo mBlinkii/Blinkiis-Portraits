@@ -198,7 +198,11 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, force)
 		return
 	end
 
-	local c = portrait.type == "boss" and "boss" or ((BLINKIISPORTRAITS.CachedBossIDs[portrait.lastGUID] and "boss") or UnitClassification(portrait.unit))
+	local npcID = select(6, strsplit("-", portrait.lastGUID))
+
+	if (portrait.type == "boss" and npcID) and not BLINKIISPORTRAITS.CachedBossIDs[npcID] then BLINKIISPORTRAITS.CachedBossIDs[npcID] = true end
+
+	local c = portrait.type == "boss" and "boss" or ((BLINKIISPORTRAITS.CachedBossIDs[npcID] and "boss") or UnitClassification(portrait.unit))
 	local isExtraUnit = c == "rare" or c == "elite" or c == "rareelite" or c == "boss"
 	if not isExtraUnit and (force and force ~= "none") then c = force end
 
