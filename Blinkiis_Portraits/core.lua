@@ -72,8 +72,22 @@ local function CheckAddons()
 	BLINKIISPORTRAITS.NDUI = IsAddOnLoaded("NDui")
 end
 
+local isDelayedUpdateScheduled = false
+
 function BLINKIISPORTRAITS:LoadPortraits()
-	if InCombatLockdown()  then return end
+	if InCombatLockdown() then
+		if not isDelayedUpdateScheduled then
+			isDelayedUpdateScheduled = true
+			C_Timer.After(1, function()
+				isDelayedUpdateScheduled = false
+				BLINKIISPORTRAITS:LoadPortraits()
+			end)
+		end
+		return
+	end
+
+	isDelayedUpdateScheduled = false
+
 	CheckAddons()
 
 	BLINKIISPORTRAITS:InitializeArenaPortrait()
