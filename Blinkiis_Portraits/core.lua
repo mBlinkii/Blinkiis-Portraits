@@ -73,6 +73,7 @@ local function CheckAddons()
 end
 
 function BLINKIISPORTRAITS:LoadPortraits()
+	if InCombatLockdown()  then return end
 	CheckAddons()
 
 	BLINKIISPORTRAITS:InitializeArenaPortrait()
