@@ -1,5 +1,12 @@
 # Changelog
 
+## [ver. 1.44] - 04.11.2025
+### FIX 
+- FIX - Prevent Initialization in combat
+- FIX - Worldboss indicator
+### UPDATE
+- UPDATE - Cache Boss IDs
+
 ## [ver. 1.43] - 25.08.2025
 ### FIX 
 - FIX - Not Showing Player and Target Portraits, if Cell is loaded on Auto setup
