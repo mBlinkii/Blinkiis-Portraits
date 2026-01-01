@@ -16,7 +16,6 @@ Thank you all for your support over the years.
     <a href="https://github.com/mBlinkii/Blinkiis-Portraits/issues">🐞 Report a Bug</a> • 
     <a href="https://github.com/mBlinkii/Blinkiis-Portraits/issues">💡 Request a Feature</a> • 
     <a href="https://discord.gg/AE9XebMU49">💬 Join Discord</a> • 
-    <a href="https://ko-fi.com/blinkii">☕ Support via Ko-Fi</a>
   </p>
   <br/><br/>
   <h3 align="center"><strong>Blinkiis Portraits</strong></h3>
