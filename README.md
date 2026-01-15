@@ -1,3 +1,12 @@
+Discontinuation of Addon Development
+
+Due to personal and family reasons, I have decided to discontinue the development of my WoW addons mMediaTag, Blinkiis Portraits, and Blinkiis Mediapack. There will be no further updates or new content for these projects.
+
+If anyone is interested in taking over the development of one or more of these addons, feel free to contact me. I’m open to handing the projects over to someone who would like to continue their work.
+
+Thank you all for your support over the years.
+
+
 <br/>
 <div align="center">
   <img src="https://raw.githubusercontent.com/mBlinkii/Blinkiis-Portraits/refs/heads/main/icon.png" alt="Logo" width="80" height="80">
@@ -7,7 +16,6 @@
     <a href="https://github.com/mBlinkii/Blinkiis-Portraits/issues">🐞 Report a Bug</a> • 
     <a href="https://github.com/mBlinkii/Blinkiis-Portraits/issues">💡 Request a Feature</a> • 
     <a href="https://discord.gg/AE9XebMU49">💬 Join Discord</a> • 
-    <a href="https://ko-fi.com/blinkii">☕ Support via Ko-Fi</a>
   </p>
   <br/><br/>
   <h3 align="center"><strong>Blinkiis Portraits</strong></h3>
