@@ -68,7 +68,7 @@ local function CheckAddons()
 	BLINKIISPORTRAITS.PB4 = IsAddOnLoaded("PitBull4")
 	BLINKIISPORTRAITS.Cell = IsAddOnLoaded("Cell")
 	BLINKIISPORTRAITS.Cell_UF = IsAddOnLoaded("Cell_UnitFrames")
-	BLINKIISPORTRAITS.UUF = IsAddOnLoaded("UnhaltedUF")
+	BLINKIISPORTRAITS.UUF = IsAddOnLoaded("UnhaltedUnitFrames")
 	BLINKIISPORTRAITS.NDUI = IsAddOnLoaded("NDui")
 end
 
