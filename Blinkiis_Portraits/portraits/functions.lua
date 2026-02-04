@@ -455,8 +455,6 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
 		type = "cell"
 	end
 
-	print("GetUnitFrames:", unit, "parent:", parent, "type:", type)
-
 	if type then
 		return GetUnitFrame(unit, type), type
 	else
@@ -474,7 +472,6 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
 			return GetUnitFrame(unit, "ndui"), "ndui"
 		end
 	end
-	print("GetUnitFrames:", unit, "parent:", parent, "type:", type)
 end
 
 function BLINKIISPORTRAITS:RegisterEvents(portrait, events, cast)
