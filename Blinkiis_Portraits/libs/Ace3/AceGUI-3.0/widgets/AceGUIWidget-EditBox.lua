@@ -19,7 +19,11 @@ Support functions
 -------------------------------------------------------------------------------]]
 if not AceGUIEditBoxInsertLink then
 	-- upgradeable hook
-	hooksecurefunc("ChatEdit_InsertLink", function(...) return _G.AceGUIEditBoxInsertLink(...) end)
+	if ChatFrameUtil and ChatFrameUtil.InsertLink then
+		hooksecurefunc(ChatFrameUtil, "InsertLink", function(...) return _G.AceGUIEditBoxInsertLink(...) end)
+	elseif ChatEdit_InsertLink then
+		hooksecurefunc("ChatEdit_InsertLink", function(...) return _G.AceGUIEditBoxInsertLink(...) end)
+	end
 end
 
 function _G.AceGUIEditBoxInsertLink(text)
@@ -33,7 +37,6 @@ function _G.AceGUIEditBoxInsertLink(text)
 end
 
 local function ShowButton(self)
-	print("ShowButton", self.disablebutton)
 	if not self.disablebutton then
 		self.button:Show()
 		self.editbox:SetTextInsets(0, 20, 3, 3)
