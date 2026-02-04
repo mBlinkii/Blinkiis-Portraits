@@ -61,7 +61,6 @@ local function Update(portrait, event, eventUnit)
 
 		portrait.isPlayer = isPlayer
 		portrait.unitClass = class
-		portrait.lastGUID = guid
 		portrait.state = isAvailable
 		portrait.unit = unit
 		portrait.isDead = isDead
@@ -199,10 +198,7 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, force)
 		return
 	end
 
-	local npcID = portrait.lastGUID and select(6, strsplit("-", portrait.lastGUID))
-	if portrait.type == "boss" and npcID and not BLINKIISPORTRAITS.CachedBossIDs[npcID] then BLINKIISPORTRAITS.CachedBossIDs[npcID] = true end
-
-	local isBoss = portrait.type == "boss" or (npcID and BLINKIISPORTRAITS.CachedBossIDs[npcID])
+	local isBoss = portrait.type == "boss"
 	local c = isBoss and "boss" or UnitClassification(portrait.unit)
 	if c == "worldboss" then c = "boss" end
 
