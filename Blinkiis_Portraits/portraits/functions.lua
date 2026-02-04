@@ -7,6 +7,7 @@ local UnitFactionGroup = UnitFactionGroup
 local UnitIsDead = UnitIsDead
 local UnitExists = UnitExists
 local select, tinsert = select, tinsert
+local issecretvalue = issecretvalue
 
 local mediaPortraits = BLINKIISPORTRAITS.media.portraits
 local mediaExtra = BLINKIISPORTRAITS.media.extra
@@ -45,12 +46,22 @@ local function UpdatePortrait(portrait, unit)
 	BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, (portrait.isPlayer and portrait.useClassIcon) and portrait.texCoords)
 end
 
+function BLINKIISPORTRAITS:IsSecretValue(value)
+	if issecretvalue then
+		return issecretvalue(value)
+	else
+		return false
+	end
+end
+
 local function Update(portrait, event, eventUnit)
 	--if portrait.type == "party" then print(event, portrait.type, portrait.unit, portrait.parentFrame._unit or portrait.parentFrame.unit) end
 	if not portrait.unit then return end
 
 	local unit = (portrait.demo and not UnitExists(portrait.unit)) and "player" or portrait.unit
 	local guid = UnitGUID(unit)
+	guid = BLINKIISPORTRAITS:IsSecretValue(guid) and " " or guid
+
 	local isAvailable = UnitIsConnected(unit) and UnitIsVisible(unit)
 	local hasStateChanged = ((event == "ForceUpdate") or (portrait.guid ~= guid) or (portrait.state ~= isAvailable))
 	local isDead = event == "UNIT_HEALTH" and portrait.isDead or UnitIsDead(unit)

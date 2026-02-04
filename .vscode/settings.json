@@ -157,7 +157,8 @@
         "GameFontHighlightSmall",
         "GameFontDisableSmall",
         "GameFontNormalSmall",
-        "ChatFontNormal"
+        "ChatFontNormal",
+        "ChatFrameUtil"
     ],
     "Lua.runtime.version": "Lua 5.1",
     "Lua.runtime.builtin": {
@@ -229,6 +230,7 @@
         "iconbg",
         "iconcolor",
         "Instanzteleporter",
+        "issecretvalue",
         "Jewelcrafting",
         "Jiberish",
         "Klassifizierungsfarbe",
