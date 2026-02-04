@@ -37,6 +37,7 @@ function BLINKIISPORTRAITS:InitializeBossPortrait(demo)
 
 					portraits[unit].isPlayer = nil
 					portraits[unit].unitClass = nil
+					portraits[unit].lastGUID = nil
 
 					BLINKIISPORTRAITS:UpdateTexturesFiles(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
 					BLINKIISPORTRAITS:UpdateSize(portraits[unit])
