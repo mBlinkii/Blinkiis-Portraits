@@ -1,5 +1,5 @@
 ## Interface: 120000,
-## Version: 1.45
+## Version: 1.46
 ## Title: |CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits
 ## Title-deDE: |CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Porträts
 ## Title-zhCN: |CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r 头像
@@ -12,7 +12,7 @@
 ## AddonCompartmentFuncOnEnter: BLINKIISPORTRAITS_OnAddonCompartmentOnEnter
 ## AddonCompartmentFuncOnLeave: BLINKIISPORTRAITS_OnAddonCompartmentOnLeave
 ## SavedVariables: BlinkiisPortraitsDB
-## OptionalDeps: Cell, Cell_UnitFrames, ElvUI, PitBull4, ShadowedUnitFrames, UnhaltedUF
+## OptionalDeps: Cell, Cell_UnitFrames, ElvUI, PitBull4, ShadowedUnitFrames, UnhaltedUF, EnhanceQoL
 
 
 libs\Ace3\LibStub\LibStub.lua

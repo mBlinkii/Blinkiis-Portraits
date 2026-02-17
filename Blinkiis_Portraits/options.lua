@@ -120,6 +120,7 @@ local parentFrames = {
 	cell = "Cell",
 	uuf = "Unhalted Unit Frames",
 	ndui = "NDui",
+	eqol = "EQOL",
 	auto = L["AUTO"],
 }
 

@@ -20,7 +20,7 @@ function BLINKIISPORTRAITS:InitializePlayerPortrait()
 				portraits[unit].events = {}
 				portraits[unit].parentFrame = parent
 				portraits[unit].isCellParentFrame = isCellParentFrame
-				portraits[unit].unit = isCellParentFrame and parent._unit or parent.unit
+				portraits[unit].unit = isCellParentFrame and parent._unit or (BLINKIISPORTRAITS.EQOL and unit or parent.unit)
 				portraits[unit].type = type -- frameType or frame.type
 				portraits[unit].db = BLINKIISPORTRAITS.db.profile[type]
 				portraits[unit].size = BLINKIISPORTRAITS.db.profile[type].size

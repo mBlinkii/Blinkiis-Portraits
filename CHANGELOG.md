@@ -1,5 +1,11 @@
 # Changelog
 
+## [ver. 1.46] - 05.02.2026
+### FIX 
+- FIX - Portraits for UF 
+- FIX - Handling Secure values
+
+
 ## [ver. 1.44] - 04.11.2025
 ### FIX 
 - FIX - Prevent Initialization in combat

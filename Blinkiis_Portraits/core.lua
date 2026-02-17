@@ -58,6 +58,62 @@ function BLINKIISPORTRAITS:Print(...)
 	print(BLINKIISPORTRAITS.Name .. ":", ...)
 end
 
+function GetTableLng(tbl)
+	local getN = 0
+	for n in pairs(tbl) do
+		getN = getN + 1
+	end
+	return getN
+end
+
+local function PrintTable(tbl, indent, simple, noFunctions, depth)
+	indent = indent or " "
+    depth = depth or 1
+    local colors = "|CFF" .. format("%X", random(50, 200)) .. format("%X", random(50, 200)) .. format("%X", random(50, 200))
+    local color = "|CFF" .. format("%X", random(50, 200)) .. format("%X", random(50, 200)) .. format("%X", random(50, 200))
+	if type(tbl) == "table" then
+		print(color .. indent .. " {|r")
+		for entry, value in pairs(tbl) do
+			if (type(value) == "table") and not simple then
+				PrintTable(value, indent .. indent .. "[" .. entry .. "]", true, noFunctions, depth + 1)
+			else
+				if type(entry) == "table" then
+					entry = tostring(entry)
+				end
+
+				if type(value) == "table" then
+					print(color .. indent .. "|r", "|cff60ffc3 [" .. entry .. "]|r", " > ", value)
+				elseif type(value) == "number" then
+					print(color .. indent .. "|r", "|cfff5b062 [" .. entry .. "]|r", " = ", value)
+				elseif type(value) == "string" then
+					print(color .. indent .. "|r", "|cffd56ef5 [" .. entry .. "]|r", " = ", value)
+				elseif type(value) == "boolean" then
+					print(type(color), type(indent), type(entry), type(value), noFunctions)
+					print(color .. indent .. "|r", "|cff96e1ff[" .. entry .. "]|r", " = ", (value and "|cffabff87true|r" or "|cffff8787false|r"))
+				elseif (type(value) == "function") and not noFunctions then
+					print(color .. indent .. "|r", "|cffb5b3f5 [" .. entry .. "]|r", " = ", value)
+				elseif type(value) ~= "function" then
+					print(color .. indent .. "|r", "|cfffbd7f9 [" .. entry .. "]|r", " = ", value)
+				end
+			end
+		end
+		print(color .. indent .. " }|r")
+		print(" ")
+	else
+		print(tostring(tbl))
+	end
+end
+
+function BLINKIISPORTRAITS:DebugPrintTable(tbl, simple, noFunctions)
+	if type(tbl) == "table" then
+		local tblLength = GetTableLng(tbl)
+		BLINKIISPORTRAITS:Print(": Table Start >>>", tbl, "Entries:", tblLength, "Options:", "Simple:", simple, "Functions:", noFunctions)
+		PrintTable(tbl, "-", (tblLength > 50), noFunctions)
+	else
+		BLINKIISPORTRAITS:Print("Not a Table:", tbl)
+	end
+end
+
 function BLINKIISPORTRAITS:LoadDB()
 	self.db = LibStub("AceDB-3.0"):New("BlinkiisPortraitsDB", BLINKIISPORTRAITS.defaults, true)
 end
@@ -70,6 +126,7 @@ local function CheckAddons()
 	BLINKIISPORTRAITS.Cell_UF = IsAddOnLoaded("Cell_UnitFrames")
 	BLINKIISPORTRAITS.UUF = IsAddOnLoaded("UnhaltedUnitFrames")
 	BLINKIISPORTRAITS.NDUI = IsAddOnLoaded("NDui")
+	BLINKIISPORTRAITS.EQOL = IsAddOnLoaded("EnhanceQoL")
 end
 
 local isDelayedUpdateScheduled = false

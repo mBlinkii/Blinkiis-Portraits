@@ -2,12 +2,14 @@ function BLINKIISPORTRAITS:InitializeBossPortrait(demo)
 	if not BLINKIISPORTRAITS.db.profile.boss.enable then return end
 
 	local unitframe, parentFrame = BLINKIISPORTRAITS:GetUnitFrames("boss", BLINKIISPORTRAITS.db.profile.boss.unitframe)
-	if unitframe then
+	local isEQOL_Frame = parentFrame == "eqol" and BLINKIISPORTRAITS.EQOL
+
+	if unitframe or isEQOL_Frame then
 		local portraits = BLINKIISPORTRAITS.Portraits
 		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_TARGETABLE_CHANGED", "INSTANCE_ENCOUNTER_ENGAGE_UNIT" }
 
 		for i = 1, (BLINKIISPORTRAITS.ELVUI or BLINKIISPORTRAITS.UUF) and 8 or 5 do
-			local parent = _G[unitframe .. i]
+			local parent = _G[(isEQOL_Frame and format("%s%sFrame", unitframe, i) or (unitframe .. i))]
 
 			if parent then
 				local unit = "boss" .. i
