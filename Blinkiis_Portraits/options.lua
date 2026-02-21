@@ -9,9 +9,13 @@ local credits = {
 }
 
 local form = {
+	antik = L["Antik"],
 	blizz = L["Blizz"],
 	blizz_up = L["Blizz Up"],
 	circle = L["Circle"],
+	blizz_round = L["Blizz Round"],
+	blizz_round_up = L["Blizz Round Up"],
+	cookie = L["Cookie"],
 	diagonal = L["Diagonal"],
 	diagonal_mirror = L["Diagonal Mirror"],
 	diamond = L["Diamond"],
@@ -21,11 +25,18 @@ local form = {
 	drop_side_mirror = L["Drop side Mirror"],
 	egg = L["Egg"],
 	hexa = L["Hexa"],
+	leaf = L["Leaf"],
+	leaf_mirror = L["Leaf Mirror"],
+	octagon = L["Octagon"],
 	pad = L["Pad"],
+	pentagon = L["Pentagon"],
 	page = L["Page"],
 	page_mirror = L["Page Mirror"],
+	shield = L["Shield"],
 	square = L["Square"],
 	square_round = L["Square Round"],
+	trapezoid = L["Trapezoid"],
+	trapezoid_mirror = L["Trapezoid Mirror"],
 	oval = L["Oval"],
 	oval_horizontal = L["Oval Horizontal"],
 	rectangular = L["Rectangular"],
@@ -87,8 +98,15 @@ local extra = {
 	dog_pack = L["Dog Pack"],
 	dog_pack_color = L["Dog Pack Color"],
 
+	round_leaf = L["Round Leaf"],
+	round_pulse = L["Round Pulse"],
+	round_star = L["Round Star"],
+	round_zickzack = L["Round Zickzack"],
+
 	space = L["Space"],
 	space_color = L["Space Color"],
+	square_leaf = L["Square Leaf"],
+	square_loop = L["Square Loop"],
 
 	climbing_plant = L["Climbing Plant"],
 	climbing_plant_v2 = L["Climbing Plant V2"],

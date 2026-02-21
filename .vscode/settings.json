@@ -183,6 +183,7 @@
         "BLINKIISPORTRAITS",
         "Bliz",
         "blizz",
+        "blizzround",
         "BOTTOMLEFT",
         "BOTTOMRIGHT",
         "Castbar",
@@ -283,7 +284,8 @@
         "Unittarget",
         "Unittargettarget",
         "usetexturecolor",
-        "worldboss"
+        "worldboss",
+        "zickzack"
     ],
     "stylua.targetReleaseVersion": "latest",
     "Lua.diagnostics.disable": [
