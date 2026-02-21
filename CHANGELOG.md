@@ -1,10 +1,17 @@
 # Changelog
 
+## [ver. 1.47] - 21.02.2026
+### UPDATE
+- UPDATE - Removed Health Checks
+- UPDATE - Game Version
+### NEW
+- NEW - Add support for EQOL UF
+- NEW - Add missing mMT 4.0 Textures
+
 ## [ver. 1.46] - 05.02.2026
 ### FIX 
 - FIX - Portraits for UF 
 - FIX - Handling Secure values
-
 
 ## [ver. 1.44] - 04.11.2025
 ### FIX 
