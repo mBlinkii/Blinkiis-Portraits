@@ -64,7 +64,7 @@ local function Update(portrait, event, eventUnit)
 
 	local isAvailable = UnitIsConnected(unit) and UnitIsVisible(unit)
 	local hasStateChanged = ((event == "ForceUpdate") or (portrait.guid ~= guid) or (portrait.state ~= isAvailable))
-	local isDead = event == "UNIT_HEALTH" and portrait.isDead or UnitIsDead(unit)
+	local isDead = portrait.isDead or UnitIsDead(unit)
 
 	if hasStateChanged or isDead then
 		local class = select(2, UnitClass(unit))
@@ -156,7 +156,7 @@ local eventHandlers = {
 	UNIT_NAME_UPDATE = SimpleUpdate,
 
 	-- death check
-	UNIT_HEALTH = DeathCheck,
+	--UNIT_HEALTH = DeathCheck,
 
 	-- arena
 	ARENA_OPPONENT_UPDATE = Update,
@@ -414,11 +414,11 @@ function BLINKIISPORTRAITS:RegisterEvents(portrait, events, cast)
 		tinsert(portrait.events, event)
 	end
 
-	if portrait.type ~= "party" then
-		portrait:RegisterUnitEvent("UNIT_HEALTH", portrait.unit)
-	else
-		portrait:RegisterEvent("UNIT_HEALTH")
-	end
+	-- if portrait.type ~= "party" then
+	-- 	portrait:RegisterUnitEvent("UNIT_HEALTH", portrait.unit)
+	-- else
+	-- 	portrait:RegisterEvent("UNIT_HEALTH")
+	-- end
 end
 
 function BLINKIISPORTRAITS:RemovePortrait(frame)
