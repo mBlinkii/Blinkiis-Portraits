@@ -1,5 +1,9 @@
 # Changelog
 
+## [ver. 1.48] - 27.02.2026
+### FIX
+- FIX - Desaturate Bug with Target Portraits
+
 ## [ver. 1.47] - 21.02.2026
 ### UPDATE
 - UPDATE - Removed Health Checks
