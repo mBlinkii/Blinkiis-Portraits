@@ -34,7 +34,7 @@ local function UpdatePortrait(portrait, unit)
 	local forceDesaturate = BLINKIISPORTRAITS.db.profile.misc.desaturate
 
 	if portrait.useClassIcon and (portrait.isPlayer or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit or portrait.unit))) then
-		portrait.unitClass = portrait.unitClass or select(2, UnitClass(portrait.unit))
+		portrait.unitClass = portrait.unitClass or select(2, UnitClass(unit or portrait.unit))
 		portrait.texCoords = portrait.classIcons.texCoords[portrait.unitClass]
 		portrait.portrait:SetTexture(portrait.classIcons.texture, "CLAMP", "CLAMP", "TRILINEAR")
 	else
