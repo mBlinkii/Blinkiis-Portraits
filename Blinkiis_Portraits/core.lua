@@ -68,18 +68,16 @@ end
 
 local function PrintTable(tbl, indent, simple, noFunctions, depth)
 	indent = indent or " "
-    depth = depth or 1
-    local colors = "|CFF" .. format("%X", random(50, 200)) .. format("%X", random(50, 200)) .. format("%X", random(50, 200))
-    local color = "|CFF" .. format("%X", random(50, 200)) .. format("%X", random(50, 200)) .. format("%X", random(50, 200))
+	depth = depth or 1
+	local colors = "|CFF" .. format("%X", random(50, 200)) .. format("%X", random(50, 200)) .. format("%X", random(50, 200))
+	local color = "|CFF" .. format("%X", random(50, 200)) .. format("%X", random(50, 200)) .. format("%X", random(50, 200))
 	if type(tbl) == "table" then
 		print(color .. indent .. " {|r")
 		for entry, value in pairs(tbl) do
 			if (type(value) == "table") and not simple then
 				PrintTable(value, indent .. indent .. "[" .. entry .. "]", true, noFunctions, depth + 1)
 			else
-				if type(entry) == "table" then
-					entry = tostring(entry)
-				end
+				if type(entry) == "table" then entry = tostring(entry) end
 
 				if type(value) == "table" then
 					print(color .. indent .. "|r", "|cff60ffc3 [" .. entry .. "]|r", " > ", value)
@@ -208,6 +206,14 @@ function BLINKIISPORTRAITS:OnInitialize()
 			hooksecurefunc(ShadowUF.Units, "CheckUnitStatus", BLINKIISPORTRAITS.DelayedUpdate)
 			hooksecurefunc(ShadowUF.modules.movers, "Update", BLINKIISPORTRAITS.DelayedUpdate)
 			BLINKIISPORTRAITS.SUF_Hook = true
+		end
+	end
+
+	--fix for EQOL
+	if BLINKIISPORTRAITS.EQOL then
+		local EQOL_GF = (_G.EnhanceQoL and _G.EnhanceQoL.Aura and _G.EnhanceQoL.Aura.UF) and _G.EnhanceQoL.Aura.UF.GroupFrames or nil
+		if EQOL_GF then
+			hooksecurefunc(EQOL_GF, "RefreshGroupIcons", BLINKIISPORTRAITS.DelayedUpdate)
 		end
 	end
 
