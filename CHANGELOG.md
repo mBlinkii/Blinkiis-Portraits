@@ -1,5 +1,11 @@
 # Changelog
 
+## [ver. 1.49] - 12.04.2026
+### FIX
+- FIX - Missing Uinit in combination with EQOL
+### UPDATE
+- UPDATE - Add support for EQOL Party Frames
+
 ## [ver. 1.48] - 27.02.2026
 ### FIX
 - FIX - Desaturate Bug with Target Portraits
