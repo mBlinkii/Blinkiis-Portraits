@@ -177,7 +177,8 @@ local function IsSUFParent()
 	local units = { "player", "target", "targettarget", "focus", "party", "boss", "arena" }
 
 	for _, unit in ipairs(units) do
-		if BLINKIISPORTRAITS.db.profile[unit].unitframe == "suf" or "auto" then return true end
+		local unitframe = BLINKIISPORTRAITS.db.profile[unit].unitframe
+		if unitframe == "suf" or unitframe == "auto" then return true end
 	end
 	return false
 end
