@@ -93,4 +93,14 @@ BLINKIISPORTRAITS.unitFrames = {
 			boss = "EQOLUFBoss",
 			arena = nil,
 		},
+		bbf = {
+			player = "PlayerFrame",
+			target = "TargetFrame",
+			pet = "PetFrame",
+			targettarget = "TargetTargetFrame",
+			focus = "FocusFrame",
+			party = "PartyHeaderUnitButton",
+			boss = "BossFrame",
+			arena = nil,
+		},
 	}

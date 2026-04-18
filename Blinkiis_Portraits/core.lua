@@ -178,7 +178,8 @@ local function IsSUFParent()
 
 	for _, unit in ipairs(units) do
 		local unitframe = BLINKIISPORTRAITS.db.profile[unit].unitframe
-		if unitframe == "suf" or unitframe == "auto" then return true end
+		local resolvedFrame, resolvedParent = BLINKIISPORTRAITS:GetUnitFrames(unit, unitframe)
+		if resolvedFrame and resolvedParent == "suf" then return true end
 	end
 	return false
 end
@@ -204,7 +205,6 @@ function BLINKIISPORTRAITS:OnInitialize()
 			hooksecurefunc(ShadowUF.Units, "InitializeFrame", BLINKIISPORTRAITS.DelayedUpdate)
 			hooksecurefunc(ShadowUF.Units, "UninitializeFrame", BLINKIISPORTRAITS.DelayedUpdate)
 			hooksecurefunc(ShadowUF.Units, "CheckGroupedUnitStatus", BLINKIISPORTRAITS.DelayedUpdate)
-			hooksecurefunc(ShadowUF.Units, "CheckUnitStatus", BLINKIISPORTRAITS.DelayedUpdate)
 			hooksecurefunc(ShadowUF.modules.movers, "Update", BLINKIISPORTRAITS.DelayedUpdate)
 			BLINKIISPORTRAITS.SUF_Hook = true
 		end
