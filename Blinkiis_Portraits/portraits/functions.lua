@@ -63,7 +63,7 @@ local function Update(portrait, event, eventUnit)
 	guid = BLINKIISPORTRAITS:IsSecretValue(guid) and " " or guid
 
 	local isAvailable = UnitIsConnected(unit) and UnitIsVisible(unit)
-	local hasStateChanged = ((event == "ForceUpdate") or (portrait.guid ~= guid) or (portrait.state ~= isAvailable))
+	local hasStateChanged = ((event == "ForceUpdate") or (portrait.lastGUID ~= guid) or (portrait.state ~= isAvailable))
 
 	if hasStateChanged then
 		local class = select(2, UnitClass(unit))
