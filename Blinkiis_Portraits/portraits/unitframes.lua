@@ -99,8 +99,8 @@ BLINKIISPORTRAITS.unitFrames = {
 			pet = "PetFrame",
 			targettarget = "TargetTargetFrame",
 			focus = "FocusFrame",
-			party = "PartyHeaderUnitButton",
-			boss = "BossFrame",
+			party = "MemberFrame",
+			boss = nil,
 			arena = nil,
 		},
 	}

@@ -7,7 +7,7 @@ function BLINKIISPORTRAITS:InitializePartyPortrait(demo)
 		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_CONNECTION", "PARTY_MEMBER_ENABLE", "PARTY_MEMBER_DISABLE", "GROUP_ROSTER_UPDATE", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE", "UNIT_NAME_UPDATE"}
 
 		for i = 1, 5 do
-			local parent = _G[unitframe .. i]
+			local parent = parentFrame == "bbf" and _G.PartyFrame[unitframe .. i] or _G[unitframe .. i]
 
 			if parent then
 				local unit = "party" .. i

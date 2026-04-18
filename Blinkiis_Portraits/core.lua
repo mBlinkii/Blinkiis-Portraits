@@ -125,6 +125,7 @@ local function CheckAddons()
 	BLINKIISPORTRAITS.UUF = IsAddOnLoaded("UnhaltedUnitFrames")
 	BLINKIISPORTRAITS.NDUI = IsAddOnLoaded("NDui")
 	BLINKIISPORTRAITS.EQOL = IsAddOnLoaded("EnhanceQoL")
+	BLINKIISPORTRAITS.BBF = IsAddOnLoaded("BetterBlizzFrames")
 end
 
 local isDelayedUpdateScheduled = false

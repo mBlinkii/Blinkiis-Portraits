@@ -139,6 +139,7 @@ local parentFrames = {
 	uuf = "Unhalted Unit Frames",
 	ndui = "NDui",
 	eqol = "EQOL",
+	bbf = "BetterBlizzFrames",
 	auto = L["AUTO"],
 }
 

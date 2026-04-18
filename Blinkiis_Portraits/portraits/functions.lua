@@ -380,6 +380,8 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
 		type = "cell"
 	elseif BLINKIISPORTRAITS.EQOL and (parent == "auto" or parent == "eqol") then
 		type = "eqol"
+	elseif BLINKIISPORTRAITS.BBF and (parent == "auto" or parent == "bbf") then
+		type = "bbf"
 	end
 
 	if type then
@@ -399,6 +401,8 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
 			return GetUnitFrame(unit, "ndui"), "ndui"
 		elseif BLINKIISPORTRAITS.EQOL then
 			return GetUnitFrame(unit, "eqol"), "eqol"
+		elseif BLINKIISPORTRAITS.BBF then
+			return GetUnitFrame(unit, "bbf"), "bbf"
 		end
 	end
 end
