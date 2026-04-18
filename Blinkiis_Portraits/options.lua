@@ -173,6 +173,13 @@ local function copyTable(src, dest)
 	return dest
 end
 
+local function ImportProfile(name, profileData)
+	local profile = copyTable(BLINKIISPORTRAITS.defaults.profile)
+	copyTable(profileData, profile)
+	BLINKIISPORTRAITS.db.profiles[name] = profile
+	BLINKIISPORTRAITS.db:SetProfile(name)
+end
+
 StaticPopupDialogs["BLINKIISPORTRAITS_PROFILE_EXISTS"] = {
 	text = L["The profile you tried to import already exists. Choose a new name or accept to overwrite the existing profile."],
 	button1 = ACCEPT,
@@ -182,9 +189,7 @@ StaticPopupDialogs["BLINKIISPORTRAITS_PROFILE_EXISTS"] = {
 	maxLetters = 127,
 	OnAccept = function(frame, data)
 		if importInfos and importInfos.success then
-			BLINKIISPORTRAITS.db.profiles[importInfos.name] = copyTable(BLINKIISPORTRAITS.defaults)
-			copyTable(importInfos.profile, BLINKIISPORTRAITS.db.profiles[importInfos.name])
-			BLINKIISPORTRAITS.db:SetProfile(importInfos.name)
+			ImportProfile(importInfos.name, importInfos.profile)
 
 			importInfos = {}
 		end
@@ -3002,9 +3007,7 @@ BLINKIISPORTRAITS.options = {
 									if importInfos.exists then
 										StaticPopup_Show("BLINKIISPORTRAITS_PROFILE_EXISTS", "", nil, importInfos.name)
 									else
-										BLINKIISPORTRAITS.db.profiles[importInfos.name] = copyTable(BLINKIISPORTRAITS.defaults)
-										copyTable(importInfos.profile, BLINKIISPORTRAITS.db.profiles[importInfos.name])
-										BLINKIISPORTRAITS.db:SetProfile(importInfos.name)
+										ImportProfile(importInfos.name, importInfos.profile)
 
 										importInfos = {}
 									end
