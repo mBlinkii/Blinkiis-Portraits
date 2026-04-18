@@ -3235,5 +3235,38 @@ BLINKIISPORTRAITS.options = {
 	},
 }
 
+local function AddIgnoreClassIconsOptions()
+	local unitOptionGroups = {
+		player = "player_group",
+		target = "target_group",
+		focus = "focus_group",
+		targettarget = "targettarget_group",
+		pet = "pet_group",
+		party = "party_group",
+		boss = "boss_group",
+		arena = "arena_group",
+	}
+
+	for unit, groupKey in pairs(unitOptionGroups) do
+		local args = BLINKIISPORTRAITS.options.args[groupKey].args.general_group.args
+
+		args.ignore_class_icons_toggle = {
+			order = 5.5,
+			type = "toggle",
+			name = L["Ignore Class Icons"],
+			desc = L["Ignore the global class icon setting for this portrait."],
+			get = function()
+				return BLINKIISPORTRAITS.db.profile[unit].ignoreClassIcons
+			end,
+			set = function(info, value)
+				BLINKIISPORTRAITS.db.profile[unit].ignoreClassIcons = value
+				BLINKIISPORTRAITS:LoadPortraits()
+			end,
+		}
+	end
+end
+
+AddIgnoreClassIconsOptions()
+
 LibStub("AceConfig-3.0"):RegisterOptionsTable("BLINKIISPORTRAITS", BLINKIISPORTRAITS.options)
 LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BLINKIISPORTRAITS", BLINKIISPORTRAITS.Name)

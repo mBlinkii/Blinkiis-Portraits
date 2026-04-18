@@ -33,7 +33,7 @@ local function UpdatePortrait(portrait, unit)
 
 	local forceDesaturate = BLINKIISPORTRAITS.db.profile.misc.desaturate
 
-	if portrait.useClassIcon and (portrait.isPlayer or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit or portrait.unit))) then
+	if (portrait.useClassIcon and not portrait.db.ignoreClassIcons)  and (portrait.isPlayer or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit or portrait.unit))) then
 		portrait.unitClass = portrait.unitClass or select(2, UnitClass(unit or portrait.unit))
 		portrait.texCoords = portrait.classIcons.texCoords[portrait.unitClass]
 		portrait.portrait:SetTexture(portrait.classIcons.texture, "CLAMP", "CLAMP", "TRILINEAR")
@@ -43,7 +43,7 @@ local function UpdatePortrait(portrait, unit)
 
 	BLINKIISPORTRAITS:UpdateDesaturated(portrait, (forceDesaturate or portrait.isDead))
 
-	BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, (portrait.isPlayer and portrait.useClassIcon) and portrait.texCoords)
+	BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, (portrait.isPlayer and (portrait.useClassIcon and not portrait.db.ignoreClassIcons) ) and portrait.texCoords)
 end
 
 function BLINKIISPORTRAITS:IsSecretValue(value)
@@ -91,7 +91,7 @@ local function CastStart(portrait, _, unit)
 	local castIcon = GetCastIcon(unit)
 	if castIcon then
 		portrait.portrait:SetTexture(castIcon)
-		if portrait.useClassIcon and portrait.texCoords then BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, { 0, 1, 0, 1 }) end
+		if (portrait.useClassIcon and not portrait.db.ignoreClassIcons)  and portrait.texCoords then BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, { 0, 1, 0, 1 }) end
 	end
 end
 
@@ -311,7 +311,7 @@ function BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, settings)
 
 	portrait.bgFile = "Interface\\Addons\\Blinkiis_Portraits\\media\\blank.tga"
 
-	if portrait.useClassIcon then portrait.classIcons = mediaClass[BLINKIISPORTRAITS.db.profile.misc.class_icon] end
+	portrait.classIcons = (portrait.useClassIcon and not portrait.db.ignoreClassIcons) and mediaClass[BLINKIISPORTRAITS.db.profile.misc.class_icon] or nil
 
 	if dbCustom.enable then
 		portrait.textureFile = "Interface\\Addons\\" .. dbCustom.texture
