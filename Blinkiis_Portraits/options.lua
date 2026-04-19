@@ -140,6 +140,7 @@ local parentFrames = {
 	ndui = "NDui",
 	eqol = "EQOL",
 	bbf = "BetterBlizzFrames",
+	eui = "EllesmereUI",
 	auto = L["AUTO"],
 }
 

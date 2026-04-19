@@ -126,6 +126,7 @@ local function CheckAddons()
 	BLINKIISPORTRAITS.NDUI = IsAddOnLoaded("NDui")
 	BLINKIISPORTRAITS.EQOL = IsAddOnLoaded("EnhanceQoL")
 	BLINKIISPORTRAITS.BBF = IsAddOnLoaded("BetterBlizzFrames")
+	BLINKIISPORTRAITS.EUI = IsAddOnLoaded("EllesmereUI")
 end
 
 local isDelayedUpdateScheduled = false

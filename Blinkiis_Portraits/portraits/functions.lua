@@ -33,7 +33,7 @@ local function UpdatePortrait(portrait, unit)
 
 	local forceDesaturate = BLINKIISPORTRAITS.db.profile.misc.desaturate
 
-	if (portrait.useClassIcon and not portrait.db.ignoreClassIcons)  and (portrait.isPlayer or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit or portrait.unit))) then
+	if (portrait.useClassIcon and not portrait.db.ignoreClassIcons) and (portrait.isPlayer or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit or portrait.unit))) then
 		portrait.unitClass = portrait.unitClass or select(2, UnitClass(unit or portrait.unit))
 		portrait.texCoords = portrait.classIcons.texCoords[portrait.unitClass]
 		portrait.portrait:SetTexture(portrait.classIcons.texture, "CLAMP", "CLAMP", "TRILINEAR")
@@ -43,7 +43,11 @@ local function UpdatePortrait(portrait, unit)
 
 	BLINKIISPORTRAITS:UpdateDesaturated(portrait, (forceDesaturate or portrait.isDead))
 
-	BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, (portrait.isPlayer and (portrait.useClassIcon and not portrait.db.ignoreClassIcons) ) and portrait.texCoords)
+	BLINKIISPORTRAITS:Mirror(
+		portrait.portrait,
+		portrait.isPlayer and portrait.db.mirror,
+		(portrait.isPlayer and (portrait.useClassIcon and not portrait.db.ignoreClassIcons)) and portrait.texCoords
+	)
 end
 
 function BLINKIISPORTRAITS:IsSecretValue(value)
@@ -91,7 +95,9 @@ local function CastStart(portrait, _, unit)
 	local castIcon = GetCastIcon(unit)
 	if castIcon then
 		portrait.portrait:SetTexture(castIcon)
-		if (portrait.useClassIcon and not portrait.db.ignoreClassIcons)  and portrait.texCoords then BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, { 0, 1, 0, 1 }) end
+		if (portrait.useClassIcon and not portrait.db.ignoreClassIcons) and portrait.texCoords then
+			BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, { 0, 1, 0, 1 })
+		end
 	end
 end
 
@@ -382,6 +388,8 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
 		type = "eqol"
 	elseif BLINKIISPORTRAITS.BBF and (parent == "auto" or parent == "bbf") then
 		type = "bbf"
+	elseif BLINKIISPORTRAITS.EUI and (parent == "auto" or parent == "eui") then
+		type = "eui"
 	end
 
 	if type then
@@ -403,6 +411,8 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
 			return GetUnitFrame(unit, "eqol"), "eqol"
 		elseif BLINKIISPORTRAITS.BBF then
 			return GetUnitFrame(unit, "bbf"), "bbf"
+		elseif BLINKIISPORTRAITS.EUI then
+			return GetUnitFrame(unit, "eui"), "eui"
 		end
 	end
 end

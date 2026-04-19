@@ -13,7 +13,6 @@ function BLINKIISPORTRAITS:InitializePlayerPortrait()
 			local type = "player"
 
 			portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait("player", _G[unitframe])
-
 			if portraits[unit] then
 				if BLINKIISPORTRAITS.db.profile[type].unitframe ~= "auto" then portraits[unit]:SetParent(_G[unitframe]) end
 				local isCellParentFrame = (parentFrame == "cell") and BLINKIISPORTRAITS.Cell_UF

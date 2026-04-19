@@ -103,4 +103,14 @@ BLINKIISPORTRAITS.unitFrames = {
 			boss = nil,
 			arena = nil,
 		},
+		eui = {
+			player = "EllesmereUIUnitFrames_Player",
+			target = "EllesmereUIUnitFrames_Target",
+			pet = "EllesmereUIUnitFrames_Pet",
+			targettarget = "EllesmereUIUnitFrames_TargetTarget",
+			focus = "EllesmereUIUnitFrames_Focus",
+			party = nil,
+			boss = "EllesmereUIUnitFrames_Boss",
+			arena = nil,
+		},
 	}
