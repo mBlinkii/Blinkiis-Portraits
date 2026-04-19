@@ -1,5 +1,17 @@
 # Changelog
 
+## [ver. 1.45] - xx.04.2026
+### NEW
+- NEW - Add support for EllesmereUI
+- NEW - Add support for BetterBlizzFrames
+### FIX
+- FIX - Unitframe bug with SUF wich returns wrong condition
+- FIX - Bug with profile structure
+- FIX - Boss portraits initializing
+- FIX - Correct state change detection in Portraits update
+### UPDATE
+- UPDATE - add option to ignore class icons for on specific portraits
+
 ## [ver. 1.49] - 12.04.2026
 ### FIX
 - FIX - Missing Uinit in combination with EQOL
