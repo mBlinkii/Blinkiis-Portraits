@@ -106,6 +106,10 @@ local function CastStop(portrait, event, unit)
 	UpdatePortrait(portrait, unit)
 end
 
+local function ForceUpdate(portrait, event, unit, arg2)
+	Update(portrait, ForceUpdate, portrait.unit)
+end
+
 local function SimpleUpdate(portrait, event, unit, arg2)
 	Update(portrait, event, portrait.unit)
 end
@@ -152,9 +156,9 @@ local eventHandlers = {
 	VEHICLE_UPDATE = SimpleUpdate,
 
 	-- target/ focus updates
-	PLAYER_TARGET_CHANGED = SimpleUpdate,
-	PLAYER_FOCUS_CHANGED = SimpleUpdate,
-	UNIT_TARGET = SimpleUpdate,
+	PLAYER_TARGET_CHANGED = ForceUpdate,
+	PLAYER_FOCUS_CHANGED = ForceUpdate,
+	UNIT_TARGET = ForceUpdate,
 
 	-- party
 	GROUP_ROSTER_UPDATE = SimpleUpdate,
