@@ -24,19 +24,17 @@
 ## Overview
 
 **Blinkiis Portraits** is a lightweight customization addon that adds portrait elements to popular
-unit frame addons and Blizzard-style frames. It is built for players who want their UI to feel more
+unit frame addons. It is built for players who want their UI to feel more
 personal, more readable, and a lot less generic.
 
 The addon can automatically detect compatible unit frames or let you choose the parent frame
 manually per unit type. Once attached, each portrait can be customized independently.
 
-Current repository version: **1.50**  
-Latest changelog entry: **2026-04-20**
 
 ## Highlights
 
 - Supports portraits for `player`, `target`, `focus`, `target of target`, `pet`, `party`, `boss`, and `arena` where the selected frame addon provides those unit frames.
-- Works with multiple unit frame ecosystems, including Blizzard-style frame replacements and addon-specific layouts.
+- Works with multiple unit frame.
 - Includes a broad portrait style library with classic, geometric, mirrored, and decorative shapes.
 - Adds optional extra textures for rare, elite, boss, and player states.
 - Supports class icon display with multiple built-in styles and custom class icon packs.
@@ -121,9 +119,6 @@ This makes it easy to keep personal presets, share layouts with friends, or bund
 profiles for specific UI setups.
 
 ## Recent Changes
-
-Version `1.50` adds support for `EllesmereUI` and `BetterBlizzFrames`, and includes several fixes
-for profile structure, boss portrait initialization, and portrait update behavior.
 
 For the full history, see [CHANGELOG.md](./CHANGELOG.md).
 
