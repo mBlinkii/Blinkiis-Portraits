@@ -1,65 +1,141 @@
-<br/>
-<div align="center">
-  <img src="https://raw.githubusercontent.com/mBlinkii/Blinkiis-Portraits/refs/heads/main/icon.png" alt="Logo" width="80" height="80">
-  <br/><br/>
-    <p align="center">
-    <a href="https://www.curseforge.com/wow/addons/blinkiis-portraits">🔗 CurseForge</a> • 
-    <a href="https://github.com/mBlinkii/Blinkiis-Portraits/issues">🐞 Report a Bug</a> • 
-    <a href="https://github.com/mBlinkii/Blinkiis-Portraits/issues">💡 Request a Feature</a> • 
-    <a href="https://discord.gg/AE9XebMU49">💬 Join Discord</a> • 
-  </p>
-  <br/><br/>
-  <h3 align="center"><strong>Blinkiis Portraits</strong></h3>
+# Blinkiis Portraits
 
-  <p align="center">
-    A lightweight addon for <strong>ElvUI</strong>, <strong>SUF</strong>, <strong>Cell</strong>, <strong>PitBull 4</strong>, <strong>UUF</strong> and <strong>NDui</strong> that adds customizable 2D portraits to your World of Warcraft interface.<br/>
-    From clean and classic to quirky and colorful — with a wide range of styles and textures, there's something for everyone to personalize their UI!
-  </p>
-</div>
+<p align="center">
+  <img src="./icon.png" alt="Blinkiis Portraits icon" width="96" height="96">
+</p>
 
----
+<p align="center">
+  Add stylized 2D portraits to supported World of Warcraft unit frames with flexible positioning,
+  class icons, overlay textures, and shareable profiles.
+</p>
 
-## 🎨 Overview
-![Banner](https://raw.githubusercontent.com/mBlinkii/Blinkiis-Portraits/refs/heads/main/logo.png)
+<p align="center">
+  <a href="https://www.curseforge.com/wow/addons/blinkiis-portraits">CurseForge</a>
+  |
+  <a href="https://github.com/mBlinkii/Blinkiis-Portraits/issues">Bug Reports</a>
+  |
+  <a href="https://github.com/mBlinkii/Blinkiis-Portraits/issues">Feature Requests</a>
+  |
+  <a href="https://discord.gg/AE9XebMU49">Discord</a>
+</p>
 
-**Blinkiis Portraits** enhances interface addons by adding unique portrait visuals for various unit frames. Perfect for players looking to give their UI a stylish touch.
+![Blinkiis Portraits banner](./logo.png)
 
-Simple to install and easy to configure — no technical know-how required.
+## Overview
 
----
+**Blinkiis Portraits** is a lightweight customization addon that adds portrait elements to popular
+unit frame addons and Blizzard-style frames. It is built for players who want their UI to feel more
+personal, more readable, and a lot less generic.
 
-## ✨ Features
+The addon can automatically detect compatible unit frames or let you choose the parent frame
+manually per unit type. Once attached, each portrait can be customized independently.
 
-- ✅ Portrait support for: player, target, dead units, pet, focus, party, arena, boss
-- 🎨 Portraits in class colors or single custom color
-- 🌟 Rare/Elite indicator overlays
-- 🧙‍♂️ Display of spell icons
-- 🛠 Fully adjustable via in-game menu
-- 🥏 Shareable Profiles
+Current repository version: **1.50**  
+Latest changelog entry: **2026-04-20**
 
-> Access the configuration via `/bp` or through _Game Menu > Interface > AddOns > Blinkiis Portraits_.
+## Highlights
 
----
+- Supports portraits for `player`, `target`, `focus`, `target of target`, `pet`, `party`, `boss`, and `arena` where the selected frame addon provides those unit frames.
+- Works with multiple unit frame ecosystems, including Blizzard-style frame replacements and addon-specific layouts.
+- Includes a broad portrait style library with classic, geometric, mirrored, and decorative shapes.
+- Adds optional extra textures for rare, elite, boss, and player states.
+- Supports class icon display with multiple built-in styles and custom class icon packs.
+- Lets you use custom portrait textures, masks, and extra masks from your own files.
+- Offers per-unit settings for size, anchor point, layer, frame level, mirroring, cast icon display, and color behavior.
+- Includes profile export/import so setups can be backed up and shared.
+- Ships with localization files for multiple languages.
 
-## 🚀 Installation
+## Supported Unit Frame Addons
+
+The addon currently includes integrations for:
+
+- `ElvUI`
+- `Shadowed Unit Frames`
+- `PitBull 4`
+- `Cell`
+- `Cell Unit Frames`
+- `Unhalted Unit Frames`
+- `NDui`
+- `EnhanceQoL`
+- `BetterBlizzFrames`
+- `EllesmereUI`
+
+Coverage depends on what each frame addon exposes. For example, some integrations support party and
+arena frames, while others only expose single-unit frames.
+
+## Supported Game Clients
+
+The repository includes separate TOC files for Retail and multiple Classic client variants.
+
+## Customization Features
+
+- Portrait shapes such as Blizzard-style, circular, diagonal, leaf, moon, oval, rectangular, shield, trapezoid, and more
+- Decorative overlays for themes like dragon, snake, plants, stars, dogs, space, and Blizzard-style elite or boss borders
+- Reaction- and classification-based coloring or overlay handling
+- Optional desaturation and zoom controls
+- Manual parent frame selection when multiple unit frame addons are installed
+- Custom class icon registration
+- Per-unit option to ignore class icons and keep regular portraits instead
+
+## Localization
+
+Localization files are currently included for:
+
+- `enUS`
+- `deDE`
+- `esMX`
+- `frFR`
+- `itIT`
+- `koKR`
+- `ptBR`
+- `ruRU`
+- `zhCN`
+- `zhTW`
+
+## Installation
 
 1. Download the addon from [CurseForge](https://www.curseforge.com/wow/addons/blinkiis-portraits).
-2. Extract it to your `Interface/AddOns` directory.
-3. Launch World of Warcraft and configure it through the game settings.
+2. Extract the `Blinkiis_Portraits` folder into your WoW `Interface/AddOns` directory for the client you play.
+3. Start the game or reload your UI.
+4. Open the configuration with `/bp`.
 
----
+## Configuration
 
-## 🤝 Contributing
+You can access the addon settings in two ways:
 
-Got ideas or want to help?
+- Type `/bp`
+- Open `Game Menu -> Options -> AddOns -> Blinkiis Portraits`
 
-- Fork the repo and submit a pull request.
-- Or open an issue labeled _Suggestion_.
+If you use more than one compatible unit frame addon at the same time, select the desired parent
+frame per unit inside the addon options.
 
-If you like the project, feel free to leave a ⭐ on GitHub!
+## Profiles and Sharing
 
----
+Blinkiis Portraits includes built-in profile management features:
 
-## 📜 License
+- Export profiles as a shareable string
+- Import profiles from other users
+- Store optional profile metadata such as author, name, and version
 
-This project is licensed under the All rights reserved (https://github.com/mBlinkii/Blinkiis-Portraits/blob/main/LICENSE.txt). Use freely and share with the community.
+This makes it easy to keep personal presets, share layouts with friends, or bundle recommended
+profiles for specific UI setups.
+
+## Recent Changes
+
+Version `1.50` adds support for `EllesmereUI` and `BetterBlizzFrames`, and includes several fixes
+for profile structure, boss portrait initialization, and portrait update behavior.
+
+For the full history, see [CHANGELOG.md](./CHANGELOG.md).
+
+## Contributing
+
+Feedback, bug reports, and feature ideas are welcome:
+
+- Open an issue on [GitHub](https://github.com/mBlinkii/Blinkiis-Portraits/issues)
+- Share feedback on [Discord](https://discord.gg/AE9XebMU49)
+
+If you enjoy the addon, starring the repository helps a lot.
+
+## License
+
+This project is **All rights reserved**. See [LICENSE.txt](./LICENSE.txt) for details.
