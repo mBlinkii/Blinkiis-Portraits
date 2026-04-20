@@ -1,6 +1,6 @@
 # Changelog
 
-## [ver. 1.45] - xx.04.2026
+## [ver. 1.50] - 20.04.2026
 ### NEW
 - NEW - Add support for EllesmereUI
 - NEW - Add support for BetterBlizzFrames
@@ -9,6 +9,7 @@
 - FIX - Bug with profile structure
 - FIX - Boss portraits initializing
 - FIX - Correct state change detection in Portraits update
+- FIX - Update correctly on target & focus change
 ### UPDATE
 - UPDATE - add option to ignore class icons for on specific portraits
 
