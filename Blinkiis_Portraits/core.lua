@@ -25,6 +25,7 @@ BLINKIISPORTRAITS.Cell_UF = nil
 BLINKIISPORTRAITS.UUF = nil
 BLINKIISPORTRAITS.NDUI = nil
 BLINKIISPORTRAITS.CachedBossIDs = {}
+BLINKIISPORTRAITS.PortraitsUpdatedForceToken = 0
 
 do
 	BLINKIISPORTRAITS.Mists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
@@ -235,4 +236,8 @@ function BLINKIISPORTRAITS:OnInitialize()
 		BLINKIISPORTRAITS.db.profile.db_Update = tonumber(BLINKIISPORTRAITS.Version)
 		BLINKIISPORTRAITS.db.profile.misc.zoom = 0
 	end
+end
+
+function BLINKIISPORTRAITS:OnEnable()
+	self.PortraitsUpdatedForceToken = (self.PortraitsUpdatedForceToken or 0) + 1
 end

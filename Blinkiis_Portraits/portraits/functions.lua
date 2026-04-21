@@ -107,10 +107,21 @@ local function CastStop(portrait, event, unit)
 end
 
 local function ForceUpdate(portrait, event, unit, arg2)
-	Update(portrait, ForceUpdate, portrait.unit)
+	Update(portrait, "ForceUpdate", portrait.unit)
 end
 
 local function SimpleUpdate(portrait, event, unit, arg2)
+	Update(portrait, event, portrait.unit)
+end
+
+local function PortraitsUpdated(portrait, event, unit, arg2)
+	local forceToken = BLINKIISPORTRAITS.PortraitsUpdatedForceToken
+	if forceToken and portrait._portraitsUpdatedForceToken ~= forceToken then
+		portrait._portraitsUpdatedForceToken = forceToken
+		Update(portrait, "ForceUpdate", portrait.unit)
+		return
+	end
+
 	Update(portrait, event, portrait.unit)
 end
 
@@ -132,7 +143,7 @@ end
 
 local eventHandlers = {
 	-- portrait updates
-	PORTRAITS_UPDATED = SimpleUpdate,
+	PORTRAITS_UPDATED = PortraitsUpdated,
 	UNIT_CONNECTION = Update,
 	UNIT_PORTRAIT_UPDATE = Update,
 	PARTY_MEMBER_ENABLE = Update,
