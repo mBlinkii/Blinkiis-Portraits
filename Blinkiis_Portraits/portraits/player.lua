@@ -2,7 +2,7 @@ function BLINKIISPORTRAITS:InitializePlayerPortrait()
 	if not BLINKIISPORTRAITS.db.profile.player.enable then return end
 
 	local unitframe, parentFrame = BLINKIISPORTRAITS:GetUnitFrames("player", BLINKIISPORTRAITS.db.profile.player.unitframe)
-
+	print("Player unitframe:", unitframe, "Parent frame:", parentFrame	)
 	if unitframe then
 		local portraits = BLINKIISPORTRAITS.Portraits
 		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_CONNECTION", "UNIT_ENTERED_VEHICLE", "UNIT_EXITING_VEHICLE", "UNIT_EXITED_VEHICLE", "VEHICLE_UPDATE" }

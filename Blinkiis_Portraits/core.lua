@@ -24,6 +24,9 @@ BLINKIISPORTRAITS.Cell = nil
 BLINKIISPORTRAITS.Cell_UF = nil
 BLINKIISPORTRAITS.UUF = nil
 BLINKIISPORTRAITS.NDUI = nil
+BLINKIISPORTRAITS.EQOL = nil
+BLINKIISPORTRAITS.BBF = nil
+BLINKIISPORTRAITS.STUF = nil
 BLINKIISPORTRAITS.CachedBossIDs = {}
 BLINKIISPORTRAITS.PortraitsUpdatedForceToken = 0
 
@@ -128,6 +131,7 @@ local function CheckAddons()
 	BLINKIISPORTRAITS.EQOL = IsAddOnLoaded("EnhanceQoL")
 	BLINKIISPORTRAITS.BBF = IsAddOnLoaded("BetterBlizzFrames")
 	BLINKIISPORTRAITS.EUI = IsAddOnLoaded("EllesmereUI")
+	BLINKIISPORTRAITS.STUF = IsAddOnLoaded("Stuf")
 end
 
 local isDelayedUpdateScheduled = false
@@ -216,9 +220,7 @@ function BLINKIISPORTRAITS:OnInitialize()
 	--fix for EQOL
 	if BLINKIISPORTRAITS.EQOL then
 		local EQOL_GF = (_G.EnhanceQoL and _G.EnhanceQoL.Aura and _G.EnhanceQoL.Aura.UF) and _G.EnhanceQoL.Aura.UF.GroupFrames or nil
-		if EQOL_GF then
-			hooksecurefunc(EQOL_GF, "RefreshGroupIcons", BLINKIISPORTRAITS.DelayedUpdate)
-		end
+		if EQOL_GF then hooksecurefunc(EQOL_GF, "RefreshGroupIcons", BLINKIISPORTRAITS.DelayedUpdate) end
 	end
 
 	-- elvui demo mode

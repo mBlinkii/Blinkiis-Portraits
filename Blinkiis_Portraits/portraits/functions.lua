@@ -405,6 +405,8 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
 		type = "bbf"
 	elseif BLINKIISPORTRAITS.EUI and (parent == "auto" or parent == "eui") then
 		type = "eui"
+	elseif BLINKIISPORTRAITS.STUF and (parent == "auto" or parent == "stuf") then
+		type = "stuf"
 	end
 
 	if type then
@@ -428,6 +430,8 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
 			return GetUnitFrame(unit, "bbf"), "bbf"
 		elseif BLINKIISPORTRAITS.EUI then
 			return GetUnitFrame(unit, "eui"), "eui"
+		elseif BLINKIISPORTRAITS.STUF then
+			return GetUnitFrame(unit, "stuf"), "stuf"
 		end
 	end
 end
