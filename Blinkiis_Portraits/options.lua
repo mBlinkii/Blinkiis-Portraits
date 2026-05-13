@@ -162,6 +162,16 @@ local importInfos = {
 	profile = nil,
 }
 
+local function GetPopupEditBox(frame)
+	return frame and (frame.editBox or frame.EditBox)
+end
+
+local function GetPopupButton(frame, index)
+	if not frame then return end
+
+	return frame["button" .. index] or frame["Button" .. index] or (frame.Buttons and frame.Buttons[index])
+end
+
 local function copyTable(src, dest)
 	if type(dest) ~= "table" then dest = {} end
 	if type(src) == "table" then
@@ -199,12 +209,16 @@ StaticPopupDialogs["BLINKIISPORTRAITS_PROFILE_EXISTS"] = {
 	end,
 	EditBoxOnTextChanged = function(frame)
 		local validInput = frame:GetText() ~= ""
-		frame:GetParent().button1:SetEnabled(validInput)
+		local button = GetPopupButton(frame:GetParent(), 1)
+		if button then button:SetEnabled(validInput) end
 		importInfos.name = validInput and frame:GetText() or importInfos.name
 	end,
 	OnShow = function(frame, data)
-		frame.editBox:SetText(data)
-		frame.editBox:SetFocus()
+		local editBox = GetPopupEditBox(frame)
+		if not editBox then return end
+
+		editBox:SetText(data)
+		editBox:SetFocus()
 	end,
 	timeout = 0,
 	whileDead = 1,

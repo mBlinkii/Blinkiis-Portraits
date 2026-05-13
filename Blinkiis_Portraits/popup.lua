@@ -1,6 +1,10 @@
 local ReloadUI = ReloadUI
 local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits", true)
 
+local function GetPopupEditBox(frame)
+	return frame and (frame.editBox or frame.EditBox)
+end
+
 StaticPopupDialogs["BLINKIISPORTRAITS_RL"] = {
 	text = L["Some settings require you to reload the interface. Do you want to do that now?"],
 	button1 = L["Yes"],
@@ -32,18 +36,24 @@ StaticPopupDialogs["BLINKIISPORTRAITS_EDITBOX"] = {
 	button1 = OKAY,
 	hasEditBox = 1,
 	OnShow = function(self, data)
-		self.editBox:SetAutoFocus(false)
-		self.editBox.width = self.editBox:GetWidth()
-		self.editBox:Width(280)
-		self.editBox:AddHistoryLine("text")
-		self.editBox.temptxt = data
-		self.editBox:SetText(data)
-		self.editBox:SetJustifyH("CENTER")
+		local editBox = GetPopupEditBox(self)
+		if not editBox then return end
+
+		editBox:SetAutoFocus(false)
+		editBox.width = editBox:GetWidth()
+		editBox:SetWidth(280)
+		editBox:AddHistoryLine("text")
+		editBox.temptxt = data
+		editBox:SetText(data)
+		editBox:SetJustifyH("CENTER")
 	end,
 	OnHide = function(self)
-		self.editBox:Width(self.editBox.width or 50)
-		self.editBox.width = nil
-		self.temptxt = nil
+		local editBox = GetPopupEditBox(self)
+		if not editBox then return end
+
+		editBox:SetWidth(editBox.width or 50)
+		editBox.width = nil
+		editBox.temptxt = nil
 	end,
 	EditBoxOnEnterPressed = function(self)
 		self:GetParent():Hide()
@@ -52,7 +62,7 @@ StaticPopupDialogs["BLINKIISPORTRAITS_EDITBOX"] = {
 		self:GetParent():Hide()
 	end,
 	EditBoxOnTextChanged = function(self)
-		if self:GetText() ~= self.temptxt then self:SetText(self.temptxt) end
+		if self.temptxt and self:GetText() ~= self.temptxt then self:SetText(self.temptxt) end
 
 		self:HighlightText()
 	end,
