@@ -12,6 +12,7 @@ BLINKIISPORTRAITS.defaults.profile.misc = {
 	zoom = 0,
 	class_icon = "none",
 	desaturate = false,
+	clickable = true,
 }
 
 BLINKIISPORTRAITS.defaults.profile.custom = {

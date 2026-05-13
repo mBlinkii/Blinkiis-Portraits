@@ -257,6 +257,19 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:LoadPortraits()
 							end,
 						},
+						clickable_toggle = {
+							order = 3,
+							type = "toggle",
+							name = L["Clickable Portraits"],
+							desc = L["Enable mouse interaction on the portraits. Disabling this uses non-secure click-through frames and can reduce taint."],
+							get = function(info)
+								return BLINKIISPORTRAITS.db.profile.misc.clickable
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.profile.misc.clickable = value
+								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+						},
 					},
 				},
 				custom_textures_group = {

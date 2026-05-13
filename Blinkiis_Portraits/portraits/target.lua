@@ -11,7 +11,7 @@ function BLINKIISPORTRAITS:InitializeTargetPortrait()
 			local unit = "target"
 			local type = "target"
 
-			portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait("target", _G[unitframe])
+			portraits[unit] = BLINKIISPORTRAITS:EnsurePortrait(unit, "target", _G[unitframe])
 
 			if portraits[unit] then
 				if BLINKIISPORTRAITS.db.profile[type].unitframe ~= "auto" then portraits[unit]:SetParent(_G[unitframe]) end

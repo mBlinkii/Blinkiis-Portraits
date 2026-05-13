@@ -13,7 +13,7 @@ function BLINKIISPORTRAITS:InitializePartyPortrait(demo)
 				local unit = "party" .. i
 				local type = "party"
 
-				portraits[unit] = portraits[unit] or BLINKIISPORTRAITS:CreatePortrait(unit, parent)
+				portraits[unit] = BLINKIISPORTRAITS:EnsurePortrait(unit, unit, parent)
 
 				if portraits[unit] then
 					if BLINKIISPORTRAITS.db.profile[type].unitframe ~= "auto" then portraits[unit]:SetParent(_G[unitframe .. i]) end

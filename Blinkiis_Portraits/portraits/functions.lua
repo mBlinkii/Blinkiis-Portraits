@@ -86,7 +86,7 @@ local function Update(portrait, event, eventUnit)
 		UpdatePortrait(portrait, unit)
 		BLINKIISPORTRAITS:UpdateExtraTexture(portrait, portrait.db.unitcolor and color, portrait.db.forceExtra)
 
-		if not InCombatLockdown() and portrait:GetAttribute("unit") ~= unit then portrait:SetAttribute("unit", unit) end
+		if portrait.clickable and not InCombatLockdown() and portrait:GetAttribute("unit") ~= unit then portrait:SetAttribute("unit", unit) end
 	end
 end
 
@@ -454,59 +454,108 @@ function BLINKIISPORTRAITS:RegisterEvents(portrait, events, cast)
 end
 
 function BLINKIISPORTRAITS:RemovePortrait(frame)
+	if frame._delayedUpdateTimer then
+		frame._delayedUpdateTimer:Cancel()
+		frame._delayedUpdateTimer = nil
+	end
+
 	frame:UnregisterAllEvents()
+	frame:SetScript("OnEvent", nil)
+	frame.eventsSet = nil
+	frame.castEventsSet = nil
+	frame.cast = nil
 	frame:Hide()
 	frame = nil
 end
 
+local function GetPortraitFrameName(name, clickable)
+	return "BP_Portrait_" .. name .. (clickable and "_Clickable" or "_Display")
+end
+
+local function HideInactivePortrait(name, clickable)
+	local inactiveFrame = _G[GetPortraitFrameName(name, not clickable)]
+	if inactiveFrame then BLINKIISPORTRAITS:RemovePortrait(inactiveFrame) end
+end
+
 function BLINKIISPORTRAITS:CreatePortrait(name, parent)
 	if parent then
-		local portrait = CreateFrame("Button", "BP_Portrait_" .. name, parent, "SecureUnitButtonTemplate")
+		local clickable = BLINKIISPORTRAITS.db.profile.misc.clickable
+		local frameName = GetPortraitFrameName(name, clickable)
+		local portrait = _G[frameName]
 
-		-- texture
-		portrait.texture = portrait:CreateTexture("BP_texture-" .. name, "ARTWORK", nil, 4)
-		portrait.texture:SetPoint("CENTER", portrait, "CENTER", 0, 0)
+		HideInactivePortrait(name, clickable)
 
-		-- mask
-		portrait.mask = portrait:CreateMaskTexture()
-		portrait.mask:SetAllPoints(portrait.texture)
+		if not portrait then
+			portrait = CreateFrame(clickable and "Button" or "Frame", frameName, parent, clickable and "SecureUnitButtonTemplate" or nil)
 
-		-- portrait
-		portrait.portrait = portrait:CreateTexture("BP_portrait-" .. name, "ARTWORK", nil, 2)
-		portrait.portrait:SetAllPoints(portrait.texture)
-		portrait.portrait:AddMaskTexture(portrait.mask)
-		local unit = (parent.unit == "party" or not parent.unit) and "player" or parent.unit
+			-- texture
+			portrait.texture = portrait:CreateTexture("BP_texture-" .. name .. (clickable and "_Clickable" or "_Display"), "ARTWORK", nil, 4)
+			portrait.texture:SetPoint("CENTER", portrait, "CENTER", 0, 0)
 
-		-- rare/elite/boss
-		local extraOnTop = BLINKIISPORTRAITS.db.profile.misc.extratop
-		portrait.extra = portrait:CreateTexture("BP_extra-" .. name, "OVERLAY", nil, extraOnTop and 7 or 1)
-		portrait.extra:SetAllPoints(portrait.texture)
+			-- mask
+			portrait.mask = portrait:CreateMaskTexture()
+			portrait.mask:SetAllPoints(portrait.texture)
 
-		-- extra mask
-		if not extraOnTop then
-			portrait.extraMask = portrait:CreateMaskTexture()
-			portrait.extraMask:SetAllPoints(portrait.texture)
-			portrait.extra:AddMaskTexture(portrait.extraMask)
+			-- portrait
+			portrait.portrait = portrait:CreateTexture("BP_portrait-" .. name .. (clickable and "_Clickable" or "_Display"), "ARTWORK", nil, 2)
+			portrait.portrait:SetAllPoints(portrait.texture)
+			portrait.portrait:AddMaskTexture(portrait.mask)
+
+			-- rare/elite/boss
+			local extraOnTop = BLINKIISPORTRAITS.db.profile.misc.extratop
+			portrait.extra = portrait:CreateTexture("BP_extra-" .. name .. (clickable and "_Clickable" or "_Display"), "OVERLAY", nil, extraOnTop and 7 or 1)
+			portrait.extra:SetAllPoints(portrait.texture)
+
+			-- extra mask
+			if not extraOnTop then
+				portrait.extraMask = portrait:CreateMaskTexture()
+				portrait.extraMask:SetAllPoints(portrait.texture)
+				portrait.extra:AddMaskTexture(portrait.extraMask)
+			end
+
+			-- bg
+			portrait.bg = portrait:CreateTexture("BP_bg-" .. name .. (clickable and "_Clickable" or "_Display"), "BACKGROUND", nil, 1)
+			portrait.bg:SetAllPoints(portrait.texture)
+			portrait.bg:AddMaskTexture(portrait.mask)
+			portrait.bg:SetVertexColor(0, 0, 0, 1)
+		else
+			portrait:SetParent(parent)
 		end
 
-		-- bg
-		portrait.bg = portrait:CreateTexture("BP_bg-" .. name, "BACKGROUND", nil, 1)
-		portrait.bg:SetAllPoints(portrait.texture)
-		portrait.bg:AddMaskTexture(portrait.mask)
-		portrait.bg:SetVertexColor(0, 0, 0, 1)
+		portrait.clickable = clickable
 
-		-- scripts to interact with mouse
-		portrait:SetAttribute("unit", portrait.unit)
-		portrait:SetAttribute("*type1", "target")
-		portrait:SetAttribute("*type2", "togglemenu")
-		portrait:SetAttribute("type3", "focus")
-		portrait:SetAttribute("toggleForVehicle", true)
-		portrait:SetAttribute("ping-receiver", true)
-		portrait:RegisterForClicks("AnyUp")
+		if clickable then
+			portrait:EnableMouse(true)
+			portrait:SetAttribute("unit", portrait.unit)
+			portrait:SetAttribute("*type1", "target")
+			portrait:SetAttribute("*type2", "togglemenu")
+			portrait:SetAttribute("type3", "focus")
+			portrait:SetAttribute("toggleForVehicle", true)
+			portrait:SetAttribute("ping-receiver", true)
+			portrait:RegisterForClicks("AnyUp")
+		else
+			portrait:EnableMouse(false)
+		end
+
 		portrait:Show()
 
 		return portrait
 	end
+end
+
+function BLINKIISPORTRAITS:EnsurePortrait(unit, name, parent)
+	local portrait = BLINKIISPORTRAITS.Portraits[unit]
+	local clickable = BLINKIISPORTRAITS.db.profile.misc.clickable
+
+	if portrait and portrait.clickable ~= clickable then
+		BLINKIISPORTRAITS:RemovePortrait(portrait)
+		portrait = nil
+	end
+
+	portrait = portrait or BLINKIISPORTRAITS:CreatePortrait(name, parent)
+	BLINKIISPORTRAITS.Portraits[unit] = portrait
+
+	return portrait
 end
 
 function BLINKIISPORTRAITS:InitPortrait(portrait, events)
