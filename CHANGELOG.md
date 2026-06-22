@@ -1,5 +1,15 @@
 # Changelog
 
+## [ver. 1.52] - 22.06.2026
+### NEW
+- NEW - Add support for Stuf
+- NEW - Add disable button for clickable portraits
+### UPDATE
+- UPDATE - Add support for EllesmereUI party frames
+- UPDATE - Update Game Version
+### FIX
+- FIX - Popup nil error
+
 ## [ver. 1.51] - 21.04.2026
 ### FIX
 - FIX - Player portrait is not showing on first login.
