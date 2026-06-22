@@ -187,7 +187,7 @@ local eventHandlers = {
 }
 
 local function OnEvent(portrait, event, eventUnit, arg)
-	local unit = portrait.isCellParentFrame and portrait.parentFrame._unit or portrait.parentFrame.unit or portrait.unit
+	local unit = (portrait.isCellParentFrame and portrait.parentFrame._unit) or (portrait.isHeaderUnit and portrait.parentFrame:GetAttribute("unit")) or portrait.parentFrame.unit or portrait.unit
 	portrait.unit = unit
 
 	if eventHandlers[event] then eventHandlers[event](portrait, event, eventUnit, arg) end

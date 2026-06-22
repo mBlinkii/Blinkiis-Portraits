@@ -109,9 +109,9 @@ BLINKIISPORTRAITS.unitFrames = {
 		pet = "EllesmereUIUnitFrames_Pet",
 		targettarget = "EllesmereUIUnitFrames_TargetTarget",
 		focus = "EllesmereUIUnitFrames_Focus",
-		party = nil,
+		party = "ERFPartyHeaderUnitButton",
 		boss = "EllesmereUIUnitFrames_Boss",
-		arena = nil,
+		arena = nil, -- has no arena frames
 	},
 	stuf = {
 		player = "Stuf.units.player",

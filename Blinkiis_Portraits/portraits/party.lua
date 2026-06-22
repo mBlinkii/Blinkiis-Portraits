@@ -1,3 +1,67 @@
+local function HookHeaderUnitChanges(parent)
+	if parent._bpUnitHooked then return end
+	parent._bpUnitHooked = true
+
+	parent:HookScript("OnAttributeChanged", function(self, name)
+		if name ~= "unit" then return end
+
+		local portrait = self._bpPortrait
+		if not portrait then return end
+
+		local onEvent = portrait:GetScript("OnEvent")
+		if onEvent then onEvent(portrait, "ForceUpdate") end
+	end)
+end
+
+local function SetupPartyPortrait(portraits, key, parent, parentFrame, events, demo)
+	local type = "party"
+	local db = BLINKIISPORTRAITS.db.profile
+	if not db then return end
+
+	portraits[key] = BLINKIISPORTRAITS:EnsurePortrait(key, key, parent)
+
+	local portrait = portraits[key]
+	if not portrait then return end
+
+	if db[type].unitframe ~= "auto" then portrait:SetParent(parent) end
+
+	local isCellParentFrame = (parentFrame == "cell") and BLINKIISPORTRAITS.Cell
+	local isHeaderUnit = (parentFrame == "eui")
+
+	if isHeaderUnit then
+		parent._bpPortrait = portrait
+		HookHeaderUnitChanges(parent)
+	end
+
+	portrait.events = {}
+	portrait.parentFrame = parent
+	portrait.isCellParentFrame = isCellParentFrame
+	portrait.isHeaderUnit = isHeaderUnit
+	portrait.unit = (isCellParentFrame and parent._unit) or (isHeaderUnit and parent:GetAttribute("unit")) or parent.unit
+	portrait.type = type
+	portrait.db = db[type]
+	portrait.size = db[type].size
+	portrait.point = db[type].point
+	portrait.useClassIcon = db.misc.class_icon ~= "none"
+	portrait.realUnit = "party"
+
+	if demo then
+		portrait.demo = not portrait.demo
+	elseif BLINKIISPORTRAITS.SUF then
+		portrait.demo = not ShadowUF.db.profile.locked
+	end
+
+	portrait.isPlayer = nil
+	portrait.unitClass = nil
+	portrait.lastGUID = nil
+
+	BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, db[type])
+	BLINKIISPORTRAITS:UpdateSize(portrait)
+	BLINKIISPORTRAITS:UpdateCastSettings(portrait)
+
+	BLINKIISPORTRAITS:InitPortrait(portrait, events)
+end
+
 function BLINKIISPORTRAITS:InitializePartyPortrait(demo)
 	if not BLINKIISPORTRAITS.db.profile.party.enable then return end
 
@@ -10,52 +74,36 @@ function BLINKIISPORTRAITS:InitializePartyPortrait(demo)
 			local parent = parentFrame == "bbf" and _G.PartyFrame[unitframe .. i] or _G[unitframe .. i]
 
 			if parent then
-				local unit = "party" .. i
-				local type = "party"
+				SetupPartyPortrait(portraits, "party" .. i, parent, parentFrame, events, demo)
+			end
+		end
 
-				portraits[unit] = BLINKIISPORTRAITS:EnsurePortrait(unit, unit, parent)
-
-				if portraits[unit] then
-					if BLINKIISPORTRAITS.db.profile[type].unitframe ~= "auto" then portraits[unit]:SetParent(_G[unitframe .. i]) end
-					local isCellParentFrame = (parentFrame == "cell") and BLINKIISPORTRAITS.Cell
-					portraits[unit].events = {}
-					portraits[unit].parentFrame = parent
-					portraits[unit].isCellParentFrame = isCellParentFrame
-					portraits[unit].unit = isCellParentFrame and parent._unit or parent.unit
-					portraits[unit].type = type
-					portraits[unit].db = BLINKIISPORTRAITS.db.profile[type]
-					portraits[unit].size = BLINKIISPORTRAITS.db.profile[type].size
-					portraits[unit].point = BLINKIISPORTRAITS.db.profile[type].point
-					portraits[unit].useClassIcon = BLINKIISPORTRAITS.db.profile.misc.class_icon ~= "none"
-					portraits[unit].realUnit = "party"
-
-					if demo then
-						portraits[unit].demo = not portraits[unit].demo
-					elseif BLINKIISPORTRAITS.SUF then
-						portraits[unit].demo = not ShadowUF.db.profile.locked
-					end
-
-					portraits[unit].isPlayer = nil
-					portraits[unit].unitClass = nil
-					portraits[unit].lastGUID = nil
-
-					BLINKIISPORTRAITS:UpdateTexturesFiles(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
-					BLINKIISPORTRAITS:UpdateSize(portraits[unit])
-					BLINKIISPORTRAITS:UpdateCastSettings(portraits[unit])
-
-					BLINKIISPORTRAITS:InitPortrait(portraits[unit], events)
-				end
+		-- EllesmereUI helper
+		if parentFrame == "eui" then
+			local selfButton = _G.ERFPartySelfButton
+			if selfButton then
+				SetupPartyPortrait(portraits, "partyself", selfButton, parentFrame, events, demo)
 			end
 		end
 	end
 end
 
+local function ReleasePartyPortrait(key)
+	local portrait = BLINKIISPORTRAITS.Portraits[key]
+	if not portrait then return end
+
+	if portrait.parentFrame and portrait.parentFrame._bpPortrait == portrait then
+		portrait.parentFrame._bpPortrait = nil
+	end
+
+	BLINKIISPORTRAITS:RemovePortrait(portrait)
+	BLINKIISPORTRAITS.Portraits[key] = nil
+end
+
 function BLINKIISPORTRAITS:KillPartyPortrait()
 	for i = 1, 5 do
-		local unit = "party" .. i
-		if BLINKIISPORTRAITS.Portraits[unit] then
-			BLINKIISPORTRAITS:RemovePortrait(BLINKIISPORTRAITS.Portraits[unit])
-			BLINKIISPORTRAITS.Portraits[unit] = nil
-		end
+		ReleasePartyPortrait("party" .. i)
 	end
+
+	ReleasePartyPortrait("partyself")
 end
