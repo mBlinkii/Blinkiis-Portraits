@@ -226,8 +226,8 @@ pip-log.txt
 ## Release script
 #############
 
-Addon/release.ps1
-Addon/release.bat
+release.ps1
+release.bat
 publish.ps1
 publish.bat
 discord_changelog.ps1
