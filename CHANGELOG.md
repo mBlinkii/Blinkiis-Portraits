@@ -15,7 +15,6 @@
 - FIX - Player portrait is not showing on first login.
 - FIX - Target change events returning the correct event now.
 
-
 ## [ver. 1.50] - 20.04.2026
 ### NEW
 - NEW - Add support for EllesmereUI
