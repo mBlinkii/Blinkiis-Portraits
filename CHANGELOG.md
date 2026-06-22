@@ -1,5 +1,10 @@
 # Changelog
 
+## [ver. 1.52] - 22.06.2026
+### UPDATE
+- UPDATE - Add support for EllesmereUI party frames
+- UPDATE - Update Game Version
+
 ## [ver. 1.51] - 21.04.2026
 ### FIX
 - FIX - Player portrait is not showing on first login.
