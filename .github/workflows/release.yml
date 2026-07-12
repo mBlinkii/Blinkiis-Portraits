@@ -24,7 +24,6 @@ jobs:
           # release/zip/CurseForge/Wago version always matches what was
           # tagged, even if a .toc's own "## Version:" line lags behind.
           VERSION="${GITHUB_REF_NAME#v}"
-          DATE_TAG=$(date +%Y-%m-%d)
           DATE_FILE=$(date +%d%m%Y)
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "zipname=${ADDON}-v${VERSION}-${DATE_FILE}" >> "$GITHUB_OUTPUT"
@@ -38,9 +37,24 @@ jobs:
           # Convert every flavor's "## Interface:" (5 or 6 digit WoW
           # interface number, e.g. 120007 or 38001) into a dotted CurseForge/
           # Wago version (12.0.7 / 3.80.1) and collect them all, since a
-          # single zip in this repo covers every flavor at once.
+          # single zip in this repo covers every flavor at once - this is
+          # what makes the CurseForge/Wago listing cover every WoW version
+          # instead of just retail.
+          #
+          # Wago's upload API wants the version split into one
+          # "supported_<flavor>_patch" field per flavor rather than a single
+          # combined list, so each .toc's version is also kept per-flavor
+          # here. Mapping is the same one Wago itself uses to read a
+          # project's .toc filename suffix (see /api/data/game
+          # "toc_suffixes"): _Mainline->retail, _Mists->mop, _Cata->cata,
+          # _TBC->bc, _Vanilla->classic, _Wrath->wotlk.
           VERSIONS=""
           RETAIL_PATCH=""
+          MOP_PATCH=""
+          CATA_PATCH=""
+          BC_PATCH=""
+          CLASSIC_PATCH=""
+          WOTLK_PATCH=""
           for TOC in "$ADDON"/"$ADDON"_*.toc; do
             IFACE=$(grep -oP '^## Interface:\s*\K.+' "$TOC" | tr -d '\r ')
             IFS=',' read -ra ARR <<< "$IFACE"
@@ -50,13 +64,23 @@ jobs:
                 *"$V"*) ;;
                 *) VERSIONS="${VERSIONS:+$VERSIONS,}$V" ;;
               esac
-              if [[ "$TOC" == *_Mainline.toc ]]; then
-                RETAIL_PATCH="$V"
-              fi
+              case "$TOC" in
+                *_Mainline.toc) RETAIL_PATCH="$V" ;;
+                *_Mists.toc) MOP_PATCH="$V" ;;
+                *_Cata.toc) CATA_PATCH="$V" ;;
+                *_TBC.toc) BC_PATCH="$V" ;;
+                *_Vanilla.toc) CLASSIC_PATCH="$V" ;;
+                *_Wrath.toc) WOTLK_PATCH="$V" ;;
+              esac
             done
           done
           echo "game_versions=$VERSIONS" >> "$GITHUB_OUTPUT"
           echo "retail_patch=$RETAIL_PATCH" >> "$GITHUB_OUTPUT"
+          echo "mop_patch=$MOP_PATCH" >> "$GITHUB_OUTPUT"
+          echo "cata_patch=$CATA_PATCH" >> "$GITHUB_OUTPUT"
+          echo "bc_patch=$BC_PATCH" >> "$GITHUB_OUTPUT"
+          echo "classic_patch=$CLASSIC_PATCH" >> "$GITHUB_OUTPUT"
+          echo "wotlk_patch=$WOTLK_PATCH" >> "$GITHUB_OUTPUT"
 
       - name: Extract release notes from CHANGELOG.md
         id: notes
@@ -150,11 +174,27 @@ jobs:
           # let curl interpret commas, semicolons and newlines inside it as
           # -F syntax and corrupt the field (Wago then rejects it with
           # "metadata must be a valid JSON string").
+          #
+          # Only flavors this addon actually ships a .toc for end up with a
+          # non-empty patch value, so each "supported_<flavor>_patch" field
+          # is added conditionally - sending an empty string for a flavor
+          # that isn't built would list a bogus, unsupported version on Wago.
           jq -n \
             --arg label "${{ steps.meta.outputs.version }}" \
-            --arg patch "${{ steps.meta.outputs.retail_patch }}" \
+            --arg retail "${{ steps.meta.outputs.retail_patch }}" \
+            --arg mop "${{ steps.meta.outputs.mop_patch }}" \
+            --arg cata "${{ steps.meta.outputs.cata_patch }}" \
+            --arg bc "${{ steps.meta.outputs.bc_patch }}" \
+            --arg classic "${{ steps.meta.outputs.classic_patch }}" \
+            --arg wotlk "${{ steps.meta.outputs.wotlk_patch }}" \
             --rawfile changelog RELEASE_NOTES.md \
-            '{label: $label, stability: "stable", supported_retail_patch: $patch, changelog: $changelog}' \
+            '{label: $label, stability: "stable", changelog: $changelog}
+             + (if $retail  != "" then {supported_retail_patch: $retail}   else {} end)
+             + (if $mop     != "" then {supported_mop_patch: $mop}         else {} end)
+             + (if $cata    != "" then {supported_cata_patch: $cata}       else {} end)
+             + (if $bc      != "" then {supported_bc_patch: $bc}           else {} end)
+             + (if $classic != "" then {supported_classic_patch: $classic} else {} end)
+             + (if $wotlk   != "" then {supported_wotlk_patch: $wotlk}     else {} end)' \
             > wago_metadata.json
 
           # "|| true" keeps the step alive under "bash -e" when curl fails
