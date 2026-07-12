@@ -1,12 +1,27 @@
-local UnitIsPlayer = UnitIsPlayer
+-- upvalues (hot path: these are called on every event)
+local _G = _G
+local CreateFrame = CreateFrame
+local C_Timer = C_Timer
+local InCombatLockdown = InCombatLockdown
+local SetPortraitTexture = SetPortraitTexture
+local UnitCastingInfo = UnitCastingInfo
+local UnitChannelInfo = UnitChannelInfo
 local UnitClass = UnitClass
-local UnitReaction = UnitReaction
-local UnitInPartyIsAI = UnitInPartyIsAI
 local UnitClassification = UnitClassification
-local UnitFactionGroup = UnitFactionGroup
-local UnitIsDead = UnitIsDead
 local UnitExists = UnitExists
+local UnitFactionGroup = UnitFactionGroup
+local UnitGUID = UnitGUID
+local UnitInPartyIsAI = UnitInPartyIsAI
+local UnitIsConnected = UnitIsConnected
+local UnitIsDead = UnitIsDead
+local UnitIsPlayer = UnitIsPlayer
+local UnitIsUnit = UnitIsUnit
+local UnitIsVisible = UnitIsVisible
+local UnitReaction = UnitReaction
+local gmatch = string.gmatch
+local ipairs, type = ipairs, type
 local select, tinsert = select, tinsert
+local strfind, strsplit, strsub = strfind, strsplit, strsub
 local issecretvalue = issecretvalue
 
 local mediaPortraits = BLINKIISPORTRAITS.media.portraits
@@ -14,6 +29,20 @@ local mediaExtra = BLINKIISPORTRAITS.media.extra
 local mediaClass = BLINKIISPORTRAITS.media.class
 
 local playerFaction = nil
+
+-- default texcoords, shared to avoid per-call table allocations
+local DEFAULT_COORDS = { 0, 1, 0, 1 }
+
+--- Returns true if the given value is a secret value (WoW 12.x API), false otherwise.
+function BLINKIISPORTRAITS:IsSecretValue(value)
+	return (issecretvalue and issecretvalue(value)) or false
+end
+
+-- reaction helper (shared by GetUnitColor and UpdateExtraTexture)
+local function GetReactionType(unit)
+	local reaction = (unit == "pet") and UnitReaction("player", unit) or UnitReaction(unit, "player")
+	return (reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly")) or "enemy"
+end
 
 -- portrait texture update functions
 local function GetCastIcon(unit)
@@ -50,16 +79,7 @@ local function UpdatePortrait(portrait, unit)
 	)
 end
 
-function BLINKIISPORTRAITS:IsSecretValue(value)
-	if issecretvalue then
-		return issecretvalue(value)
-	else
-		return false
-	end
-end
-
 local function Update(portrait, event, eventUnit)
-	--if portrait.type == "party" then print(event, portrait.type, portrait.unit, portrait.parentFrame._unit or portrait.parentFrame.unit) end
 	if not portrait.unit then return end
 
 	local unit = (portrait.demo and not UnitExists(portrait.unit)) and "player" or portrait.unit
@@ -96,7 +116,7 @@ local function CastStart(portrait, _, unit)
 	if castIcon then
 		portrait.portrait:SetTexture(castIcon)
 		if (portrait.useClassIcon and not portrait.db.ignoreClassIcons) and portrait.texCoords then
-			BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, { 0, 1, 0, 1 })
+			BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, DEFAULT_COORDS)
 		end
 	end
 end
@@ -106,15 +126,15 @@ local function CastStop(portrait, event, unit)
 	UpdatePortrait(portrait, unit)
 end
 
-local function ForceUpdate(portrait, event, unit, arg2)
+local function ForceUpdate(portrait)
 	Update(portrait, "ForceUpdate", portrait.unit)
 end
 
-local function SimpleUpdate(portrait, event, unit, arg2)
+local function SimpleUpdate(portrait, event)
 	Update(portrait, event, portrait.unit)
 end
 
-local function PortraitsUpdated(portrait, event, unit, arg2)
+local function PortraitsUpdated(portrait, event)
 	local forceToken = BLINKIISPORTRAITS.PortraitsUpdatedForceToken
 	if forceToken and portrait._portraitsUpdatedForceToken ~= forceToken then
 		portrait._portraitsUpdatedForceToken = forceToken
@@ -125,15 +145,13 @@ local function PortraitsUpdated(portrait, event, unit, arg2)
 	Update(portrait, event, portrait.unit)
 end
 
-local function DeathCheck(portrait, event, unit)
-	if portrait.unit ~= unit then return end
-	local isDead = UnitIsDead(portrait.unit)
-	if portrait.isDead == isDead then return end
-	portrait.isDead = isDead
-	Update(portrait, event)
+local function ModelChanged(portrait, event, eventUnit)
+	-- globally registered frames (party) receive this event for all units; only react to the own unit
+	if eventUnit and portrait.unit and eventUnit ~= portrait.unit and not UnitIsUnit(eventUnit, portrait.unit) then return end
+	Update(portrait, "ForceUpdate", portrait.unit)
 end
 
-local function DelayedUpdate(portrait, event, unit, arg2)
+local function DelayedUpdate(portrait, event)
 	if portrait._delayedUpdateTimer then portrait._delayedUpdateTimer:Cancel() end
 	portrait._delayedUpdateTimer = C_Timer.NewTimer(0.6, function()
 		Update(portrait, event, portrait.unit)
@@ -146,7 +164,9 @@ local eventHandlers = {
 	PORTRAITS_UPDATED = PortraitsUpdated,
 	UNIT_CONNECTION = Update,
 	UNIT_PORTRAIT_UPDATE = Update,
+	UNIT_MODEL_CHANGED = ModelChanged,
 	PARTY_MEMBER_ENABLE = Update,
+	PARTY_MEMBER_DISABLE = Update,
 	ForceUpdate = Update,
 
 	-- cast icon updates
@@ -175,9 +195,6 @@ local eventHandlers = {
 	GROUP_ROSTER_UPDATE = SimpleUpdate,
 	UNIT_NAME_UPDATE = SimpleUpdate,
 
-	-- death check
-	--UNIT_HEALTH = DeathCheck,
-
 	-- arena
 	ARENA_OPPONENT_UPDATE = Update,
 	UNIT_TARGETABLE_CHANGED = Update,
@@ -186,23 +203,63 @@ local eventHandlers = {
 	UPDATE_ACTIVE_BATTLEFIELD = SimpleUpdate,
 }
 
-local function OnEvent(portrait, event, eventUnit, arg)
-	local unit = (portrait.isCellParentFrame and portrait.parentFrame._unit) or (portrait.isHeaderUnit and portrait.parentFrame:GetAttribute("unit")) or portrait.parentFrame.unit or portrait.unit
-	portrait.unit = unit
+local castEvents = { "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_STOP" }
+local empowerEvents = { "UNIT_SPELLCAST_EMPOWER_START", "UNIT_SPELLCAST_EMPOWER_STOP" }
 
-	if eventHandlers[event] then eventHandlers[event](portrait, event, eventUnit, arg) end
+-- lookup to skip unit re-resolution for cast events (unit cannot change mid cast)
+local castEventLookup = {}
+for _, event in ipairs(castEvents) do
+	castEventLookup[event] = true
+end
+for _, event in ipairs(empowerEvents) do
+	castEventLookup[event] = true
 end
 
+local function OnEvent(portrait, event, eventUnit, arg)
+	local handler = eventHandlers[event]
+	if not handler then return end
+
+	if not castEventLookup[event] then
+		portrait.unit = (portrait.isCellParentFrame and portrait.parentFrame._unit)
+			or (portrait.isHeaderUnit and portrait.parentFrame:GetAttribute("unit"))
+			or portrait.parentFrame.unit
+			or portrait.unit
+	end
+
+	handler(portrait, event, eventUnit, arg)
+end
+
+-- mirrored texcoords are precomputed once per coords table to avoid per-call allocations
+local mirroredCoordsCache = {}
+local function GetMirroredCoords(coords)
+	local mirrored = mirroredCoordsCache[coords]
+	if not mirrored then
+		if #coords == 8 then
+			mirrored = { coords[5], coords[6], coords[7], coords[8], coords[1], coords[2], coords[3], coords[4] }
+		else
+			mirrored = { coords[2], coords[1], coords[3], coords[4] }
+		end
+		mirroredCoordsCache[coords] = mirrored
+	end
+	return mirrored
+end
+
+--- Applies (optionally mirrored) texcoords to a texture.
+-- @param texture the texture to modify
+-- @param mirror true to mirror horizontally
+-- @param texCoords optional texcoords table (4 or 8 values); defaults to full texture
 function BLINKIISPORTRAITS:Mirror(texture, mirror, texCoords)
 	if texCoords then
-		local coords = texCoords
+		local coords = mirror and GetMirroredCoords(texCoords) or texCoords
 		if #coords == 8 then
-			texture:SetTexCoord(unpack((mirror and { coords[5], coords[6], coords[7], coords[8], coords[1], coords[2], coords[3], coords[4] } or coords)))
+			texture:SetTexCoord(coords[1], coords[2], coords[3], coords[4], coords[5], coords[6], coords[7], coords[8])
 		else
-			texture:SetTexCoord(unpack((mirror and { coords[2], coords[1], coords[3], coords[4] } or coords)))
+			texture:SetTexCoord(coords[1], coords[2], coords[3], coords[4])
 		end
+	elseif mirror then
+		texture:SetTexCoord(1, 0, 0, 1)
 	else
-		texture:SetTexCoord(mirror and 1 or 0, mirror and 0 or 1, 0, 1)
+		texture:SetTexCoord(0, 1, 0, 1)
 	end
 end
 
@@ -210,6 +267,7 @@ local function SetTexture(texture, file, wrapMode)
 	texture:SetTexture(file, wrapMode, wrapMode, "TRILINEAR")
 end
 
+--- Applies the configured texture files to all layers of a portrait.
 function BLINKIISPORTRAITS:UpdateTextures(portrait)
 	local mirror = portrait.db.mirror
 
@@ -224,6 +282,12 @@ function BLINKIISPORTRAITS:UpdateTextures(portrait)
 end
 
 local extraTypes = { rare = true, elite = true, rareelite = true, boss = true }
+local extraFileKeys = { rare = "rareFile", elite = "eliteFile", rareelite = "rareeliteFile", boss = "bossFile", player = "playerFile" }
+
+--- Updates the rare/elite/boss overlay texture of a portrait.
+-- @param portrait the portrait frame
+-- @param color optional color override (unit color)
+-- @param force optional forced classification ("none" disables forcing)
 function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, force)
 	if not (portrait.extra and portrait.db.extra) then
 		if portrait.extra then portrait.extra:Hide() end
@@ -245,17 +309,16 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, force)
 	end
 
 	if isExtraUnit and not color then
-		color = BLINKIISPORTRAITS.db.profile.misc.force_reaction
-				and (function()
-					local reaction = UnitReaction(portrait.unit, "player")
-					local reactionType = (reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly")) or "enemy"
-					return BLINKIISPORTRAITS.db.profile.colors.reaction[reactionType]
-				end)()
-			or BLINKIISPORTRAITS.db.profile.colors.classification[c]
+		local colors = BLINKIISPORTRAITS.db.profile.colors
+		if BLINKIISPORTRAITS.db.profile.misc.force_reaction then
+			color = colors.reaction[GetReactionType(portrait.unit)]
+		else
+			color = colors.classification[c]
+		end
 	end
 
 	if color then
-		portrait.extra:SetTexture(portrait[c .. "File"], "CLAMP", "CLAMP", "TRILINEAR")
+		portrait.extra:SetTexture(portrait[extraFileKeys[c] or (c .. "File")], "CLAMP", "CLAMP", "TRILINEAR")
 		portrait.extra:SetVertexColor(color.r, color.g, color.b, color.a or 1)
 		portrait.extra:Show()
 	else
@@ -264,19 +327,22 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, force)
 end
 
 -- color functions
+
+--- Returns the configured color for a unit (class, reaction, death or default color).
 function BLINKIISPORTRAITS:GetUnitColor(unit, isDead, isPlayer, class)
 	if not unit then return end
 
-	local colors = BLINKIISPORTRAITS.db.profile.colors
+	local profile = BLINKIISPORTRAITS.db.profile
+	local colors = profile.colors
 
 	if isDead then return colors.misc.death, isPlayer end
 
-	if BLINKIISPORTRAITS.db.profile.misc.force_default then return colors.misc.default, isPlayer end
+	if profile.misc.force_default then return colors.misc.default, isPlayer end
 
 	if isPlayer then
-		if BLINKIISPORTRAITS.db.profile.misc.force_reaction then
-			local unitFaction = select(1, UnitFactionGroup(unit))
-			playerFaction = playerFaction or select(1, UnitFactionGroup("player"))
+		if profile.misc.force_reaction then
+			local unitFaction = UnitFactionGroup(unit)
+			playerFaction = playerFaction or UnitFactionGroup("player")
 
 			local reactionType = (playerFaction == unitFaction) and "friendly" or "enemy"
 			return colors.reaction[reactionType], isPlayer
@@ -284,12 +350,11 @@ function BLINKIISPORTRAITS:GetUnitColor(unit, isDead, isPlayer, class)
 			return class and colors.class[class] or colors.misc.default
 		end
 	else
-		local reaction = (unit == "pet") and UnitReaction("player", unit) or UnitReaction(unit, "player")
-		local reactionType = (reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly")) or "enemy"
-		return colors.reaction[reactionType], isPlayer
+		return colors.reaction[GetReactionType(unit)], isPlayer
 	end
 end
 
+--- Sets the desaturation state of the portrait texture (only touches the texture on change).
 function BLINKIISPORTRAITS:UpdateDesaturated(portrait, isDead)
 	if isDead then
 		if not portrait.isDesaturated then
@@ -303,14 +368,18 @@ function BLINKIISPORTRAITS:UpdateDesaturated(portrait, isDead)
 end
 
 -- update settings functions
-local function UpdateZoom(texture, size)
+local function UpdateZoom(portrait)
 	local zoom = BLINKIISPORTRAITS.db.profile.misc.zoom
-	local offset = (size / 2) * zoom
+	local offset = (portrait.size / 2) * zoom
+	local texture = portrait.portrait
 
-	texture:SetPoint("TOPLEFT", 0 - offset, 0 + offset)
-	texture:SetPoint("BOTTOMRIGHT", 0 + offset, 0 - offset)
+	-- anchor explicitly to the portrait frame; a single consistent anchor model
+	texture:ClearAllPoints()
+	texture:SetPoint("TOPLEFT", portrait, "TOPLEFT", -offset, offset)
+	texture:SetPoint("BOTTOMRIGHT", portrait, "BOTTOMRIGHT", offset, -offset)
 end
 
+--- Applies size, position, strata and level to a portrait (skipped during combat lockdown).
 function BLINKIISPORTRAITS:UpdateSize(portrait, size, point)
 	if not InCombatLockdown() then
 		size = size or portrait.size
@@ -325,14 +394,16 @@ function BLINKIISPORTRAITS:UpdateSize(portrait, size, point)
 	end
 end
 
+--- Resolves the texture/mask file paths for a portrait based on the profile settings.
 function BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, settings)
-	local dbMisc = BLINKIISPORTRAITS.db.profile.misc
-	local dbCustom = BLINKIISPORTRAITS.db.profile.custom
+	local profile = BLINKIISPORTRAITS.db.profile
+	local dbMisc = profile.misc
+	local dbCustom = profile.custom
 	local media = mediaPortraits[settings.texture]
 
 	portrait.bgFile = "Interface\\Addons\\Blinkiis_Portraits\\media\\blank.tga"
 
-	portrait.classIcons = (portrait.useClassIcon and not portrait.db.ignoreClassIcons) and mediaClass[BLINKIISPORTRAITS.db.profile.misc.class_icon] or nil
+	portrait.classIcons = (portrait.useClassIcon and not portrait.db.ignoreClassIcons) and mediaClass[dbMisc.class_icon] or nil
 
 	if dbCustom.enable then
 		portrait.textureFile = "Interface\\Addons\\" .. dbCustom.texture
@@ -371,6 +442,20 @@ function BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, settings)
 end
 
 -- initialize function
+
+--- Resolves a frame reference from a global name; supports dotted paths like "Stuf.units.player".
+function BLINKIISPORTRAITS:ResolveFrame(path)
+	if type(path) ~= "string" then return path end
+	if not strfind(path, ".", 1, true) then return _G[path] end
+
+	local obj = _G
+	for part in gmatch(path, "[^%.]+") do
+		obj = obj[part]
+		if not obj then return nil end
+	end
+	return obj
+end
+
 local function GetUnitFrame(unit, type)
 	local unitFrames = BLINKIISPORTRAITS.unitFrames
 
@@ -383,76 +468,66 @@ local function GetUnitFrame(unit, type)
 	end
 end
 
+-- priority order for resolving the parent unit frame addon
+-- "unit" restricts an entry to a specific unit (Cell provides party frames only)
+local ufTypePriority = {
+	{ type = "cell", flag = "Cell", unit = "party" },
+	{ type = "elvui", flag = "ELVUI" },
+	{ type = "pb4", flag = "PB4" },
+	{ type = "suf", flag = "SUF" },
+	{ type = "uuf", flag = "UUF" },
+	{ type = "ndui", flag = "NDUI" },
+	{ type = "cell", flag = "Cell_UF" },
+	{ type = "eqol", flag = "EQOL" },
+	{ type = "bbf", flag = "BBF" },
+	{ type = "eui", flag = "EUI" },
+	{ type = "stuf", flag = "STUF" },
+}
+
+--- Returns the unit frame name and addon type for a unit, honoring the configured parent.
+-- @param unit the unit key ("player", "party", ...)
+-- @param parent the configured unit frame addon ("auto" or a specific type)
+-- @return frameName, addonType (or nil if no supported unit frame addon is loaded)
 function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
-	local type
-	if unit == "party" and BLINKIISPORTRAITS.Cell and (parent == "auto" or parent == "cell") then
-		type = "cell"
-	elseif BLINKIISPORTRAITS.ELVUI and (parent == "auto" or parent == "elvui") then
-		type = "elvui"
-	elseif BLINKIISPORTRAITS.PB4 and (parent == "auto" or parent == "pb4") then
-		type = "pb4"
-	elseif BLINKIISPORTRAITS.SUF and (parent == "auto" or parent == "suf") then
-		type = "suf"
-	elseif BLINKIISPORTRAITS.UUF and (parent == "auto" or parent == "uuf") then
-		type = "uuf"
-	elseif BLINKIISPORTRAITS.NDUI and (parent == "auto" or parent == "ndui") then
-		type = "ndui"
-	elseif BLINKIISPORTRAITS.Cell_UF and (parent == "auto" or parent == "cell") then
-		type = "cell"
-	elseif BLINKIISPORTRAITS.EQOL and (parent == "auto" or parent == "eqol") then
-		type = "eqol"
-	elseif BLINKIISPORTRAITS.BBF and (parent == "auto" or parent == "bbf") then
-		type = "bbf"
-	elseif BLINKIISPORTRAITS.EUI and (parent == "auto" or parent == "eui") then
-		type = "eui"
-	elseif BLINKIISPORTRAITS.STUF and (parent == "auto" or parent == "stuf") then
-		type = "stuf"
+	-- explicit selection or "auto" priority
+	for _, entry in ipairs(ufTypePriority) do
+		if BLINKIISPORTRAITS[entry.flag] and (parent == "auto" or parent == entry.type) and (not entry.unit or entry.unit == unit) then
+			return GetUnitFrame(unit, entry.type), entry.type
+		end
 	end
 
-	if type then
-		return GetUnitFrame(unit, type), type
-	else
-		if BLINKIISPORTRAITS.Cell or BLINKIISPORTRAITS.Cell_UF then
-			return GetUnitFrame(unit, "cell"), "cell"
-		elseif BLINKIISPORTRAITS.ELVUI then
-			return GetUnitFrame(unit, "elvui"), "elvui"
-		elseif BLINKIISPORTRAITS.PB4 then
-			return GetUnitFrame(unit, "pb4"), "pb4"
-		elseif BLINKIISPORTRAITS.SUF then
-			return GetUnitFrame(unit, "suf"), "suf"
-		elseif BLINKIISPORTRAITS.UUF then
-			return GetUnitFrame(unit, "uuf"), "uuf"
-		elseif BLINKIISPORTRAITS.NDUI then
-			return GetUnitFrame(unit, "ndui"), "ndui"
-		elseif BLINKIISPORTRAITS.EQOL then
-			return GetUnitFrame(unit, "eqol"), "eqol"
-		elseif BLINKIISPORTRAITS.BBF then
-			return GetUnitFrame(unit, "bbf"), "bbf"
-		elseif BLINKIISPORTRAITS.EUI then
-			return GetUnitFrame(unit, "eui"), "eui"
-		elseif BLINKIISPORTRAITS.STUF then
-			return GetUnitFrame(unit, "stuf"), "stuf"
+	-- fallback: first loaded unit frame addon, ignoring the configured parent
+	for _, entry in ipairs(ufTypePriority) do
+		if BLINKIISPORTRAITS[entry.flag] and (not entry.unit or entry.unit == unit) then
+			return GetUnitFrame(unit, entry.type), entry.type
 		end
 	end
 end
 
-function BLINKIISPORTRAITS:RegisterEvents(portrait, events, cast)
-	for _, event in pairs(events) do
-		if cast and portrait.type ~= "party" then
-			portrait:RegisterUnitEvent(event, portrait.unit)
+-- events that pass a unit token but must stay globally registered
+-- (their relevant unit differs from the portrait unit, e.g. UNIT_TARGET fires for "target" on targettarget frames)
+local globalOnlyUnitEvents = {
+	UNIT_TARGET = true,
+}
+
+--- Registers all given events on a portrait.
+-- UNIT_* events are registered unit-filtered (RegisterUnitEvent) when the portrait has a fixed unit,
+-- which avoids handler calls for unrelated units (raid/party spam).
+function BLINKIISPORTRAITS:RegisterEvents(portrait, events)
+	local unit = portrait.unit
+	local useUnitEvents = unit and portrait.type ~= "party"
+
+	for _, event in ipairs(events) do
+		if useUnitEvents and strsub(event, 1, 5) == "UNIT_" and not globalOnlyUnitEvents[event] then
+			portrait:RegisterUnitEvent(event, unit)
 		else
 			portrait:RegisterEvent(event)
 		end
 		tinsert(portrait.events, event)
 	end
-
-	-- if portrait.type ~= "party" then
-	-- 	portrait:RegisterUnitEvent("UNIT_HEALTH", portrait.unit)
-	-- else
-	-- 	portrait:RegisterEvent("UNIT_HEALTH")
-	-- end
 end
 
+--- Unregisters all events of a portrait, cancels pending timers and hides the frame.
 function BLINKIISPORTRAITS:RemovePortrait(frame)
 	if frame._delayedUpdateTimer then
 		frame._delayedUpdateTimer:Cancel()
@@ -465,7 +540,6 @@ function BLINKIISPORTRAITS:RemovePortrait(frame)
 	frame.castEventsSet = nil
 	frame.cast = nil
 	frame:Hide()
-	frame = nil
 end
 
 local function GetPortraitFrameName(name, clickable)
@@ -477,6 +551,7 @@ local function HideInactivePortrait(name, clickable)
 	if inactiveFrame then BLINKIISPORTRAITS:RemovePortrait(inactiveFrame) end
 end
 
+--- Creates (or reuses) the portrait frame including all texture layers.
 function BLINKIISPORTRAITS:CreatePortrait(name, parent)
 	if parent then
 		local clickable = BLINKIISPORTRAITS.db.profile.misc.clickable
@@ -543,6 +618,7 @@ function BLINKIISPORTRAITS:CreatePortrait(name, parent)
 	end
 end
 
+--- Returns the portrait for a unit key, recreating it if the clickable setting changed.
 function BLINKIISPORTRAITS:EnsurePortrait(unit, name, parent)
 	local portrait = BLINKIISPORTRAITS.Portraits[unit]
 	local clickable = BLINKIISPORTRAITS.db.profile.misc.clickable
@@ -558,6 +634,7 @@ function BLINKIISPORTRAITS:EnsurePortrait(unit, name, parent)
 	return portrait
 end
 
+--- Applies textures, registers events and triggers the first update of a portrait.
 function BLINKIISPORTRAITS:InitPortrait(portrait, events)
 	if portrait then
 		BLINKIISPORTRAITS:UpdateTextures(portrait)
@@ -570,28 +647,27 @@ function BLINKIISPORTRAITS:InitPortrait(portrait, events)
 		end
 		OnEvent(portrait, "ForceUpdate", portrait.unit)
 
-		UpdateZoom(portrait.portrait, portrait.size)
+		UpdateZoom(portrait)
 	end
 end
 
-local castEvents = { "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_STOP" }
-local empowerEvents = { "UNIT_SPELLCAST_EMPOWER_START", "UNIT_SPELLCAST_EMPOWER_STOP" }
-
 local function UnregisterEvents(portrait, events)
-	for _, event in pairs(events) do
+	for _, event in ipairs(events) do
 		portrait:UnregisterEvent(event)
 	end
 end
 
+--- Registers the cast events (and empower events on retail) of a portrait once.
 function BLINKIISPORTRAITS:RegisterCastEvents(portrait)
 	if not portrait.castEventsSet then
-		BLINKIISPORTRAITS:RegisterEvents(portrait, castEvents, true)
+		BLINKIISPORTRAITS:RegisterEvents(portrait, castEvents)
 
-		if BLINKIISPORTRAITS.Retail then BLINKIISPORTRAITS:RegisterEvents(portrait, empowerEvents, true) end
+		if BLINKIISPORTRAITS.Retail then BLINKIISPORTRAITS:RegisterEvents(portrait, empowerEvents) end
 		portrait.castEventsSet = true
 	end
 end
 
+--- Unregisters the cast events (and empower events on retail) of a portrait.
 function BLINKIISPORTRAITS:UnregisterCastEvents(portrait)
 	UnregisterEvents(portrait, castEvents)
 
@@ -599,6 +675,7 @@ function BLINKIISPORTRAITS:UnregisterCastEvents(portrait)
 	portrait.castEventsSet = false
 end
 
+--- Enables/disables the cast icon events based on the portrait settings.
 function BLINKIISPORTRAITS:UpdateCastSettings(portrait)
 	if portrait.db.cast then
 		BLINKIISPORTRAITS:RegisterCastEvents(portrait)
@@ -607,4 +684,81 @@ function BLINKIISPORTRAITS:UpdateCastSettings(portrait)
 		BLINKIISPORTRAITS:UnregisterCastEvents(portrait)
 		portrait.cast = false
 	end
+end
+
+--- Shared setup for a portrait instance; used by all unit initializers.
+-- opts:
+--   key          (string) key in BLINKIISPORTRAITS.Portraits ("player", "boss1", ...)
+--   type         (string) db profile key ("player", "target", "party", ...)
+--   parent       (frame)  parent unit frame
+--   parentFrame  (string) resolved unit frame addon type ("elvui", "cell", ...)
+--   events       (table)  events to register
+--   unitOverride (string) optional fixed unit token (used before parent.unit)
+--   isHeaderUnit (bool)   unit is read from the parent's "unit" attribute
+--   cellFlag     (bool)   addon flag for cell parent detection (defaults to Cell_UF)
+--   isGroup      (bool)   group frame demo handling (boss/arena/party)
+--   demo         (bool)   toggles demo mode for group frames
+-- @return the portrait frame (or nil)
+function BLINKIISPORTRAITS:SetupUnitPortrait(opts)
+	local db = BLINKIISPORTRAITS.db.profile
+	if not db then return end
+
+	local settings = db[opts.type]
+	local parent = opts.parent
+
+	local portrait = BLINKIISPORTRAITS:EnsurePortrait(opts.key, opts.key, parent)
+	if not portrait then return end
+
+	if settings.unitframe ~= "auto" then portrait:SetParent(parent) end
+
+	local cellFlag = opts.cellFlag
+	if cellFlag == nil then cellFlag = BLINKIISPORTRAITS.Cell_UF end
+
+	local isCellParentFrame = (opts.parentFrame == "cell") and cellFlag
+	local isHeaderUnit = opts.isHeaderUnit
+
+	portrait.events = {}
+	portrait.parentFrame = parent
+	portrait.isCellParentFrame = isCellParentFrame
+	portrait.isHeaderUnit = isHeaderUnit
+	portrait.unit = (isCellParentFrame and parent._unit) or (isHeaderUnit and parent:GetAttribute("unit")) or opts.unitOverride or parent.unit
+	portrait.type = opts.type
+	portrait.db = settings
+	portrait.size = settings.size
+	portrait.point = settings.point
+	portrait.useClassIcon = db.misc.class_icon ~= "none"
+	portrait.realUnit = opts.type
+
+	if opts.isGroup then
+		if opts.demo then
+			portrait.demo = not portrait.demo
+		elseif BLINKIISPORTRAITS.SUF then
+			portrait.demo = not ShadowUF.db.profile.locked
+		end
+	else
+		portrait.demo = BLINKIISPORTRAITS.SUF and not ShadowUF.db.profile.locked
+	end
+
+	portrait.isPlayer = nil
+	portrait.unitClass = nil
+	portrait.lastGUID = nil
+
+	BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, settings)
+	BLINKIISPORTRAITS:UpdateSize(portrait)
+	BLINKIISPORTRAITS:UpdateCastSettings(portrait)
+
+	BLINKIISPORTRAITS:InitPortrait(portrait, opts.events)
+
+	return portrait
+end
+
+--- Removes a portrait by its key and clears all references to it.
+function BLINKIISPORTRAITS:KillPortrait(key)
+	local portrait = BLINKIISPORTRAITS.Portraits[key]
+	if not portrait then return end
+
+	if portrait.parentFrame and portrait.parentFrame._bpPortrait == portrait then portrait.parentFrame._bpPortrait = nil end
+
+	BLINKIISPORTRAITS:RemovePortrait(portrait)
+	BLINKIISPORTRAITS.Portraits[key] = nil
 end

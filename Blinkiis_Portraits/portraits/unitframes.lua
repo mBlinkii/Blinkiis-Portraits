@@ -27,7 +27,7 @@ BLINKIISPORTRAITS.unitFrames = {
 		focus = BLINKIISPORTRAITS.Classic and nil or (BLINKIISPORTRAITS.Cell_UF and "CUF_Focus"),
 		party = "CellPartyFrameHeaderUnitButton",
 		boss = BLINKIISPORTRAITS.Cell_UF and "CUF_Boss",
-		arena = BLINKIISPORTRAITS.Cell_UF and "CUF_Arena",
+		arena = nil, -- Cell_UnitFrames has no arena frames (see CUF Data/Constants.lua TITLE_CASED_UNITS)
 	},
 	pb4 = {
 		singleUnits = function()

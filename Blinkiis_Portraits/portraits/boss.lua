@@ -1,64 +1,38 @@
+local format = format
+
+local bossEvents = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_TARGETABLE_CHANGED", "INSTANCE_ENCOUNTER_ENGAGE_UNIT" }
+
+--- Creates or updates the boss portraits (boss1-boss5) based on the current profile settings.
+-- @param demo toggles the demo mode of the portraits
 function BLINKIISPORTRAITS:InitializeBossPortrait(demo)
 	if not BLINKIISPORTRAITS.db.profile.boss.enable then return end
 
 	local unitframe, parentFrame = BLINKIISPORTRAITS:GetUnitFrames("boss", BLINKIISPORTRAITS.db.profile.boss.unitframe)
 	local isEQOL_Frame = parentFrame == "eqol" and BLINKIISPORTRAITS.EQOL
 
-	if unitframe or isEQOL_Frame then
-		local portraits = BLINKIISPORTRAITS.Portraits
-		local events = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_TARGETABLE_CHANGED", "INSTANCE_ENCOUNTER_ENGAGE_UNIT" }
+	if not (unitframe or isEQOL_Frame) then return end
 
-		for i = 1, 5 do
-			local parent = _G[(isEQOL_Frame and format("%s%sFrame", unitframe, i) or (unitframe .. i))]
+	for i = 1, 5 do
+		local frameName = isEQOL_Frame and format("%s%sFrame", unitframe, i) or (unitframe .. i)
+		local parent = BLINKIISPORTRAITS:ResolveFrame(frameName)
 
-			if parent then
-				local unit = "boss" .. i
-				local type = "boss"
-
-				portraits[unit] = BLINKIISPORTRAITS:EnsurePortrait(unit, unit, parent)
-
-				if portraits[unit] then
-					if BLINKIISPORTRAITS.db.profile[type].unitframe ~= "auto" then portraits[unit]:SetParent(_G[unitframe .. i]) end
-					local isCellParentFrame = (parentFrame == "cell") and BLINKIISPORTRAITS.Cell_UF
-					portraits[unit].events = {}
-					portraits[unit].parentFrame = parent
-					portraits[unit].isCellParentFrame = isCellParentFrame
-					portraits[unit].unit = isCellParentFrame and parent._unit or parent.unit
-					portraits[unit].type = type
-					portraits[unit].db = BLINKIISPORTRAITS.db.profile[type]
-					portraits[unit].size = BLINKIISPORTRAITS.db.profile[type].size
-					portraits[unit].point = BLINKIISPORTRAITS.db.profile[type].point
-					portraits[unit].useClassIcon = BLINKIISPORTRAITS.db.profile.misc.class_icon ~= "none"
-					portraits[unit].realUnit = "boss"
-
-					if demo then
-						portraits[unit].demo = not portraits[unit].demo
-					elseif BLINKIISPORTRAITS.SUF then
-						portraits[unit].demo = not ShadowUF.db.profile.locked
-					end
-
-					portraits[unit].isPlayer = nil
-					portraits[unit].unitClass = nil
-					portraits[unit].lastGUID = nil
-
-					BLINKIISPORTRAITS:UpdateTexturesFiles(portraits[unit], BLINKIISPORTRAITS.db.profile[type])
-					BLINKIISPORTRAITS:UpdateSize(portraits[unit])
-					BLINKIISPORTRAITS:UpdateCastSettings(portraits[unit])
-
-					BLINKIISPORTRAITS:InitPortrait(portraits[unit], events)
-					--OnEvent(portraits[unit], nil, "player")
-				end
-			end
+		if parent then
+			BLINKIISPORTRAITS:SetupUnitPortrait({
+				key = "boss" .. i,
+				type = "boss",
+				parent = parent,
+				parentFrame = parentFrame,
+				events = bossEvents,
+				isGroup = true,
+				demo = demo,
+			})
 		end
 	end
 end
 
+--- Removes all boss portraits.
 function BLINKIISPORTRAITS:KillBossPortrait()
 	for i = 1, 5 do
-		local unit = "boss" .. i
-		if BLINKIISPORTRAITS.Portraits[unit] then
-			BLINKIISPORTRAITS:RemovePortrait(BLINKIISPORTRAITS.Portraits[unit])
-			BLINKIISPORTRAITS.Portraits[unit] = nil
-		end
+		BLINKIISPORTRAITS:KillPortrait("boss" .. i)
 	end
 end

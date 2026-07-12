@@ -1,6 +1,6 @@
 local _G = _G
 local GetAddOnMetadata = _G.C_AddOns and _G.C_AddOns.GetAddOnMetadata or _G.GetAddOnMetadata
-local IsAddOnLoaded = _G.C_AddOns and _G.C_AddOns.IsAddOnLoaded or IsAddOnLoaded
+local IsAddOnLoaded = _G.C_AddOns and _G.C_AddOns.IsAddOnLoaded or _G.IsAddOnLoaded
 local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits", true)
 
 -- addon name and namespace
@@ -26,6 +26,7 @@ BLINKIISPORTRAITS.UUF = nil
 BLINKIISPORTRAITS.NDUI = nil
 BLINKIISPORTRAITS.EQOL = nil
 BLINKIISPORTRAITS.BBF = nil
+BLINKIISPORTRAITS.EUI = nil
 BLINKIISPORTRAITS.STUF = nil
 BLINKIISPORTRAITS.CachedBossIDs = {}
 BLINKIISPORTRAITS.PortraitsUpdatedForceToken = 0
@@ -62,12 +63,13 @@ function BLINKIISPORTRAITS:Print(...)
 	print(BLINKIISPORTRAITS.Name .. ":", ...)
 end
 
-function GetTableLng(tbl)
-	local getN = 0
-	for n in pairs(tbl) do
-		getN = getN + 1
+-- Counts all entries of a table (also works for non-array tables).
+local function GetTableLength(tbl)
+	local count = 0
+	for _ in pairs(tbl) do
+		count = count + 1
 	end
-	return getN
+	return count
 end
 
 local function PrintTable(tbl, indent, simple, noFunctions, depth)
@@ -90,7 +92,6 @@ local function PrintTable(tbl, indent, simple, noFunctions, depth)
 				elseif type(value) == "string" then
 					print(color .. indent .. "|r", "|cffd56ef5 [" .. entry .. "]|r", " = ", value)
 				elseif type(value) == "boolean" then
-					print(type(color), type(indent), type(entry), type(value), noFunctions)
 					print(color .. indent .. "|r", "|cff96e1ff[" .. entry .. "]|r", " = ", (value and "|cffabff87true|r" or "|cffff8787false|r"))
 				elseif (type(value) == "function") and not noFunctions then
 					print(color .. indent .. "|r", "|cffb5b3f5 [" .. entry .. "]|r", " = ", value)
@@ -108,7 +109,7 @@ end
 
 function BLINKIISPORTRAITS:DebugPrintTable(tbl, simple, noFunctions)
 	if type(tbl) == "table" then
-		local tblLength = GetTableLng(tbl)
+		local tblLength = GetTableLength(tbl)
 		BLINKIISPORTRAITS:Print(": Table Start >>>", tbl, "Entries:", tblLength, "Options:", "Simple:", simple, "Functions:", noFunctions)
 		PrintTable(tbl, "-", (tblLength > 50), noFunctions)
 	else
@@ -140,7 +141,7 @@ function BLINKIISPORTRAITS:LoadPortraits()
 	if InCombatLockdown() then
 		if not isDelayedUpdateScheduled then
 			isDelayedUpdateScheduled = true
-			C_Timer.After(1, function()
+			C_Timer_After(1, function()
 				isDelayedUpdateScheduled = false
 				BLINKIISPORTRAITS:LoadPortraits()
 			end)
@@ -235,7 +236,9 @@ function BLINKIISPORTRAITS:OnInitialize()
 
 	-- db updates/ fixes
 	if not BLINKIISPORTRAITS.db.profile.db_Update or BLINKIISPORTRAITS.db.profile.db_Update < 1.30 then
-		BLINKIISPORTRAITS.db.profile.db_Update = tonumber(BLINKIISPORTRAITS.Version)
+		-- extract a numeric version even if the version string contains suffixes (e.g. "1.52.1" or "1.52-beta")
+		local versionNumber = tonumber(BLINKIISPORTRAITS.Version) or tonumber(strmatch(BLINKIISPORTRAITS.Version or "", "%d+%.?%d*")) or 1.30
+		BLINKIISPORTRAITS.db.profile.db_Update = versionNumber
 		BLINKIISPORTRAITS.db.profile.misc.zoom = 0
 	end
 end
