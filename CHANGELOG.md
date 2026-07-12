@@ -1,5 +1,12 @@
 # Changelog
 
+## [ver. 1.53] - 12.07.2026
+### UPDATE
+- UPDATE - Refactored unit portrait setup into shared functions to reduce code duplication
+- UPDATE - Optimized event registration, UNIT_* events now use RegisterUnitEvent where possible
+### FIX
+- FIX - Removed non-functional Cell arena frame reference
+
 ## [ver. 1.52] - 22.06.2026
 ### NEW
 - NEW - Add support for Stuf
@@ -229,16 +236,4 @@
 
 ## [ver. 1.1] - 29.12.2024
 ### UPDATE
-- UPDATE - Add Blizzards (rare/elite/boss) textures
-### NEW
-- NEW - Add support for Cell & Cell Unit Frames (both are required)
-
-
-## [ver. 1.0] - 27.12.2024
-### FIX 
-- FIX - Removed all debug Prints
-### UPDATE
-- UPDATE - Code optimizations
-### NEW
-- NEW - Add support for PitBull 4
-- NEW - Add support for Classic and Cata
+- UPDATE - Add Blizzards (rare
