@@ -1,0 +1,179 @@
+name: Release
+
+# Runs on every version tag, e.g.: git tag v1.53 && git push origin v1.53
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version, interface versions, and date
+        id: meta
+        run: |
+          set -e
+          ADDON="Blinkiis_Portraits"
+          # Version comes from the git tag that triggered this run, so the
+          # release/zip/CurseForge/Wago version always matches what was
+          # tagged, even if a .toc's own "## Version:" line lags behind.
+          VERSION="${GITHUB_REF_NAME#v}"
+          DATE_TAG=$(date +%Y-%m-%d)
+          DATE_FILE=$(date +%d%m%Y)
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "zipname=${ADDON}-v${VERSION}-${DATE_FILE}" >> "$GITHUB_OUTPUT"
+
+          # Keep the shipped .toc files in sync with the tag, even if the
+          # committed "## Version:" line wasn't bumped before tagging.
+          for TOC in "$ADDON"/"$ADDON"_*.toc; do
+            sed -i "s/^## Version:.*/## Version: ${VERSION}/" "$TOC"
+          done
+
+          # Convert every flavor's "## Interface:" (5 or 6 digit WoW
+          # interface number, e.g. 120007 or 38001) into a dotted CurseForge/
+          # Wago version (12.0.7 / 3.80.1) and collect them all, since a
+          # single zip in this repo covers every flavor at once.
+          VERSIONS=""
+          RETAIL_PATCH=""
+          for TOC in "$ADDON"/"$ADDON"_*.toc; do
+            IFACE=$(grep -oP '^## Interface:\s*\K.+' "$TOC" | tr -d '\r ')
+            IFS=',' read -ra ARR <<< "$IFACE"
+            for I in "${ARR[@]}"; do
+              V="$((10#$I / 10000)).$(((10#$I % 10000) / 100)).$((10#$I % 100))"
+              case "$VERSIONS" in
+                *"$V"*) ;;
+                *) VERSIONS="${VERSIONS:+$VERSIONS,}$V" ;;
+              esac
+              if [[ "$TOC" == *_Mainline.toc ]]; then
+                RETAIL_PATCH="$V"
+              fi
+            done
+          done
+          echo "game_versions=$VERSIONS" >> "$GITHUB_OUTPUT"
+          echo "retail_patch=$RETAIL_PATCH" >> "$GITHUB_OUTPUT"
+
+      - name: Extract release notes from CHANGELOG.md
+        id: notes
+        run: |
+          VERSION="${{ steps.meta.outputs.version }}"
+          # Copy this version's section body from CHANGELOG.md: everything
+          # between its "## [ver. x.y.z]" heading and the next "## [" heading.
+          # Matching on "## [ver. x.y.z]" keeps the date suffix working
+          # regardless of its exact format.
+          awk -v ver="$VERSION" '
+            /^## \[/ { insec = (index($0, "## [ver. " ver "]") == 1); next }
+            insec { print }
+          ' CHANGELOG.md > RELEASE_NOTES.md
+
+          # Trim leading blank lines.
+          sed -i '/./,$!d' RELEASE_NOTES.md
+
+          # Every release must ship its changelog on GitHub/CurseForge/Wago,
+          # so a missing section is a hard error, not a silent fallback.
+          if [ ! -s RELEASE_NOTES.md ]; then
+            echo "::error::No section for version ${VERSION} found in CHANGELOG.md (expected a '## [ver. ${VERSION}] - ...' heading) - add it before tagging." >&2
+            exit 1
+          fi
+
+          echo "Release notes for v${VERSION}:"
+          cat RELEASE_NOTES.md
+
+          # Expose the notes as a (multi-line) step output for action inputs.
+          # The extra "echo" before each delimiter guarantees the delimiter
+          # starts on its own line even when the file lacks a trailing
+          # newline - otherwise GitHub fails with "Matching delimiter not
+          # found".
+          {
+            echo "body<<NOTES_EOF"
+            cat RELEASE_NOTES.md
+            echo ""
+            echo "NOTES_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          # CurseForge stores changelogs natively as HTML; markdown sent
+          # through its API renders lossy (newlines collapse, "#"/backticks
+          # get escaped), so the CurseForge upload gets a proper HTML
+          # conversion instead.
+          pip install --quiet markdown
+          python3 -m markdown RELEASE_NOTES.md > RELEASE_NOTES.html
+
+          {
+            echo "body_html<<NOTES_EOF"
+            cat RELEASE_NOTES.html
+            echo ""
+            echo "NOTES_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build zip
+        run: |
+          # Zip from the repo root, referencing the folder by name, so
+          # "Blinkiis_Portraits/" itself is the top-level entry in the
+          # archive (required for WoW/CurseForge/Wago - not just its
+          # contents). Libraries already live in the repo, so no separate
+          # fetch step is needed here.
+          zip -r "${{ steps.meta.outputs.zipname }}.zip" "Blinkiis_Portraits" -x "Blinkiis_Portraits/.git*"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Ver. ${{ steps.meta.outputs.version }}
+          files: ${{ steps.meta.outputs.zipname }}.zip
+          # Release notes come from CHANGELOG.md (see the notes step above)
+          # instead of auto-generated commit lists.
+          body_path: RELEASE_NOTES.md
+
+      - name: Upload to CurseForge
+        uses: itsmeow/curseforge-upload@v3
+        with:
+          token: ${{ secrets.CF_API_TOKEN }}
+          project_id: "1164560"
+          game_endpoint: wow
+          file_path: ${{ steps.meta.outputs.zipname }}.zip
+          display_name: Ver. ${{ steps.meta.outputs.version }}
+          game_versions: ${{ steps.meta.outputs.game_versions }}
+          release_type: release
+          changelog: ${{ steps.notes.outputs.body_html }}
+          changelog_type: html
+
+      - name: Upload to Wago Addons
+        run: |
+          # Build the metadata JSON with jq (correct escaping of the
+          # multi-line markdown changelog) and write it to a file. It is
+          # passed to curl as '-F "metadata=<file"', which sends the raw
+          # file content as the field value - passing the JSON inline would
+          # let curl interpret commas, semicolons and newlines inside it as
+          # -F syntax and corrupt the field (Wago then rejects it with
+          # "metadata must be a valid JSON string").
+          jq -n \
+            --arg label "${{ steps.meta.outputs.version }}" \
+            --arg patch "${{ steps.meta.outputs.retail_patch }}" \
+            --rawfile changelog RELEASE_NOTES.md \
+            '{label: $label, stability: "stable", supported_retail_patch: $patch, changelog: $changelog}' \
+            > wago_metadata.json
+
+          # "|| true" keeps the step alive under "bash -e" when curl fails
+          # at the network level (exit != 0, HTTP_CODE "000"), so status and
+          # body are still printed and the check below produces a clear
+          # failure.
+          HTTP_CODE=$(curl -s -o response.json -w "%{http_code}" -X POST \
+            -F "metadata=<wago_metadata.json" \
+            -F "file=@${{ steps.meta.outputs.zipname }}.zip" \
+            -H "Authorization: Bearer ${{ secrets.WAGO_API_TOKEN }}" \
+            -H "Accept: application/json" \
+            "https://addons.wago.io/api/projects/j6jzo56R/version") || true
+
+          echo "HTTP status: ${HTTP_CODE:-000}"
+          echo "Response body:"
+          cat response.json 2>/dev/null || echo "(no response body)"
+          echo
+
+          if [ "${HTTP_CODE:-0}" -lt 200 ] || [ "${HTTP_CODE:-0}" -ge 300 ]; then
+            echo "Wago upload failed." >&2
+            exit 1
+          fi
