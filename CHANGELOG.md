@@ -1,5 +1,10 @@
 # Changelog
 
+## [ver. 1.54] - 12.07.2026
+### UPDATE
+- UPDATE - Automated release process for GitHub, CurseForge, and Wago
+
+
 ## [ver. 1.53] - 12.07.2026
 ### UPDATE
 - UPDATE - Refactored unit portrait setup into shared functions to reduce code duplication
