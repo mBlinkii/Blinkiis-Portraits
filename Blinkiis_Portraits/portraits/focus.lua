@@ -1,4 +1,4 @@
-local focusEvents = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_CONNECTION", "PLAYER_FOCUS_CHANGED" }
+local focusEvents = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_CONNECTION", "PLAYER_FOCUS_CHANGED", "INSTANCE_ENCOUNTER_ENGAGE_UNIT" }
 
 --- Creates or updates the focus portrait based on the current profile settings.
 function BLINKIISPORTRAITS:InitializeFocusPortrait()

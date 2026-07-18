@@ -17,6 +17,7 @@ local UnitIsDead = UnitIsDead
 local UnitIsPlayer = UnitIsPlayer
 local UnitIsUnit = UnitIsUnit
 local UnitIsVisible = UnitIsVisible
+local UnitLevel = UnitLevel
 local UnitReaction = UnitReaction
 local gmatch = string.gmatch
 local ipairs, type = ipairs, type
@@ -36,6 +37,13 @@ local DEFAULT_COORDS = { 0, 1, 0, 1 }
 --- Returns true if the given value is a secret value (WoW 12.x API), false otherwise.
 function BLINKIISPORTRAITS:IsSecretValue(value)
 	return (issecretvalue and issecretvalue(value)) or false
+end
+
+-- Returns the value unchanged, or nil if it is a secret value.
+-- Secret values must never be compared, concatenated or branched on in addon code.
+local function SafeValue(value)
+	if issecretvalue and issecretvalue(value) then return nil end
+	return value
 end
 
 -- reaction helper (shared by GetUnitColor and UpdateExtraTexture)
@@ -199,8 +207,10 @@ local eventHandlers = {
 	ARENA_OPPONENT_UPDATE = Update,
 	UNIT_TARGETABLE_CHANGED = Update,
 	ARENA_PREP_OPPONENT_SPECIALIZATIONS = SimpleUpdate,
-	INSTANCE_ENCOUNTER_ENGAGE_UNIT = SimpleUpdate,
 	UPDATE_ACTIVE_BATTLEFIELD = SimpleUpdate,
+
+	-- boss unit check/ update
+	INSTANCE_ENCOUNTER_ENGAGE_UNIT = ForceUpdate,
 }
 
 local castEvents = { "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_STOP" }
@@ -284,6 +294,64 @@ end
 local extraTypes = { rare = true, elite = true, rareelite = true, boss = true }
 local extraFileKeys = { rare = "rareFile", elite = "eliteFile", rareelite = "rareeliteFile", boss = "bossFile", player = "playerFile" }
 
+-- precomputed boss unit tokens (boss1-boss8) to avoid per-call string concatenations
+local MAX_BOSS_UNITS = 8
+local bossTokens = {}
+for i = 1, MAX_BOSS_UNITS do
+	bossTokens[i] = "boss" .. i
+end
+
+-- Extracts the npcID from a creature GUID; returns nil for player GUIDs,
+-- missing GUIDs or the secret placeholder (" ") stored by Update().
+local function GetNpcID(guid)
+	if not guid or guid == " " then return nil end
+	return select(6, strsplit("-", guid))
+end
+
+-- Secret-safe check whether a unit matches one of the boss1-boss8 unit tokens.
+-- UnitExists/UnitIsUnit may return secret values during an encounter (WoW 12.x);
+-- secret results are treated as "unknown" and skipped.
+local function IsBossTokenUnit(unit)
+	for i = 1, MAX_BOSS_UNITS do
+		local token = bossTokens[i]
+		if SafeValue(UnitExists(token)) and SafeValue(UnitIsUnit(unit, token)) then return true end
+	end
+	return false
+end
+
+--- Determines the extra classification of a portrait unit (secret-safe, WoW 12.x).
+-- Boss detection uses all available sources, in order:
+--   1. portrait type "boss" (boss frames always show bosses)
+--   2. cached npcIDs, learned at runtime and persisted in db.global.BossIDs
+--   3. comparison against the boss1-boss8 unit tokens (active encounter)
+--   4. UnitClassification ("worldboss"/"boss")
+--   5. level fallback: non-player units with UnitLevel == -1 ("??")
+-- All API results are ignored when secret, so detection degrades gracefully in combat.
+-- @param portrait the portrait frame
+-- @return "boss", "rareelite", "rare", "elite" or nil
+function BLINKIISPORTRAITS:GetExtraClassification(portrait)
+	local unit = portrait.unit
+	if not unit then return nil end
+
+	local npcID = GetNpcID(portrait.lastGUID)
+	local classification = SafeValue(UnitClassification(unit))
+	if classification == "worldboss" then classification = "boss" end
+
+	local isBoss = (portrait.type == "boss")
+		or (npcID and BLINKIISPORTRAITS.CachedBossIDs[npcID])
+		or (classification == "boss")
+		or (not portrait.isPlayer and IsBossTokenUnit(unit))
+		or (not portrait.isPlayer and SafeValue(UnitLevel(unit)) == -1)
+
+	if isBoss then
+		-- learn the npcID for reliable pre-pull detection in future sessions
+		if npcID and not BLINKIISPORTRAITS.CachedBossIDs[npcID] then BLINKIISPORTRAITS.CachedBossIDs[npcID] = true end
+		return "boss"
+	end
+
+	return extraTypes[classification] and classification or nil
+end
+
 --- Updates the rare/elite/boss overlay texture of a portrait.
 -- @param portrait the portrait frame
 -- @param color optional color override (unit color)
@@ -294,14 +362,8 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, force)
 		return
 	end
 
-	local npcID = portrait.lastGUID and select(6, strsplit("-", portrait.lastGUID))
-	if portrait.type == "boss" and npcID and not BLINKIISPORTRAITS.CachedBossIDs[npcID] then BLINKIISPORTRAITS.CachedBossIDs[npcID] = true end
-
-	local isBoss = portrait.type == "boss" or (npcID and BLINKIISPORTRAITS.CachedBossIDs[npcID])
-	local c = isBoss and "boss" or UnitClassification(portrait.unit)
-	if c == "worldboss" then c = "boss" end
-
-	local isExtraUnit = extraTypes[c]
+	local c = BLINKIISPORTRAITS:GetExtraClassification(portrait)
+	local isExtraUnit = c ~= nil
 
 	if not isExtraUnit and force and force ~= "none" then
 		c = force
@@ -498,9 +560,7 @@ function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
 
 	-- fallback: first loaded unit frame addon, ignoring the configured parent
 	for _, entry in ipairs(ufTypePriority) do
-		if BLINKIISPORTRAITS[entry.flag] and (not entry.unit or entry.unit == unit) then
-			return GetUnitFrame(unit, entry.type), entry.type
-		end
+		if BLINKIISPORTRAITS[entry.flag] and (not entry.unit or entry.unit == unit) then return GetUnitFrame(unit, entry.type), entry.type end
 	end
 end
 

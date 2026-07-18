@@ -1,4 +1,4 @@
-local targetEvents = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_CONNECTION", "PLAYER_TARGET_CHANGED" }
+local targetEvents = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_CONNECTION", "PLAYER_TARGET_CHANGED", "INSTANCE_ENCOUNTER_ENGAGE_UNIT" }
 
 --- Creates or updates the target portrait based on the current profile settings.
 function BLINKIISPORTRAITS:InitializeTargetPortrait()
