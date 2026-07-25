@@ -1,4 +1,4 @@
-## Interface: 11508
+## Interface: 11509
 ## Version: 1.55
 ## Title: |CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits - Classic
 ## Title-deDE: |CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Porträts - Classic
@@ -13,7 +13,7 @@
 ## AddonCompartmentFuncOnLeave: BLINKIISPORTRAITS_OnAddonCompartmentOnLeave
 ## SavedVariables: BlinkiisPortraitsDB
 ## X-Wago-ID: j6jzo56R
-## OptionalDeps: Cell, Cell_UnitFrames, ElvUI, PitBull4, ShadowedUnitFrames, UnhaltedUF, Stuf
+## OptionalDeps: Cell, Cell_UnitFrames, ElvUI, PitBull4, ShadowedUnitFrames, UnhaltedUnitFrames, NDui, Stuf
 
 
 libs\Ace3\LibStub\LibStub.lua

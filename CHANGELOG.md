@@ -13,6 +13,7 @@
 - FIX - Portraits stayed empty when the parent unit frame exposed no unit
 - FIX - A loaded unit frame addon without frames for a unit blocked all lower priority addons
 - FIX - Cast icon was restored once per stop and interrupt event instead of once per cast
+- FIX - OptionalDeps listed Unhalted Unit Frames under the wrong addon name, and was missing NDui, BetterBlizzFrames and EllesmereUI
 
 ## [ver. 1.54] - 12.07.2026
 ### UPDATE
