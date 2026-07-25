@@ -19,10 +19,12 @@ local UnitIsUnit = UnitIsUnit
 local UnitIsVisible = UnitIsVisible
 local UnitLevel = UnitLevel
 local UnitReaction = UnitReaction
+local format = format
 local gmatch = string.gmatch
 local ipairs, type = ipairs, type
 local select, tinsert = select, tinsert
 local strfind, strsplit, strsub = strfind, strsplit, strsub
+local tostring = tostring
 local issecretvalue = issecretvalue
 
 local mediaPortraits = BLINKIISPORTRAITS.media.portraits
@@ -74,8 +76,18 @@ local function UpdatePortrait(portrait, unit)
 		portrait.unitClass = portrait.unitClass or select(2, UnitClass(unit or portrait.unit))
 		portrait.texCoords = portrait.classIcons.texCoords[portrait.unitClass]
 		portrait.portrait:SetTexture(portrait.classIcons.texture, "CLAMP", "CLAMP", "TRILINEAR")
+
+		if BLINKIISPORTRAITS.DebugEnabled then
+			BLINKIISPORTRAITS:Debug(format("  texture <- class icon | unit: %s | class: %s", tostring(unit or portrait.unit), tostring(portrait.unitClass)))
+		end
 	else
 		SetPortraitTexture(portrait.portrait, unit or portrait.unit, true)
+
+		-- a nil texture here means the client had no portrait data for the unit yet;
+		-- UNIT_PORTRAIT_UPDATE / PORTRAITS_UPDATED must refresh it once it becomes available
+		if BLINKIISPORTRAITS.DebugEnabled then
+			BLINKIISPORTRAITS:Debug(format("  texture <- SetPortraitTexture | unit: %s | result: %s", tostring(unit or portrait.unit), tostring(portrait.portrait:GetTexture())))
+		end
 	end
 
 	BLINKIISPORTRAITS:UpdateDesaturated(portrait, (forceDesaturate or portrait.isDead))
@@ -88,7 +100,10 @@ local function UpdatePortrait(portrait, unit)
 end
 
 local function Update(portrait, event, eventUnit)
-	if not portrait.unit then return end
+	if not portrait.unit then
+		if BLINKIISPORTRAITS.DebugEnabled then BLINKIISPORTRAITS:Debug(format("%s | %s | SKIPPED, no unit resolved", tostring(portrait:GetName()), tostring(event))) end
+		return
+	end
 
 	local unit = (portrait.demo and not UnitExists(portrait.unit)) and "player" or portrait.unit
 	local guid = UnitGUID(unit)
@@ -96,6 +111,21 @@ local function Update(portrait, event, eventUnit)
 
 	local isAvailable = UnitIsConnected(unit) and UnitIsVisible(unit)
 	local hasStateChanged = ((event == "ForceUpdate") or (portrait.lastGUID ~= guid) or (portrait.state ~= isAvailable))
+
+	if BLINKIISPORTRAITS.DebugEnabled then
+		BLINKIISPORTRAITS:Debug(
+			format(
+				"%s | %s | unit: %s | exists: %s | available: %s | guidChanged: %s | changed: %s",
+				tostring(portrait:GetName()),
+				tostring(event),
+				tostring(unit),
+				tostring(UnitExists(unit) and true or false),
+				tostring(isAvailable),
+				tostring(portrait.lastGUID ~= guid),
+				tostring(hasStateChanged)
+			)
+		)
+	end
 
 	if hasStateChanged then
 		local class = select(2, UnitClass(unit))
@@ -119,17 +149,27 @@ local function Update(portrait, event, eventUnit)
 end
 
 local function CastStart(portrait, _, unit)
-	portrait.isCasting = true
+	-- without an icon there is nothing to show, so the casting state must not be set either -
+	-- otherwise CastStop would restore a portrait that was never replaced
 	local castIcon = GetCastIcon(unit)
-	if castIcon then
-		portrait.portrait:SetTexture(castIcon)
-		if (portrait.useClassIcon and not portrait.db.ignoreClassIcons) and portrait.texCoords then
-			BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, DEFAULT_COORDS)
-		end
+	if not castIcon then return end
+
+	portrait.isCasting = true
+	portrait.portrait:SetTexture(castIcon)
+
+	-- the class icon is a slice of an atlas, the cast icon a full texture: reset the texcoords
+	if (portrait.useClassIcon and not portrait.db.ignoreClassIcons) and portrait.texCoords then
+		BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, DEFAULT_COORDS)
 	end
+
+	if BLINKIISPORTRAITS.DebugEnabled then BLINKIISPORTRAITS:Debug(format("  texture <- cast icon | unit: %s | icon: %s", tostring(unit), tostring(castIcon))) end
 end
 
 local function CastStop(portrait, event, unit)
+	-- STOP and INTERRUPTED both fire for the same cast, and INTERRUPTED can repeat; restoring the
+	-- portrait more than once would rebuild the texture for every one of them
+	if not portrait.isCasting then return end
+
 	portrait.isCasting = false
 	UpdatePortrait(portrait, unit)
 end
@@ -142,20 +182,28 @@ local function SimpleUpdate(portrait, event)
 	Update(portrait, event, portrait.unit)
 end
 
-local function PortraitsUpdated(portrait, event)
-	local forceToken = BLINKIISPORTRAITS.PortraitsUpdatedForceToken
-	if forceToken and portrait._portraitsUpdatedForceToken ~= forceToken then
-		portrait._portraitsUpdatedForceToken = forceToken
-		Update(portrait, "ForceUpdate", portrait.unit)
-		return
-	end
+-- PORTRAITS_UPDATED announces that portrait textures became available or changed. The unit state
+-- (guid, connection) is unchanged in that moment, so this must always force an update - otherwise
+-- Update() short circuits and a texture that was still missing on the first try stays empty.
+local function PortraitsUpdated(portrait)
+	-- the event fires for all portraits at once, but a unit that is provably absent has no texture
+	-- to refresh. Skipping those avoids a full update pass (including the boss token scan) over
+	-- every inactive portrait. A secret result (WoW 12.x) counts as "unknown" and updates anyway.
+	if not portrait.demo and portrait.unit and SafeValue(UnitExists(portrait.unit)) == false then return end
 
-	Update(portrait, event, portrait.unit)
+	Update(portrait, "ForceUpdate", portrait.unit)
 end
 
-local function ModelChanged(portrait, event, eventUnit)
-	-- globally registered frames (party) receive this event for all units; only react to the own unit
-	if eventUnit and portrait.unit and eventUnit ~= portrait.unit and not UnitIsUnit(eventUnit, portrait.unit) then return end
+-- UNIT_PORTRAIT_UPDATE / UNIT_MODEL_CHANGED: the texture of a single unit became available or
+-- changed, which likewise never shows up as a state change. Group portraits are registered
+-- globally and receive these events for all units, so unrelated units are filtered out.
+local function UnitTextureChanged(portrait, event, eventUnit)
+	if eventUnit and portrait.unit and eventUnit ~= portrait.unit then
+		-- skip only when the units are provably different; a secret result (WoW 12.x) is treated as
+		-- "unknown" and updates anyway, since a redundant update is cheaper than an empty portrait
+		if SafeValue(UnitIsUnit(eventUnit, portrait.unit)) == false then return end
+	end
+
 	Update(portrait, "ForceUpdate", portrait.unit)
 end
 
@@ -171,8 +219,8 @@ local eventHandlers = {
 	-- portrait updates
 	PORTRAITS_UPDATED = PortraitsUpdated,
 	UNIT_CONNECTION = Update,
-	UNIT_PORTRAIT_UPDATE = Update,
-	UNIT_MODEL_CHANGED = ModelChanged,
+	UNIT_PORTRAIT_UPDATE = UnitTextureChanged,
+	UNIT_MODEL_CHANGED = UnitTextureChanged,
 	PARTY_MEMBER_ENABLE = Update,
 	PARTY_MEMBER_DISABLE = Update,
 	ForceUpdate = Update,
@@ -225,16 +273,36 @@ for _, event in ipairs(empowerEvents) do
 	castEventLookup[event] = true
 end
 
+--- Resolves the unit token of a portrait from its parent unit frame.
+-- Sources are tried in order of reliability: Cell stores the unit in "_unit", header based frames
+-- (EllesmereUI) in the secure "unit" attribute, oUF style frames in ".unit". unitOverride wins over
+-- the parent for addons that expose no unit at all (EQOL), unitFallback is the last resort for group
+-- frames whose parent had no unit assigned yet - without it the portrait texture would stay empty.
+-- @param portrait the portrait frame
+-- @return the unit token, or nil if none could be resolved
+function BLINKIISPORTRAITS:ResolvePortraitUnit(portrait)
+	local parent = portrait.parentFrame
+	if not parent then return portrait.unit end
+
+	return (portrait.isCellParentFrame and parent._unit)
+		or (portrait.isHeaderUnit and parent:GetAttribute("unit"))
+		or portrait.unitOverride
+		or parent.unit
+		or portrait.unit
+		or portrait.unitFallback
+end
+
 local function OnEvent(portrait, event, eventUnit, arg)
 	local handler = eventHandlers[event]
+
+	if BLINKIISPORTRAITS.DebugEnabled then
+		BLINKIISPORTRAITS:Debug(format("event %s | %s | eventUnit: %s | handler: %s", tostring(event), tostring(portrait:GetName()), tostring(eventUnit), tostring(handler ~= nil)))
+	end
+
 	if not handler then return end
 
-	if not castEventLookup[event] then
-		portrait.unit = (portrait.isCellParentFrame and portrait.parentFrame._unit)
-			or (portrait.isHeaderUnit and portrait.parentFrame:GetAttribute("unit"))
-			or portrait.parentFrame.unit
-			or portrait.unit
-	end
+	-- the unit cannot change mid cast, so cast events skip the re-resolution
+	if not castEventLookup[event] then portrait.unit = BLINKIISPORTRAITS:ResolvePortraitUnit(portrait) end
 
 	handler(portrait, event, eventUnit, arg)
 end
@@ -530,6 +598,16 @@ local function GetUnitFrame(unit, type)
 	end
 end
 
+--- Returns the frame name a unit frame addon uses for a unit, skipping the addon priority.
+-- Used for optional companion frames whose addon type has already been resolved.
+-- @param unit the unit key ("partyself", ...)
+-- @param addonType the resolved addon type ("eui", "uuf", ...)
+-- @return the frame name, or nil if this addon provides no such frame
+function BLINKIISPORTRAITS:GetUnitFrameName(unit, addonType)
+	if not addonType then return nil end
+	return GetUnitFrame(unit, addonType)
+end
+
 -- priority order for resolving the parent unit frame addon
 -- "unit" restricts an entry to a specific unit (Cell provides party frames only)
 local ufTypePriority = {
@@ -546,28 +624,40 @@ local ufTypePriority = {
 	{ type = "stuf", flag = "STUF" },
 }
 
+-- True if the addon of a priority entry is loaded and the entry is not restricted to another unit.
+local function IsEntryAvailable(entry, unit)
+	return BLINKIISPORTRAITS[entry.flag] and (not entry.unit or entry.unit == unit)
+end
+
 --- Returns the unit frame name and addon type for a unit, honoring the configured parent.
+-- Entries that provide no frame for the requested unit are skipped, so a loaded addon with a
+-- gap in its mapping (e.g. no party frames) cannot block a lower priority addon that has one.
 -- @param unit the unit key ("player", "party", ...)
 -- @param parent the configured unit frame addon ("auto" or a specific type)
--- @return frameName, addonType (or nil if no supported unit frame addon is loaded)
+-- @return frameName, addonType (or nil if no loaded unit frame addon provides the unit)
 function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
 	-- explicit selection or "auto" priority
 	for _, entry in ipairs(ufTypePriority) do
-		if BLINKIISPORTRAITS[entry.flag] and (parent == "auto" or parent == entry.type) and (not entry.unit or entry.unit == unit) then
-			return GetUnitFrame(unit, entry.type), entry.type
+		if IsEntryAvailable(entry, unit) and (parent == "auto" or parent == entry.type) then
+			local frame = GetUnitFrame(unit, entry.type)
+			if frame then return frame, entry.type end
 		end
 	end
 
-	-- fallback: first loaded unit frame addon, ignoring the configured parent
+	-- fallback: first loaded unit frame addon providing the unit, ignoring the configured parent
 	for _, entry in ipairs(ufTypePriority) do
-		if BLINKIISPORTRAITS[entry.flag] and (not entry.unit or entry.unit == unit) then return GetUnitFrame(unit, entry.type), entry.type end
+		if IsEntryAvailable(entry, unit) then
+			local frame = GetUnitFrame(unit, entry.type)
+			if frame then return frame, entry.type end
+		end
 	end
 end
 
--- events that pass a unit token but must stay globally registered
--- (their relevant unit differs from the portrait unit, e.g. UNIT_TARGET fires for "target" on targettarget frames)
-local globalOnlyUnitEvents = {
-	UNIT_TARGET = true,
+-- UNIT_* events whose relevant unit differs from the portrait unit, mapped to the unit they must be
+-- filtered to. UNIT_TARGET fires for the unit whose target changed, so a targettarget portrait has
+-- to listen to "target" - registered globally it would run for every group member's target change.
+local unitEventOverrides = {
+	UNIT_TARGET = "target",
 }
 
 --- Registers all given events on a portrait.
@@ -578,8 +668,8 @@ function BLINKIISPORTRAITS:RegisterEvents(portrait, events)
 	local useUnitEvents = unit and portrait.type ~= "party"
 
 	for _, event in ipairs(events) do
-		if useUnitEvents and strsub(event, 1, 5) == "UNIT_" and not globalOnlyUnitEvents[event] then
-			portrait:RegisterUnitEvent(event, unit)
+		if useUnitEvents and strsub(event, 1, 5) == "UNIT_" then
+			portrait:RegisterUnitEvent(event, unitEventOverrides[event] or unit)
 		else
 			portrait:RegisterEvent(event)
 		end
@@ -754,6 +844,7 @@ end
 --   parentFrame  (string) resolved unit frame addon type ("elvui", "cell", ...)
 --   events       (table)  events to register
 --   unitOverride (string) optional fixed unit token (used before parent.unit)
+--   unitFallback (string) optional unit token used only if no other source yields one
 --   isHeaderUnit (bool)   unit is read from the parent's "unit" attribute
 --   cellFlag     (bool)   addon flag for cell parent detection (defaults to Cell_UF)
 --   isGroup      (bool)   group frame demo handling (boss/arena/party)
@@ -781,7 +872,10 @@ function BLINKIISPORTRAITS:SetupUnitPortrait(opts)
 	portrait.parentFrame = parent
 	portrait.isCellParentFrame = isCellParentFrame
 	portrait.isHeaderUnit = isHeaderUnit
-	portrait.unit = (isCellParentFrame and parent._unit) or (isHeaderUnit and parent:GetAttribute("unit")) or opts.unitOverride or parent.unit
+	portrait.unitOverride = opts.unitOverride
+	portrait.unitFallback = opts.unitFallback
+	portrait.unit = nil -- discard the unit of a previous parent before resolving the current one
+	portrait.unit = BLINKIISPORTRAITS:ResolvePortraitUnit(portrait)
 	portrait.type = opts.type
 	portrait.db = settings
 	portrait.size = settings.size
@@ -806,6 +900,20 @@ function BLINKIISPORTRAITS:SetupUnitPortrait(opts)
 	BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, settings)
 	BLINKIISPORTRAITS:UpdateSize(portrait)
 	BLINKIISPORTRAITS:UpdateCastSettings(portrait)
+
+	if BLINKIISPORTRAITS.DebugEnabled then
+		BLINKIISPORTRAITS:Debug(
+			format(
+				"setup %s | addon: %s | parent: %s | unit: %s | header: %s | cell: %s",
+				tostring(opts.key),
+				tostring(opts.parentFrame),
+				tostring(parent:GetName() or "unnamed"),
+				tostring(portrait.unit),
+				tostring(isHeaderUnit and true or false),
+				tostring(isCellParentFrame and true or false)
+			)
+		)
+	end
 
 	BLINKIISPORTRAITS:InitPortrait(portrait, opts.events)
 

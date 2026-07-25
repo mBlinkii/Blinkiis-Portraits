@@ -1,5 +1,7 @@
 local _G = _G
 
+local MAX_PARTY_MEMBERS = 5
+
 local partyEvents = {
 	"UNIT_PORTRAIT_UPDATE",
 	"PORTRAITS_UPDATED",
@@ -29,7 +31,32 @@ local function HookHeaderUnitChanges(parent)
 	end)
 end
 
-local function SetupPartyPortrait(key, parent, parentFrame, demo)
+-- Resolves the parent unit button of a party index for the given unit frame addon.
+-- Returns nil while the button does not exist yet (header-based frames create them on demand).
+local function ResolvePartyParent(unitframe, parentFrame, index)
+	if parentFrame == "bbf" then
+		local partyFrame = _G.PartyFrame
+		return partyFrame and partyFrame[unitframe .. index]
+	end
+
+	return BLINKIISPORTRAITS:ResolveFrame(unitframe .. index)
+end
+
+-- Resolves the optional standalone player frame of a party layout (EllesmereUI, UUF), which sits
+-- next to the party frames instead of being one of them. Returns nil if the addon has none or if
+-- the frame is disabled in its settings.
+local function ResolvePartySelfFrame(parentFrame)
+	local name = BLINKIISPORTRAITS:GetUnitFrameName("partyself", parentFrame)
+	return name and BLINKIISPORTRAITS:ResolveFrame(name) or nil
+end
+
+-- True if no portrait exists for the key yet, or if it is attached to a different unit button.
+local function IsPortraitOutdated(key, parent)
+	local portrait = BLINKIISPORTRAITS.Portraits[key]
+	return (not portrait) or (portrait.parentFrame ~= parent)
+end
+
+local function SetupPartyPortrait(key, parent, parentFrame, unitFallback, demo)
 	local isHeaderUnit = (parentFrame == "eui")
 
 	local portrait = BLINKIISPORTRAITS:SetupUnitPortrait({
@@ -41,6 +68,7 @@ local function SetupPartyPortrait(key, parent, parentFrame, demo)
 		isGroup = true,
 		demo = demo,
 		isHeaderUnit = isHeaderUnit,
+		unitFallback = unitFallback,
 		cellFlag = BLINKIISPORTRAITS.Cell,
 	})
 
@@ -48,6 +76,27 @@ local function SetupPartyPortrait(key, parent, parentFrame, demo)
 		parent._bpPortrait = portrait
 		HookHeaderUnitChanges(parent)
 	end
+end
+
+--- Returns true if a party unit button exists that has no up to date portrait.
+-- Header-based unit frame addons (EllesmereUI, Cell, EQOL, ...) create their unit buttons lazily,
+-- so buttons appearing after login need a portrait without re-running the full initialization.
+-- @return true if InitializePartyPortrait has work to do
+function BLINKIISPORTRAITS:HasPendingPartyPortraits()
+	if not BLINKIISPORTRAITS.db.profile.party.enable then return false end
+
+	local unitframe, parentFrame = BLINKIISPORTRAITS:GetUnitFrames("party", BLINKIISPORTRAITS.db.profile.party.unitframe)
+	if not unitframe then return false end
+
+	for i = 1, MAX_PARTY_MEMBERS do
+		local parent = ResolvePartyParent(unitframe, parentFrame, i)
+		if parent and IsPortraitOutdated("party" .. i, parent) then return true end
+	end
+
+	local selfFrame = ResolvePartySelfFrame(parentFrame)
+	if selfFrame and IsPortraitOutdated("partyself", selfFrame) then return true end
+
+	return false
 end
 
 --- Creates or updates the party portraits (party1-party5) based on the current profile settings.
@@ -58,22 +107,21 @@ function BLINKIISPORTRAITS:InitializePartyPortrait(demo)
 	local unitframe, parentFrame = BLINKIISPORTRAITS:GetUnitFrames("party", BLINKIISPORTRAITS.db.profile.party.unitframe)
 	if not unitframe then return end
 
-	for i = 1, 5 do
-		local parent = (parentFrame == "bbf") and _G.PartyFrame[unitframe .. i] or BLINKIISPORTRAITS:ResolveFrame(unitframe .. i)
+	for i = 1, MAX_PARTY_MEMBERS do
+		local parent = ResolvePartyParent(unitframe, parentFrame, i)
 
-		if parent then SetupPartyPortrait("party" .. i, parent, parentFrame, demo) end
+		-- the party token is only a fallback; a header may assign a different unit to this button
+		if parent then SetupPartyPortrait("party" .. i, parent, parentFrame, "party" .. i, demo) end
 	end
 
-	-- EllesmereUI helper
-	if parentFrame == "eui" then
-		local selfButton = _G.ERFPartySelfButton
-		if selfButton then SetupPartyPortrait("partyself", selfButton, parentFrame, demo) end
-	end
+	-- standalone player frame of the party layout, if the addon has one
+	local selfFrame = ResolvePartySelfFrame(parentFrame)
+	if selfFrame then SetupPartyPortrait("partyself", selfFrame, parentFrame, "player", demo) end
 end
 
 --- Removes all party portraits.
 function BLINKIISPORTRAITS:KillPartyPortrait()
-	for i = 1, 5 do
+	for i = 1, MAX_PARTY_MEMBERS do
 		BLINKIISPORTRAITS:KillPortrait("party" .. i)
 	end
 

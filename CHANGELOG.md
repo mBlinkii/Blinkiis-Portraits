@@ -1,5 +1,19 @@
 # Changelog
 
+## [ver. 1.55] - 25.07.2026
+### NEW
+- NEW - Add support for Unhalted Unit Frames party frames
+### UPDATE
+- UPDATE - UNIT_TARGET is now registered unit filtered instead of globally
+- UPDATE - PORTRAITS_UPDATED no longer updates portraits whose unit is not present
+- UPDATE - The separate party player frame is now resolved from the unit frame table instead of a hardcoded name
+- UPDATE - Party portraits are recreated on roster changes, for unit frames that create their buttons on demand
+### FIX
+- FIX - Party portraits stayed black until a reload, UNIT_PORTRAIT_UPDATE and PORTRAITS_UPDATED did not refresh the texture
+- FIX - Portraits stayed empty when the parent unit frame exposed no unit
+- FIX - A loaded unit frame addon without frames for a unit blocked all lower priority addons
+- FIX - Cast icon was restored once per stop and interrupt event instead of once per cast
+
 ## [ver. 1.54] - 12.07.2026
 ### UPDATE
 - UPDATE - Automated release process for GitHub, CurseForge, and Wago

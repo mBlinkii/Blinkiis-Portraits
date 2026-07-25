@@ -6,6 +6,9 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits", true)
 -- addon name and namespace
 local addonName, _ = ...
 local C_Timer_After = C_Timer.After
+local CreateFrame = CreateFrame
+local InCombatLockdown = InCombatLockdown
+local ipairs = ipairs
 
 BLINKIISPORTRAITS = LibStub("AceAddon-3.0"):NewAddon("BLINKIISPORTRAITS", "AceEvent-3.0", "AceConsole-3.0")
 
@@ -29,7 +32,7 @@ BLINKIISPORTRAITS.BBF = nil
 BLINKIISPORTRAITS.EUI = nil
 BLINKIISPORTRAITS.STUF = nil
 BLINKIISPORTRAITS.CachedBossIDs = {}
-BLINKIISPORTRAITS.PortraitsUpdatedForceToken = 0
+BLINKIISPORTRAITS.DebugEnabled = false
 
 do
 	BLINKIISPORTRAITS.Mists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
@@ -61,6 +64,14 @@ end
 -- default functions
 function BLINKIISPORTRAITS:Print(...)
 	print(BLINKIISPORTRAITS.Name .. ":", ...)
+end
+
+--- Prints a debug message, but only while debug output is enabled ("/bp log").
+-- Call sites in hot paths (per event, per portrait) must additionally guard with
+-- "if BLINKIISPORTRAITS.DebugEnabled then" so no strings are built while it is off.
+function BLINKIISPORTRAITS:Debug(...)
+	if not BLINKIISPORTRAITS.DebugEnabled then return end
+	print("|cff888888[BP]|r", ...)
 end
 
 -- Counts all entries of a table (also works for non-array tables).
@@ -167,6 +178,55 @@ function BLINKIISPORTRAITS:DelayedUpdate()
 	C_Timer_After(0.5, BLINKIISPORTRAITS.LoadPortraits)
 end
 
+-- party portraits attach to the unit buttons of the configured unit frame addon. Header-based
+-- addons (EllesmereUI, Cell, EQOL, NDui, ...) create those buttons lazily as the group grows,
+-- so the portraits must be created again whenever the roster changes - PLAYER_ENTERING_WORLD
+-- alone would miss every button that appears after login.
+local partyWatcherEvents = {
+	"GROUP_ROSTER_UPDATE",
+	"PARTY_MEMBER_ENABLE",
+	"PARTY_MEMBER_DISABLE",
+}
+
+local isPartyRefreshScheduled = false
+
+--- Re-initializes the party portraits if unit buttons without a portrait exist.
+-- Throttled to coalesce roster event bursts and deferred while in combat, because
+-- anchoring and secure attributes cannot be changed during combat lockdown.
+function BLINKIISPORTRAITS:RefreshPartyPortraits()
+	if isPartyRefreshScheduled then return end
+	isPartyRefreshScheduled = true
+
+	C_Timer_After(0.5, function()
+		isPartyRefreshScheduled = false
+
+		if InCombatLockdown() then
+			BLINKIISPORTRAITS:RefreshPartyPortraits()
+			return
+		end
+
+		if BLINKIISPORTRAITS:HasPendingPartyPortraits() then BLINKIISPORTRAITS:InitializePartyPortrait() end
+	end)
+end
+
+local function OnPartyWatcherEvent()
+	BLINKIISPORTRAITS:RefreshPartyPortraits()
+end
+
+-- Creates the single event watcher that keeps the party portraits in sync with the roster.
+local function CreatePartyWatcher()
+	if BLINKIISPORTRAITS.PartyWatcher then return end
+
+	local watcher = CreateFrame("Frame", "BP_PartyWatcher")
+
+	for _, event in ipairs(partyWatcherEvents) do
+		watcher:RegisterEvent(event)
+	end
+
+	watcher:SetScript("OnEvent", OnPartyWatcherEvent)
+	BLINKIISPORTRAITS.PartyWatcher = watcher
+end
+
 function BLINKIISPORTRAITS:PLAYER_ENTERING_WORLD()
 	C_Timer_After(0.5, BLINKIISPORTRAITS.LoadPortraits)
 end
@@ -197,6 +257,7 @@ function BLINKIISPORTRAITS:OnInitialize()
 
 	BLINKIISPORTRAITS:LoadDB()
 	BLINKIISPORTRAITS:RegisterEvent("PLAYER_ENTERING_WORLD")
+	CreatePartyWatcher()
 
 	-- add options profile tab
 	BLINKIISPORTRAITS.options.args.profile_group.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(BLINKIISPORTRAITS.db)
@@ -241,8 +302,4 @@ function BLINKIISPORTRAITS:OnInitialize()
 		BLINKIISPORTRAITS.db.profile.db_Update = versionNumber
 		BLINKIISPORTRAITS.db.profile.misc.zoom = 0
 	end
-end
-
-function BLINKIISPORTRAITS:OnEnable()
-	self.PortraitsUpdatedForceToken = (self.PortraitsUpdatedForceToken or 0) + 1
 end

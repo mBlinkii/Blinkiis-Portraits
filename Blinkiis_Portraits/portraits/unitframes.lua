@@ -69,9 +69,10 @@ BLINKIISPORTRAITS.unitFrames = {
 		pet = "UUF_Pet",
 		targettarget = "UUF_TargetTarget",
 		focus = "UUF_Focus",
-		party = nil, -- uff has no party frames
+		party = "UUF_Party", -- UUF_Party1-4, individually spawned oUF frames (MAX_PARTY_FRAMES = 4)
+		partyself = "UUF_PartyPlayer", -- separate player frame, only spawned when "Show Player" is on
 		boss = "UUF_Boss",
-		arena = nil, -- uff has no arena frames
+		arena = nil, -- uuf has no arena frames
 	},
 	ndui = {
 		player = "oUF_Player",
@@ -110,6 +111,7 @@ BLINKIISPORTRAITS.unitFrames = {
 		targettarget = "EllesmereUIUnitFrames_TargetTarget",
 		focus = "EllesmereUIUnitFrames_Focus",
 		party = "ERFPartyHeaderUnitButton",
+		partyself = "ERFPartySelfButton", -- separate player button next to the party header
 		boss = "EllesmereUIUnitFrames_Boss",
 		arena = nil, -- has no arena frames
 	},
