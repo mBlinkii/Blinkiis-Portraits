@@ -221,15 +221,3 @@ pip-log.txt
 # Luacheck's Cache
 .luacheckcache
 /.vscode
-
-#############
-## Release script
-#############
-
-release.ps1
-release.bat
-publish.ps1
-publish.bat
-discord_changelog.ps1
-discord_changelog.bat
-DISCORD_CHANGELOG.md
