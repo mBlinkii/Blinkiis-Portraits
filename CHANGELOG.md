@@ -1,5 +1,10 @@
 # Changelog - Blinkii's Portraits
 
+## [ver. 1.56] - 30.07.2026
+### 🔧 UPDATE
+- UPDATE - [System]: Ace3, LibSerialize and LibDeflate are now fetched fresh for every release, so each build ships the current library versions.
+- UPDATE - [System]: Removed the unused Ace3 modules AceTimer, AceBucket, AceHook, AceComm, AceTab and AceSerializer from the package.
+
 ## [ver. 1.55] - 25.07.2026
 ### 🐛 FIX
 - FIX - [Party]: Party portraits stayed black until a reload because UNIT_PORTRAIT_UPDATE and PORTRAITS_UPDATED did not refresh the texture.

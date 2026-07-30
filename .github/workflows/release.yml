@@ -134,14 +134,44 @@ jobs:
             echo "NOTES_EOF"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Install Subversion
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq subversion
+
+      # The libraries are not tracked in the repo, they are fetched fresh on
+      # every release. Only the modules listed in Blinkiis_Portraits/libs/
+      # embeds.xml are pulled - keep both lists in sync when adding a library.
+      - name: Fetch Ace3 + helper libraries into libs/
+        run: |
+          set -e
+          LIBS="Blinkiis_Portraits/libs"
+          mkdir -p "$LIBS"
+
+          svn export --force https://repos.curseforge.com/wow/libstub/trunk "$LIBS/LibStub"
+          svn export --force https://repos.curseforge.com/wow/callbackhandler/trunk/CallbackHandler-1.0 "$LIBS/CallbackHandler-1.0"
+          svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceAddon-3.0 "$LIBS/AceAddon-3.0"
+          svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceEvent-3.0 "$LIBS/AceEvent-3.0"
+          svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceConsole-3.0 "$LIBS/AceConsole-3.0"
+          svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceLocale-3.0 "$LIBS/AceLocale-3.0"
+          svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceDB-3.0 "$LIBS/AceDB-3.0"
+          svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceDBOptions-3.0 "$LIBS/AceDBOptions-3.0"
+          svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceGUI-3.0 "$LIBS/AceGUI-3.0"
+          svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceConfig-3.0 "$LIBS/AceConfig-3.0"
+
+          git clone --depth 1 https://github.com/rossnichols/LibSerialize.git "$LIBS/LibSerialize"
+          rm -rf "$LIBS/LibSerialize/.git"
+          git clone --depth 1 https://github.com/SafeteeWoW/LibDeflate.git "$LIBS/LibDeflate"
+          rm -rf "$LIBS/LibDeflate/.git"
+
       - name: Build zip
         run: |
+          # The README only documents how to populate libs/ locally and has no
+          # business in the shipped archive.
+          rm -f Blinkiis_Portraits/libs/README.md
           # Zip from the repo root, referencing the folder by name, so
           # "Blinkiis_Portraits/" itself is the top-level entry in the
           # archive (required for WoW/CurseForge/Wago - not just its
-          # contents). Libraries already live in the repo, so no separate
-          # fetch step is needed here.
-          zip -r "${{ steps.meta.outputs.zipname }}.zip" "Blinkiis_Portraits" -x "Blinkiis_Portraits/.git*"
+          # contents).
+          zip -r "${{ steps.meta.outputs.zipname }}.zip" "Blinkiis_Portraits" -x "Blinkiis_Portraits/.git*" -x "*/.svn/*"
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
