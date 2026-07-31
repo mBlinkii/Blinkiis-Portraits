@@ -310,8 +310,10 @@ jobs:
           # unset test secret is an empty string, and "a && b || c" would
           # silently fall back to the production webhook.
           if [ "$IS_TEST" = "true" ]; then
-            WEBHOOK="$TEST_WEBHOOK"
-            SECRET_NAME="DISCORD_TEST_WEBHOOK"
+            # DISCORD_TEST_WEBHOOK is optional - without it a test run posts to
+            # the release channel, recognisable by the "[TEST]" title prefix.
+            WEBHOOK="${TEST_WEBHOOK:-$RELEASE_WEBHOOK}"
+            SECRET_NAME="DISCORD_TEST_WEBHOOK/DISCORD_RELEASE_WEBHOOK"
             TITLE="[TEST] Blinkii's Portraits - Ver. ${VERSION}"
           else
             WEBHOOK="$RELEASE_WEBHOOK"
