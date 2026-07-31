@@ -1,0 +1,122 @@
+name: Dev Build
+
+# Rolling development build. Runs on every push to main and overwrites the
+# prerelease behind the fixed tag "dev". The release workflow is untouched -
+# it only triggers on tags "v*".
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "README.md"
+      - "CHANGELOG.md"
+      - "LICENSE.txt"
+      - "libs_report.md"
+      - "icon.png"
+      - "logo.png"
+      - ".vscode/**"
+      - ".github/workflows/release.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Parallel pushes must not overwrite each other. The running job is cancelled
+# as soon as a newer one starts.
+concurrency:
+  group: dev-build
+  cancel-in-progress: true
+
+jobs:
+  dev:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read version and commit info
+        id: meta
+        run: |
+          set -e
+          ADDON="Blinkiis_Portraits"
+          VERSION=$(grep -oP '^## Version:\s*\K.+' "$ADDON/${ADDON}_Mainline.toc" | tr -d '\r ')
+          SHORT="${GITHUB_SHA::7}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "sha=${SHORT}" >> "$GITHUB_OUTPUT"
+
+          # Stamp the shipped .toc files so it is visible in-game that this is
+          # not a release build.
+          for TOC in "$ADDON"/"$ADDON"_*.toc; do
+            [ -e "$TOC" ] || continue
+            sed -i "s/^## Version:.*/## Version: ${VERSION}-dev-${SHORT}/" "$TOC"
+          done
+
+      - name: Install Subversion
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq subversion
+
+      # The libraries are not tracked in the repo, they are fetched fresh on
+      # every build. Only the modules listed in Blinkiis_Portraits/libs/
+      # embeds.xml are pulled - keep both lists in sync when adding a library.
+      - name: Fetch Ace3 + helper libraries into libs/
+        run: |
+          set -e
+          LIBS="Blinkiis_Portraits/libs"
+          mkdir -p "$LIBS"
+
+          svn export --force https://repos.curseforge.com/wow/libstub/trunk "$LIBS/LibStub"
+          svn export --force https://repos.curseforge.com/wow/callbackhandler/trunk/CallbackHandler-1.0 "$LIBS/CallbackHandler-1.0"
+          svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceAddon-3.0 "$LIBS/AceAddon-3.0"
+          svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceEvent-3.0 "$LIBS/AceEvent-3.0"
+          svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceConsole-3.0 "$LIBS/AceConsole-3.0"
+          svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceLocale-3.0 "$LIBS/AceLocale-3.0"
+          svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceDB-3.0 "$LIBS/AceDB-3.0"
+          svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceDBOptions-3.0 "$LIBS/AceDBOptions-3.0"
+          svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceGUI-3.0 "$LIBS/AceGUI-3.0"
+          svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceConfig-3.0 "$LIBS/AceConfig-3.0"
+
+          git clone --depth 1 https://github.com/rossnichols/LibSerialize.git "$LIBS/LibSerialize"
+          rm -rf "$LIBS/LibSerialize/.git"
+          git clone --depth 1 https://github.com/SafeteeWoW/LibDeflate.git "$LIBS/LibDeflate"
+          rm -rf "$LIBS/LibDeflate/.git"
+
+      # Constant file name - otherwise the download URL changes on every run.
+      - name: Build zip
+        run: |
+          # The README only documents how to populate libs/ locally and has no
+          # business in the shipped archive.
+          rm -f Blinkiis_Portraits/libs/README.md
+          # Zip from the repo root, referencing the folder by name, so
+          # "Blinkiis_Portraits/" itself is the top-level entry in the archive.
+          zip -r "Blinkiis_Portraits-dev.zip" "Blinkiis_Portraits" -x "Blinkiis_Portraits/.git*" -x "*/.svn/*"
+
+      - name: Write release notes
+        run: |
+          cat > DEV_NOTES.md <<'HEADER'
+          > ⚠️ **Untested development build.** Built automatically on every push to `main` and not verified in-game. For a stable version please use the latest [Release](https://github.com/mBlinkii/Blinkiis-Portraits/releases/latest).
+
+          HEADER
+          {
+            echo "**Version:** ${{ steps.meta.outputs.version }}-dev-${{ steps.meta.outputs.sha }}"
+            echo "**Commit:** ${GITHUB_SHA}"
+            echo "**Built:** $(date -u '+%d.%m.%Y %H:%M UTC')"
+            echo
+            echo '## Latest commit'
+            echo
+            echo '```'
+            git log -1 --pretty=%B
+            echo '```'
+          } >> DEV_NOTES.md
+
+      # Tag and prerelease are re-set on every run. The asset keeps the same
+      # name so the download URL stays stable.
+      - name: Publish prerelease
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: dev
+          target_commitish: ${{ github.sha }}
+          name: Blinkii's Portraits Development Build
+          body_path: DEV_NOTES.md
+          files: Blinkiis_Portraits-dev.zip
+          prerelease: true
+          make_latest: false
