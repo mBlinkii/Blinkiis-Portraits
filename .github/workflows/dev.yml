@@ -3,10 +3,15 @@ name: Dev Build
 # Rolling development build. Runs on every push to main and overwrites the
 # prerelease behind the fixed tag "dev". The release workflow is untouched -
 # it only triggers on tags "v*".
+#
+# Reusable in other addon repos: every repo-specific spot is marked with an
+# "ADAPT n:" comment below.
 on:
   push:
     branches:
+      # ADAPT 1: default branch of the repo.
       - main
+    # ADAPT 2: everything that is not addon code - no dev build needed for it.
     paths-ignore:
       - "README.md"
       - "CHANGELOG.md"
@@ -31,14 +36,17 @@ jobs:
   dev:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
+          # Full history so the last commit message can be read for the notes.
           fetch-depth: 0
 
       - name: Read version and commit info
         id: meta
         run: |
           set -e
+          # ADAPT 3: addon folder name; the .toc files are expected as
+          # <ADDON>/<ADDON>_<Flavor>.toc.
           ADDON="Blinkiis_Portraits"
           VERSION=$(grep -oP '^## Version:\s*\K.+' "$ADDON/${ADDON}_Mainline.toc" | tr -d '\r ')
           SHORT="${GITHUB_SHA::7}"
@@ -55,6 +63,7 @@ jobs:
       - name: Install Subversion
         run: sudo apt-get update -qq && sudo apt-get install -y -qq subversion
 
+      # ADAPT 4: library fetching - must stay identical to release.yml.
       # The libraries are not tracked in the repo, they are fetched fresh on
       # every build. Only the modules listed in Blinkiis_Portraits/libs/
       # embeds.xml are pulled - keep both lists in sync when adding a library.
@@ -80,7 +89,8 @@ jobs:
           git clone --depth 1 https://github.com/SafeteeWoW/LibDeflate.git "$LIBS/LibDeflate"
           rm -rf "$LIBS/LibDeflate/.git"
 
-      # Constant file name - otherwise the download URL changes on every run.
+      # ADAPT 5: addon folder and constant zip name - the name must not contain
+      # version or sha, otherwise the download URL changes on every run.
       - name: Build zip
         run: |
           # The README only documents how to populate libs/ locally and has no
@@ -92,6 +102,7 @@ jobs:
 
       - name: Write release notes
         run: |
+          # ADAPT 6: repo URL in the "latest release" link.
           cat > DEV_NOTES.md <<'HEADER'
           > ⚠️ **Untested development build.** Built automatically on every push to `main` and not verified in-game. For a stable version please use the latest [Release](https://github.com/mBlinkii/Blinkiis-Portraits/releases/latest).
 
@@ -111,10 +122,11 @@ jobs:
       # Tag and prerelease are re-set on every run. The asset keeps the same
       # name so the download URL stays stable.
       - name: Publish prerelease
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: dev
           target_commitish: ${{ github.sha }}
+          # ADAPT 7: release title of the rolling build.
           name: Blinkii's Portraits Development Build
           body_path: DEV_NOTES.md
           files: Blinkiis_Portraits-dev.zip

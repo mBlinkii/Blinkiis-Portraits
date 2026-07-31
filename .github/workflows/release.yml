@@ -1,10 +1,17 @@
 name: Release
 
 # Runs on every version tag, e.g.: git tag v1.53 && git push origin v1.53
+#
+# The pattern is "v[0-9]*" and not "v*": legacy tags in this repo are named
+# "ver.1.36", which "v*" would match too - "${GITHUB_REF_NAME#v}" then yields
+# "er.1.36" instead of a version.
+#
+# A tag with the "-test" suffix (e.g. v1.56-test) is a dry run: draft
+# prerelease, no CurseForge/Wago upload, Discord goes to the test webhook.
 on:
   push:
     tags:
-      - "v*"
+      - "v[0-9]*"
 
 permissions:
   contents: write
@@ -13,7 +20,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Read version, interface versions, and date
         id: meta
@@ -23,10 +30,31 @@ jobs:
           # Version comes from the git tag that triggered this run, so the
           # release/zip/CurseForge/Wago version always matches what was
           # tagged, even if a .toc's own "## Version:" line lags behind.
-          VERSION="${GITHUB_REF_NAME#v}"
+          RAW="${GITHUB_REF_NAME#v}"
+          case "$RAW" in
+            *-test)
+              IS_TEST="true"
+              VERSION="${RAW%-test}"
+              ;;
+            *)
+              IS_TEST="false"
+              VERSION="$RAW"
+              ;;
+          esac
           DATE_FILE=$(date +%d%m%Y)
+          echo "test=${IS_TEST}" >> "$GITHUB_OUTPUT"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "zipname=${ADDON}-v${VERSION}-${DATE_FILE}" >> "$GITHUB_OUTPUT"
+
+          # A test run must never end up as "Latest" in the release list, and
+          # action-gh-release wants these as strings.
+          if [ "$IS_TEST" = "true" ]; then
+            echo "make_latest=false" >> "$GITHUB_OUTPUT"
+            echo "release_name=Ver. ${VERSION} (TEST)" >> "$GITHUB_OUTPUT"
+          else
+            echo "make_latest=true" >> "$GITHUB_OUTPUT"
+            echo "release_name=Ver. ${VERSION}" >> "$GITHUB_OUTPUT"
+          fi
 
           # Keep the shipped .toc files in sync with the tag, even if the
           # committed "## Version:" line wasn't bumped before tagging.
@@ -174,15 +202,23 @@ jobs:
           zip -r "${{ steps.meta.outputs.zipname }}.zip" "Blinkiis_Portraits" -x "Blinkiis_Portraits/.git*" -x "*/.svn/*"
 
       - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
+        id: release
+        uses: softprops/action-gh-release@v3
         with:
-          name: Ver. ${{ steps.meta.outputs.version }}
+          name: ${{ steps.meta.outputs.release_name }}
           files: ${{ steps.meta.outputs.zipname }}.zip
           # Release notes come from CHANGELOG.md (see the notes step above)
           # instead of auto-generated commit lists.
           body_path: RELEASE_NOTES.md
+          # A "-test" tag stays a draft prerelease so nothing shows up for
+          # users; without an explicit make_latest a release would otherwise
+          # be flagged as "Latest".
+          draft: ${{ steps.meta.outputs.test == 'true' }}
+          prerelease: ${{ steps.meta.outputs.test == 'true' }}
+          make_latest: ${{ steps.meta.outputs.make_latest }}
 
       - name: Upload to CurseForge
+        if: steps.meta.outputs.test != 'true'
         uses: itsmeow/curseforge-upload@v3
         with:
           token: ${{ secrets.CF_API_TOKEN }}
@@ -196,6 +232,7 @@ jobs:
           changelog_type: html
 
       - name: Upload to Wago Addons
+        if: steps.meta.outputs.test != 'true'
         run: |
           # Build the metadata JSON with jq (correct escaping of the
           # multi-line markdown changelog) and write it to a file. It is
@@ -245,5 +282,76 @@ jobs:
 
           if [ "${HTTP_CODE:-0}" -lt 200 ] || [ "${HTTP_CODE:-0}" -ge 300 ]; then
             echo "Wago upload failed." >&2
+            exit 1
+          fi
+
+      # Last step on purpose: Discord is announced only after the release and
+      # both uploads went through.
+      #
+      # No "github.event.release.prerelease" check here - this workflow is
+      # triggered by "push: tags", so no release event object exists and the
+      # expression would always be null. The tag pattern already does the
+      # filtering: the rolling "dev" tag never starts this workflow, and
+      # "-test" tags are routed to the test webhook below.
+      #
+      # Discord must never turn the workflow red.
+      - name: Announce on Discord
+        continue-on-error: true
+        env:
+          RELEASE_WEBHOOK: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
+          TEST_WEBHOOK: ${{ secrets.DISCORD_TEST_WEBHOOK }}
+          IS_TEST: ${{ steps.meta.outputs.test }}
+          VERSION: ${{ steps.meta.outputs.version }}
+          RELEASE_URL: ${{ steps.release.outputs.url }}
+        run: |
+          set -e
+
+          # The webhook is picked in the shell, not in a GitHub expression: an
+          # unset test secret is an empty string, and "a && b || c" would
+          # silently fall back to the production webhook.
+          if [ "$IS_TEST" = "true" ]; then
+            WEBHOOK="$TEST_WEBHOOK"
+            SECRET_NAME="DISCORD_TEST_WEBHOOK"
+            TITLE="[TEST] Blinkii's Portraits - Ver. ${VERSION}"
+          else
+            WEBHOOK="$RELEASE_WEBHOOK"
+            SECRET_NAME="DISCORD_RELEASE_WEBHOOK"
+            TITLE="Blinkii's Portraits - Ver. ${VERSION}"
+          fi
+
+          if [ -z "$WEBHOOK" ]; then
+            echo "::notice::Secret ${SECRET_NAME} is not set - skipping Discord announcement."
+            exit 0
+          fi
+
+          # The changelog goes into the payload via --rawfile only. Inlining it
+          # into the shell string would break the JSON on quotes and backticks
+          # from the changelog. 3800 chars stays below Discord's 4096 limit for
+          # embed descriptions.
+          jq -n \
+            --arg title "$TITLE" \
+            --arg url "$RELEASE_URL" \
+            --arg thumb "https://raw.githubusercontent.com/mBlinkii/Blinkiis-Portraits/main/icon.png" \
+            --rawfile notes RELEASE_NOTES.md \
+            '{embeds: [{
+               title: $title,
+               url: $url,
+               description: ($notes | .[0:3800]),
+               color: 50943,
+               thumbnail: {url: $thumb}
+             }]}' > discord_payload.json
+
+          # --data-binary, not -d: -d strips newlines from the file.
+          HTTP_CODE=$(curl -s -o discord_response.txt -w "%{http_code}" -X POST \
+            -H "Content-Type: application/json" \
+            --data-binary @discord_payload.json \
+            "$WEBHOOK") || true
+
+          echo "HTTP status: ${HTTP_CODE:-000}"
+          cat discord_response.txt 2>/dev/null || true
+          echo
+
+          if [ "${HTTP_CODE:-0}" -lt 200 ] || [ "${HTTP_CODE:-0}" -ge 300 ]; then
+            echo "::warning::Discord announcement failed (HTTP ${HTTP_CODE:-000})."
             exit 1
           fi
