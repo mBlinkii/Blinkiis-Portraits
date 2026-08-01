@@ -38,8 +38,10 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          # Full history so the last commit message can be read for the notes.
+          # Full history *and* tags: the last commit message goes into the
+          # notes and the base version is derived from the newest version tag.
           fetch-depth: 0
+          fetch-tags: true
 
       - name: Read version and commit info
         id: meta
@@ -48,17 +50,48 @@ jobs:
           # ADAPT 3: addon folder name; the .toc files are expected as
           # <ADDON>/<ADDON>_<Flavor>.toc.
           ADDON="Blinkiis_Portraits"
-          VERSION=$(grep -oP '^## Version:\s*\K.+' "$ADDON/${ADDON}_Mainline.toc" | tr -d '\r ')
+
+          # The committed .toc files carry the placeholder "git-build", so the
+          # base version comes from the topmost "## [ver. X.YY]" heading in
+          # CHANGELOG.md - that is the version currently being worked towards,
+          # which is what a dev build represents ("1.56-dev-ff6313e").
+          #
+          # ADAPT 3a: changelog path and heading format. If the changelog has
+          # no section for the upcoming version yet, the newest release tag is
+          # used instead ("-test" tags are dry runs and never define a
+          # version); a repo without either falls back to "0.00".
+          BASE=$(grep -m1 -oP '^## \[ver\.\s*\K[0-9][^\]]*' CHANGELOG.md 2>/dev/null | tr -d '\r ' || true)
+          if [ -z "$BASE" ]; then
+            BASE=$(git tag --list 'v[0-9]*' --sort=-v:refname | grep -v -- '-test$' | head -n1)
+            BASE="${BASE#v}"
+          fi
+          BASE="${BASE:-0.00}"
           SHORT="${GITHUB_SHA::7}"
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          VERSION="${BASE}-dev-${SHORT}"
+          echo "base=${BASE}" >> "$GITHUB_OUTPUT"
           echo "sha=${SHORT}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
           # Stamp the shipped .toc files so it is visible in-game that this is
-          # not a release build.
+          # not a release build. Stamping happens in the build only, the repo
+          # keeps the placeholder.
+          STAMPED=0
           for TOC in "$ADDON"/"$ADDON"_*.toc; do
             [ -e "$TOC" ] || continue
-            sed -i "s/^## Version:.*/## Version: ${VERSION}-dev-${SHORT}/" "$TOC"
+            # A .toc without a "## Version:" line would ship an empty version
+            # to the client, so a silent no-op sed must fail the build.
+            if ! grep -q '^## Version:' "$TOC"; then
+              echo "::error::${TOC} has no '## Version:' line to stamp." >&2
+              exit 1
+            fi
+            sed -i "s/^## Version:.*/## Version: ${VERSION}/" "$TOC"
+            STAMPED=$((STAMPED + 1))
           done
+          if [ "$STAMPED" -eq 0 ]; then
+            echo "::error::No .toc files found under ${ADDON}/ - nothing to stamp." >&2
+            exit 1
+          fi
+          grep -H '^## Version:' "$ADDON"/"$ADDON"_*.toc
 
       - name: Install Subversion
         run: sudo apt-get update -qq && sudo apt-get install -y -qq subversion
@@ -108,7 +141,7 @@ jobs:
 
           HEADER
           {
-            echo "**Version:** ${{ steps.meta.outputs.version }}-dev-${{ steps.meta.outputs.sha }}"
+            echo "**Version:** ${{ steps.meta.outputs.version }}"
             echo "**Commit:** ${GITHUB_SHA}"
             echo "**Built:** $(date -u '+%d.%m.%Y %H:%M UTC')"
             echo
