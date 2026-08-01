@@ -52,19 +52,14 @@ jobs:
           ADDON="Blinkiis_Portraits"
 
           # The committed .toc files carry the placeholder "git-build", so the
-          # base version comes from the topmost "## [ver. X.YY]" heading in
-          # CHANGELOG.md - that is the version currently being worked towards,
-          # which is what a dev build represents ("1.56-dev-ff6313e").
+          # base version comes from the newest release tag - a dev build is
+          # "last release plus these commits" ("1.55-dev-ff6313e").
           #
-          # ADAPT 3a: changelog path and heading format. If the changelog has
-          # no section for the upcoming version yet, the newest release tag is
-          # used instead ("-test" tags are dry runs and never define a
-          # version); a repo without either falls back to "0.00".
-          BASE=$(grep -m1 -oP '^## \[ver\.\s*\K[0-9][^\]]*' CHANGELOG.md 2>/dev/null | tr -d '\r ' || true)
-          if [ -z "$BASE" ]; then
-            BASE=$(git tag --list 'v[0-9]*' --sort=-v:refname | grep -v -- '-test$' | head -n1)
-            BASE="${BASE#v}"
-          fi
+          # ADAPT 3a: tag pattern of the release workflow. "-test" tags are dry
+          # runs and must not define the base version. A repo without any tag
+          # falls back to "0.00".
+          BASE=$(git tag --list 'v[0-9]*' --sort=-v:refname | grep -v -- '-test$' | head -n1)
+          BASE="${BASE#v}"
           BASE="${BASE:-0.00}"
           SHORT="${GITHUB_SHA::7}"
           VERSION="${BASE}-dev-${SHORT}"
