@@ -334,13 +334,19 @@ jobs:
             --arg title "$TITLE" \
             --arg url "$RELEASE_URL" \
             --arg thumb "https://raw.githubusercontent.com/mBlinkii/Blinkiis-Portraits/main/icon.png" \
+            --arg curse "https://www.curseforge.com/wow/addons/blinkiis-portraits" \
+            --arg wago "https://addons.wago.io/addons/blinkiis-portraits" \
             --rawfile notes RELEASE_NOTES.md \
             '{embeds: [{
                title: $title,
                url: $url,
                description: ($notes | .[0:3800]),
                color: 50943,
-               thumbnail: {url: $thumb}
+               thumbnail: {url: $thumb},
+               fields: [{
+                 name: "Download",
+                 value: "[CurseForge](\($curse)) • [Wago](\($wago)) • [GitHub](\($url))"
+               }]
              }]}' > discord_payload.json
 
           # --data-binary, not -d: -d strips newlines from the file.
