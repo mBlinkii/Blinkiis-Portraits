@@ -142,6 +142,7 @@ local parentFrames = {
 	bbf = "BetterBlizzFrames",
 	eui = "EllesmereUI",
 	stuf = "Stuf",
+	df = "DandersFrames",
 	auto = L["AUTO"],
 }
 
