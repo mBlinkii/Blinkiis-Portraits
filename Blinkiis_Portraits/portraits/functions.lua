@@ -447,7 +447,7 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, force)
 		end
 	end
 
-	if color then
+	if color and c then
 		portrait.extra:SetTexture(portrait[extraFileKeys[c] or (c .. "File")], "CLAMP", "CLAMP", "TRILINEAR")
 		portrait.extra:SetVertexColor(color.r, color.g, color.b, color.a or 1)
 		portrait.extra:Show()
