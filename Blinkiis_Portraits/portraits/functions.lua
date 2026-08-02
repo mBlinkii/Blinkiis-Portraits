@@ -609,8 +609,9 @@ function BLINKIISPORTRAITS:GetUnitFrameName(unit, addonType)
 end
 
 -- priority order for resolving the parent unit frame addon
--- "unit" restricts an entry to a specific unit (Cell provides party frames only)
+-- "unit" restricts an entry to a specific unit (Cell and DandersFrames provide party frames only)
 local ufTypePriority = {
+	{ type = "df", flag = "DF", unit = "party" },
 	{ type = "cell", flag = "Cell", unit = "party" },
 	{ type = "elvui", flag = "ELVUI" },
 	{ type = "pb4", flag = "PB4" },
