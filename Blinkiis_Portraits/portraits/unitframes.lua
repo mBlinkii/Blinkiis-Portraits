@@ -125,4 +125,14 @@ BLINKIISPORTRAITS.unitFrames = {
 		boss = "Stuf.units.boss",
 		arena = "Stuf.units.arena",
 	},
+		df = {
+		player = nil,
+		target = nil,
+		pet = nil,
+		targettarget = nil,
+		focus = nil,
+		party = "DandersPartyHeaderUnitButton",
+		boss = nil,
+		arena = nil,
+	},
 }

@@ -31,6 +31,7 @@ BLINKIISPORTRAITS.EQOL = nil
 BLINKIISPORTRAITS.BBF = nil
 BLINKIISPORTRAITS.EUI = nil
 BLINKIISPORTRAITS.STUF = nil
+BLINKIISPORTRAITS.DF = nil
 BLINKIISPORTRAITS.CachedBossIDs = {}
 BLINKIISPORTRAITS.DebugEnabled = false
 
@@ -144,6 +145,7 @@ local function CheckAddons()
 	BLINKIISPORTRAITS.BBF = IsAddOnLoaded("BetterBlizzFrames")
 	BLINKIISPORTRAITS.EUI = IsAddOnLoaded("EllesmereUI")
 	BLINKIISPORTRAITS.STUF = IsAddOnLoaded("Stuf")
+	BLINKIISPORTRAITS.DF = IsAddOnLoaded("DandersFrames")
 end
 
 local isDelayedUpdateScheduled = false
