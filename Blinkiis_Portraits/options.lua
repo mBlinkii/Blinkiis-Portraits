@@ -1,5 +1,6 @@
 local CopyTable = CopyTable
 local C_EncodingUtil = C_EncodingUtil
+local UnitName = UnitName
 local AceGUI = LibStub("AceGUI-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits", true)
 
@@ -233,6 +234,13 @@ local function ImportProfile(name, profileData)
 	copyTable(profileData, profile)
 	BLINKIISPORTRAITS.db.profiles[name] = profile
 	BLINKIISPORTRAITS.db:SetProfile(name)
+end
+
+-- an emptied input field hands over "", not nil
+local function ExportValue(value, fallback)
+	if value == nil or value == "" then return fallback end
+
+	return value
 end
 
 local function ProfileExists(name)
@@ -3297,9 +3305,9 @@ BLINKIISPORTRAITS.options = {
 							end,
 							func = function()
 								-- get profile infos
-								exportProfile.author = exportProfile.author or "Unknown"
-								exportProfile.name = exportProfile.name or BLINKIISPORTRAITS.db:GetCurrentProfile()
-								exportProfile.version = exportProfile.version or "1.0"
+								exportProfile.author = ExportValue(exportProfile.author, UnitName("player"))
+								exportProfile.name = ExportValue(exportProfile.name, BLINKIISPORTRAITS.db:GetCurrentProfile())
+								exportProfile.version = ExportValue(exportProfile.version, "1.0")
 								exportProfile.bp_version = BLINKIISPORTRAITS.Version
 
 								-- get profile db
