@@ -1,7 +1,9 @@
 local CopyTable = CopyTable
 local C_EncodingUtil = C_EncodingUtil
+local AceGUI = LibStub("AceGUI-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits", true)
 
+local IMPORT_EDITBOX = "BlinkiisPortraitsImportBox"
 local EXPORT_PREFIX = "!BP2!"
 local LEGACY_EXPORT_PREFIX = "!BP"
 local COMPRESSION_METHOD = Enum.CompressionMethod and Enum.CompressionMethod.Deflate or 0
@@ -232,6 +234,81 @@ local function ImportProfile(name, profileData)
 	BLINKIISPORTRAITS.db.profiles[name] = profile
 	BLINKIISPORTRAITS.db:SetProfile(name)
 end
+
+local function ProfileExists(name)
+	local profiles = name and BLINKIISPORTRAITS.db:GetProfiles()
+	if not profiles then return end
+
+	for _, profile in ipairs(profiles) do
+		if profile == name then return true end
+	end
+end
+
+-- only the fields the imported profile actually carries are listed
+local function BuildImportDisplay()
+	if not importInfos.success then return importInfos.error end
+
+	local lines = {}
+	if importInfos.author then lines[#lines + 1] = format(L["Author: %s"], importInfos.author) end
+	if importInfos.name then lines[#lines + 1] = format(L["Name: %s"], importInfos.exists and format("%s %s", importInfos.name, L["(exists)"]) or importInfos.name) end
+	if importInfos.version then lines[#lines + 1] = format(L["Version: %s"], importInfos.version) end
+
+	return lines[1] and table.concat(lines, "\n") or nil
+end
+
+local function ReadImportString(import)
+	if import == importInfos.raw then return false end
+
+	local previous = importInfos.display
+	importInfos = { raw = import }
+
+	if not C_EncodingUtil then
+		importInfos.error = L["ERROR - This game version does not support profile import and export."]
+	elseif import ~= "" then
+		if not strmatch(import, "^" .. EXPORT_PREFIX) then
+			importInfos.error = strmatch(import, "^" .. LEGACY_EXPORT_PREFIX) and L["ERROR - This profile was exported with an older version, please export it again."] or L["ERROR 1 - This is not a Blinkiis Portraits profile!"]
+		else
+			local outputDB = DecodeProfile(gsub(import, "^" .. EXPORT_PREFIX, ""))
+			if type(outputDB) ~= "table" or type(outputDB.profile) ~= "table" then
+				importInfos.error = L["ERROR 2 - Import string is corrupted!"]
+			else
+				importInfos.success = true
+				importInfos.author = outputDB.author
+				importInfos.name = outputDB.name
+				importInfos.version = outputDB.version
+				importInfos.bp_version = outputDB.bp_version
+				importInfos.profile = outputDB.profile
+				importInfos.exists = ProfileExists(outputDB.name)
+			end
+		end
+	end
+
+	importInfos.display = BuildImportDisplay()
+
+	return importInfos.display ~= previous
+end
+
+-- AceConfigDialog only wires OnEnterPressed, so reading the string while it is typed needs the text change script of the widget itself
+local function ConstructImportEditBox()
+	local widget = AceGUI:Create("MultiLineEditBox")
+	widget.type = IMPORT_EDITBOX
+
+	local OnAcquire = widget.OnAcquire
+	widget.OnAcquire = function(self)
+		OnAcquire(self)
+		self:DisableButton(true)
+	end
+
+	-- refreshing the dialog rebuilds this widget, so only fire when the shown infos really change
+	widget.editBox:HookScript("OnTextChanged", function(editBox, userInput)
+		if not userInput then return end
+		if ReadImportString(editBox:GetText()) then widget:Fire("OnEnterPressed", editBox:GetText()) end
+	end)
+
+	return widget
+end
+
+AceGUI:RegisterWidgetType(IMPORT_EDITBOX, ConstructImportEditBox, 1)
 
 StaticPopupDialogs["BLINKIISPORTRAITS_PROFILE_EXISTS"] = {
 	text = L["The profile you tried to import already exists. Choose a new name or accept to overwrite the existing profile."],
@@ -3185,55 +3262,23 @@ BLINKIISPORTRAITS.options = {
 							name = L["Import"],
 							multiline = true,
 							width = "full",
+							dialogControl = IMPORT_EDITBOX,
 							get = function()
-								-- check if the a profile with same name exists
-								local profileExists
-								local profiles = BLINKIISPORTRAITS.db:GetProfiles()
-								if profiles then
-									for _, name in ipairs(profiles) do
-										if name == importInfos.name then
-											profileExists = true
-											break
-										end
-									end
-								end
-
-								importInfos.exists = profileExists
-
-								-- show import infos
-								if importInfos.success then
-									local outputString = profileExists and "Author: %s\nName: %s (exists)\nVersion: %s" or "Author: %s\nName: %s\nVersion: %s"
-									return format(outputString, importInfos.author, importInfos.name, importInfos.version)
-								elseif importInfos.error then
-									return importInfos.error
-								end
+								return importInfos.raw or ""
 							end,
 							set = function(info, import)
-								importInfos = {}
-
-								if not C_EncodingUtil then
-									importInfos.error = L["ERROR - This game version does not support profile import and export."]
-									return
-								end
-
-								-- check the import string
-								if not strmatch(import, "^" .. EXPORT_PREFIX) then
-									importInfos.error = strmatch(import, "^" .. LEGACY_EXPORT_PREFIX) and L["ERROR - This profile was exported with an older version, please export it again."] or L["ERROR 1 - This is not a Blinkiis Portraits profile!"]
-									return
-								end
-
-								local outputDB = DecodeProfile(gsub(import, "^" .. EXPORT_PREFIX, ""))
-								if type(outputDB) ~= "table" or type(outputDB.profile) ~= "table" then
-									importInfos.error = L["ERROR 2 - Import string is corrupted!"]
-									return
-								end
-
-								importInfos.success = true
-								importInfos.author = outputDB.author
-								importInfos.name = outputDB.name
-								importInfos.version = outputDB.version
-								importInfos.bp_version = outputDB.bp_version
-								importInfos.profile = outputDB.profile
+								ReadImportString(import)
+							end,
+						},
+						infos = {
+							order = 3,
+							type = "description",
+							fontSize = "medium",
+							hidden = function()
+								return not importInfos.display
+							end,
+							name = function()
+								return importInfos.display
 							end,
 						},
 					},
