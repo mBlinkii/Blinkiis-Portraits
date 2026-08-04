@@ -227,6 +227,69 @@ StaticPopupDialogs["BLINKIISPORTRAITS_PROFILE_EXISTS"] = {
 	preferredIndex = 3,
 }
 
+local UNIT_ORDER = { "player", "target", "focus", "targettarget", "pet", "party", "boss", "arena" }
+local COPY_EXCLUDED_KEYS = { enable = true, unitframe = true }
+
+local unitPortraits = {
+	player = { name = L["Player"], init = "InitializePlayerPortrait" },
+	target = { name = L["Target"], init = "InitializeTargetPortrait" },
+	focus = { name = L["Focus"], init = "InitializeFocusPortrait" },
+	targettarget = { name = L["Target of Target"], init = "InitializeTargetTargetPortrait" },
+	pet = { name = L["Pet"], init = "InitializePetPortrait" },
+	party = { name = L["Party"], init = "InitializePartyPortrait" },
+	boss = { name = L["Boss"], init = "InitializeBossPortrait" },
+	arena = { name = L["Arena"], init = "InitializeArenaPortrait" },
+}
+
+local copySources, copySorting = {}, {}
+for _, unit in ipairs(UNIT_ORDER) do
+	local sources, sorting = {}, {}
+	for _, source in ipairs(UNIT_ORDER) do
+		if source ~= unit then
+			sources[source] = unitPortraits[source].name
+			sorting[#sorting + 1] = source
+		end
+	end
+	copySources[unit], copySorting[unit] = sources, sorting
+end
+
+-- the defaults table drives the key set, so units without a key (boss/arena have no forceExtra) never receive it
+local function CopyUnitSettings(source, target)
+	local from, to, keys = BLINKIISPORTRAITS.db.profile[source], BLINKIISPORTRAITS.db.profile[target], BLINKIISPORTRAITS.defaults.profile[target]
+	if not (from and to and keys) then return end
+
+	for key, value in pairs(keys) do
+		if not COPY_EXCLUDED_KEYS[key] and from[key] ~= nil then to[key] = type(value) == "table" and copyTable(from[key], to[key]) or from[key] end
+	end
+end
+
+local function BuildCopyGroup(unit, order)
+	return {
+		order = order,
+		type = "group",
+		inline = true,
+		name = L["Copy Settings"],
+		args = {
+			source_select = {
+				order = 1,
+				type = "select",
+				name = L["Copy From"],
+				desc = L["Copies the settings of the selected portrait to this one. Enable state and parent frame stay untouched."],
+				values = copySources[unit],
+				sorting = copySorting[unit],
+				confirm = function(info, value)
+					return format(L["Copy the settings from %s to %s?"], unitPortraits[value].name, unitPortraits[unit].name)
+				end,
+				get = function() end,
+				set = function(info, value)
+					CopyUnitSettings(value, unit)
+					BLINKIISPORTRAITS[unitPortraits[unit].init](BLINKIISPORTRAITS)
+				end,
+			},
+		},
+	}
+end
+
 BLINKIISPORTRAITS.options = {
 	name = BLINKIISPORTRAITS.Icon .. BLINKIISPORTRAITS.Name,
 	handler = BLINKIISPORTRAITS,
@@ -709,6 +772,7 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
+				copy_group = BuildCopyGroup("player", 5),
 			},
 		},
 		target_group = {
@@ -955,6 +1019,7 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
+				copy_group = BuildCopyGroup("target", 5),
 			},
 		},
 		focus_group = {
@@ -1201,6 +1266,7 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
+				copy_group = BuildCopyGroup("focus", 5),
 			},
 		},
 		targettarget_group = {
@@ -1447,6 +1513,7 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
+				copy_group = BuildCopyGroup("targettarget", 5),
 			},
 		},
 		pet_group = {
@@ -1693,6 +1760,7 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
+				copy_group = BuildCopyGroup("pet", 5),
 			},
 		},
 		party_group = {
@@ -1939,6 +2007,7 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
+				copy_group = BuildCopyGroup("party", 5),
 			},
 		},
 		boss_group = {
@@ -2164,6 +2233,7 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
+				copy_group = BuildCopyGroup("boss", 5),
 			},
 		},
 		arena_group = {
@@ -2389,6 +2459,7 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
+				copy_group = BuildCopyGroup("arena", 5),
 			},
 		},
 		extra_group = {

@@ -4,6 +4,8 @@
 ### ✨ NEW
 - NEW - [ElvUI]: The options are shown inside the ElvUI options menu again and the addon is listed in the ElvUI plugin list.
 - NEW - [Options]: Add a toggle to disable the ElvUI options integration.
+- NEW - [Options]: Every portrait now has a copy dropdown to take over the settings of another portrait, except its enable state and parent frame.
+- NEW - [ElvUI]: The addon logo is shown above the options and the addon icon on the button in the ElvUI menu.
 
 ## [ver. 1.56] - 30.07.2026
 ### 🔧 UPDATE
