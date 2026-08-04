@@ -95,7 +95,7 @@ jobs:
       # The libraries are not tracked in the repo, they are fetched fresh on
       # every build. Only the modules listed in Blinkiis_Portraits/libs/
       # embeds.xml are pulled - keep both lists in sync when adding a library.
-      - name: Fetch Ace3 + helper libraries into libs/
+      - name: Fetch Ace3 libraries into libs/
         run: |
           set -e
           LIBS="Blinkiis_Portraits/libs"
@@ -111,11 +111,6 @@ jobs:
           svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceDBOptions-3.0 "$LIBS/AceDBOptions-3.0"
           svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceGUI-3.0 "$LIBS/AceGUI-3.0"
           svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceConfig-3.0 "$LIBS/AceConfig-3.0"
-
-          git clone --depth 1 https://github.com/rossnichols/LibSerialize.git "$LIBS/LibSerialize"
-          rm -rf "$LIBS/LibSerialize/.git"
-          git clone --depth 1 https://github.com/SafeteeWoW/LibDeflate.git "$LIBS/LibDeflate"
-          rm -rf "$LIBS/LibDeflate/.git"
 
       # ADAPT 5: addon folder and constant zip name - the name must not contain
       # version or sha, otherwise the download URL changes on every run.

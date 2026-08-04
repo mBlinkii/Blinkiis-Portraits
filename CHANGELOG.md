@@ -1,6 +1,9 @@
 # Changelog - Blinkii's Portraits
 
 ## [ver. 1.57] - 04.08.2026
+### 🔧 UPDATE
+- UPDATE - [Profiles]: Profile import and export now use the game's own encoding API, which drops two embedded libraries from the addon.
+- UPDATE - [Profiles]: Export strings use the new prefix !BP2!, older strings are recognised and ask you to export the profile again.
 ### ✨ NEW
 - NEW - [ElvUI]: The options are shown inside the ElvUI options menu again and the addon is listed in the ElvUI plugin list.
 - NEW - [Options]: Add a toggle to disable the ElvUI options integration.

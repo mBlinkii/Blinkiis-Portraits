@@ -142,8 +142,8 @@ L["Custom "] = "Benutzerdefiniert "
 
 L["ERROR 1 - This is not a Blinkiis Portraits profile!"] = "ERROR 1 - Dies ist kein Blinkiis Portraits-Profil!"
 L["ERROR 2 - Import string is corrupted!"] = "ERROR 2 - Der Import-String ist beschädigt!"
-L["ERROR 3 - Import string is corrupted!"] = "ERROR 3 - Der Import-String ist beschädigt!"
-L["ERROR 4 - Import string is corrupted!"] = "ERROR 4 - Der Import-String ist beschädigt!"
+L["ERROR - This profile was exported with an older version, please export it again."] = "ERROR - Dieses Profil wurde mit einer älteren Version exportiert, bitte erneut exportieren."
+L["ERROR - This game version does not support profile import and export."] = "ERROR - Diese Spielversion unterstützt keinen Profil-Import und -Export."
 
 L["BACKGROUND"] = "HINTERGRUND"
 L["LOW"] = "NIEDRIG"

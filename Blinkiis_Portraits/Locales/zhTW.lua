@@ -132,8 +132,8 @@ L["Custom "] = "自定义 "
 
 L["ERROR 1 - This is not a Blinkiis Portraits profile!"] = "错误1 - 这不是Blinkii头像的配置文件！"
 L["ERROR 2 - Import string is corrupted!"] = "错误2 - 导入的字符串已损坏！"
-L["ERROR 3 - Import string is corrupted!"] = "错误3 - 导入的字符串已损坏！"
-L["ERROR 4 - Import string is corrupted!"] = "错误4 - 导入的字符串已损坏！"
+L["ERROR - This profile was exported with an older version, please export it again."] = "ERROR - This profile was exported with an older version, please export it again."
+L["ERROR - This game version does not support profile import and export."] = "ERROR - This game version does not support profile import and export."
 
 L["BACKGROUND"] = "背景层"
 L["LOW"] = "底层"

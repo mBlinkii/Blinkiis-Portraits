@@ -1,7 +1,11 @@
 local CopyTable = CopyTable
-local LibSerialize = LibStub("LibSerialize")
-local LibDeflate = LibStub("LibDeflate")
+local C_EncodingUtil = C_EncodingUtil
 local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits", true)
+
+local EXPORT_PREFIX = "!BP2!"
+local LEGACY_EXPORT_PREFIX = "!BP"
+local COMPRESSION_METHOD = Enum.CompressionMethod and Enum.CompressionMethod.Deflate or 0
+local COMPRESSION_LEVEL = Enum.CompressionLevel and Enum.CompressionLevel.Default or 0
 
 local credits = {
 	"Huchang47",
@@ -185,6 +189,41 @@ local function copyTable(src, dest)
 		end
 	end
 	return dest
+end
+
+local function EncodeProfile(data)
+	if not C_EncodingUtil then return end
+
+	local ok, serialized = pcall(C_EncodingUtil.SerializeCBOR, data)
+	if not ok or not serialized then return end
+
+	local compressed
+	ok, compressed = pcall(C_EncodingUtil.CompressString, serialized, COMPRESSION_METHOD, COMPRESSION_LEVEL)
+	if not ok or not compressed then return end
+
+	local encoded
+	ok, encoded = pcall(C_EncodingUtil.EncodeBase64, compressed)
+	if not ok or not encoded then return end
+
+	return format("%s%s", EXPORT_PREFIX, encoded)
+end
+
+-- every step raises on malformed input instead of returning nil, so each one needs its own pcall
+local function DecodeProfile(import)
+	if not C_EncodingUtil then return end
+
+	local ok, decoded = pcall(C_EncodingUtil.DecodeBase64, import)
+	if not ok or not decoded then return end
+
+	local decompressed
+	ok, decompressed = pcall(C_EncodingUtil.DecompressString, decoded, COMPRESSION_METHOD)
+	if not ok or not decompressed then return end
+
+	local profile
+	ok, profile = pcall(C_EncodingUtil.DeserializeCBOR, decompressed)
+	if not ok then return end
+
+	return profile
 end
 
 local function ImportProfile(name, profileData)
@@ -3172,41 +3211,29 @@ BLINKIISPORTRAITS.options = {
 							set = function(info, import)
 								importInfos = {}
 
-								-- check the import string
-								if not strmatch(import, "^" .. "!BP") then
-									importInfos.error = L["ERROR 1 - This is not a Blinkiis Portraits profile!"]
+								if not C_EncodingUtil then
+									importInfos.error = L["ERROR - This game version does not support profile import and export."]
 									return
 								end
 
-								local profileImport = gsub(import, "^" .. "!BP", "")
+								-- check the import string
+								if not strmatch(import, "^" .. EXPORT_PREFIX) then
+									importInfos.error = strmatch(import, "^" .. LEGACY_EXPORT_PREFIX) and L["ERROR - This profile was exported with an older version, please export it again."] or L["ERROR 1 - This is not a Blinkiis Portraits profile!"]
+									return
+								end
 
-								local decoded = LibDeflate:DecodeForPrint(profileImport)
-								if not decoded then
+								local outputDB = DecodeProfile(gsub(import, "^" .. EXPORT_PREFIX, ""))
+								if type(outputDB) ~= "table" or type(outputDB.profile) ~= "table" then
 									importInfos.error = L["ERROR 2 - Import string is corrupted!"]
 									return
 								end
 
-								local decompressed = LibDeflate:DecompressDeflate(decoded)
-								if not decompressed then
-									importInfos.error = L["ERROR 3 - Import string is corrupted!"]
-									return
-								end
-
-								local success, outputDB = LibSerialize:Deserialize(decompressed)
-								if not success then
-									importInfos.error = L["ERROR 4 - Import string is corrupted!"]
-									return
-								end
-
-								-- if success, the add the infos to the importInfos table
-								if success and outputDB then
-									importInfos.success = success
-									importInfos.author = outputDB.author
-									importInfos.name = outputDB.name
-									importInfos.version = outputDB.version
-									importInfos.bp_version = outputDB.bp_version
-									importInfos.profile = outputDB.profile
-								end
+								importInfos.success = true
+								importInfos.author = outputDB.author
+								importInfos.name = outputDB.name
+								importInfos.version = outputDB.version
+								importInfos.bp_version = outputDB.bp_version
+								importInfos.profile = outputDB.profile
 							end,
 						},
 					},
@@ -3220,6 +3247,9 @@ BLINKIISPORTRAITS.options = {
 							order = 1,
 							type = "execute",
 							name = L["Export"],
+							disabled = function()
+								return not C_EncodingUtil
+							end,
 							func = function()
 								-- get profile infos
 								exportProfile.author = exportProfile.author or "Unknown"
@@ -3230,11 +3260,7 @@ BLINKIISPORTRAITS.options = {
 								-- get profile db
 								exportProfile.profile = BLINKIISPORTRAITS.db.profile
 
-								-- build export string
-								local serialized = LibSerialize:Serialize(exportProfile) -- serialized the profile db
-								local compressed = LibDeflate:CompressDeflate(serialized) -- compress the serialized string
-								local encoded = LibDeflate:EncodeForPrint(compressed) -- encode the compressed string for the wow addon channel
-								exportString = encoded and format("!BP%s", encoded) or nil -- add prefix to the encoded string
+								exportString = EncodeProfile(exportProfile)
 
 								-- cleanup the export data
 								exportProfile = {}

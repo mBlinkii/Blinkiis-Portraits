@@ -9,8 +9,9 @@ on every tag. Add them locally before running the addon from a fresh clone.
 - **Ace3** (used modules: AceAddon-3.0, AceEvent-3.0, AceConsole-3.0,
   AceLocale-3.0, AceDB-3.0, AceDBOptions-3.0, AceGUI-3.0, AceConfig-3.0,
   plus LibStub and CallbackHandler-1.0) — https://www.curseforge.com/wow/addons/ace3
-- **LibSerialize** — https://github.com/rossnichols/LibSerialize
-- **LibDeflate** — https://github.com/SafeteeWoW/LibDeflate
+
+Profile import and export run on the `C_EncodingUtil` game API, no serialization
+or compression library is needed.
 
 ## How to populate
 
@@ -29,7 +30,4 @@ svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceDB-3.0 libs/Ac
 svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceDBOptions-3.0 libs/AceDBOptions-3.0
 svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceGUI-3.0 libs/AceGUI-3.0
 svn export --force https://repos.curseforge.com/wow/ace3/trunk/AceConfig-3.0 libs/AceConfig-3.0
-
-git clone --depth 1 https://github.com/rossnichols/LibSerialize.git libs/LibSerialize
-git clone --depth 1 https://github.com/SafeteeWoW/LibDeflate.git libs/LibDeflate
 ```
