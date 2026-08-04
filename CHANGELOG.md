@@ -16,6 +16,7 @@
 - NEW - [Options]: Add a toggle to disable the ElvUI options integration.
 - NEW - [Options]: Every portrait now has a copy dropdown to take over the settings of another portrait, except its enable state and parent frame.
 - NEW - [ElvUI]: The addon logo is shown above the options and the addon icon on the button in the ElvUI menu.
+- NEW - [System]: New command /bp report prints a diagnostic snapshot for bug reports, the same text can be copied from the About tab.
 
 ## [ver. 1.56] - 30.07.2026
 ### 🔧 UPDATE

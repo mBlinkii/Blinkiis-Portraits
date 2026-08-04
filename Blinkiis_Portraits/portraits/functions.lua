@@ -954,6 +954,7 @@ function BLINKIISPORTRAITS:SetupUnitPortrait(opts)
 	local isHeaderUnit = opts.isHeaderUnit
 
 	portrait.parentFrame = parent
+	portrait.parentAddon = opts.parentFrame
 	portrait.isCellParentFrame = isCellParentFrame
 	portrait.isHeaderUnit = isHeaderUnit
 	portrait.unitOverride = opts.unitOverride

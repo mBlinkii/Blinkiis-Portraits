@@ -3438,6 +3438,31 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
+				report = {
+					order = 2,
+					type = "group",
+					inline = true,
+					name = L["Diagnostics"],
+					args = {
+						info = {
+							order = 1,
+							type = "description",
+							fontSize = "medium",
+							name = L["Attach this to your bug report. The same text is printed to chat by /bp report."],
+						},
+						text = {
+							order = 2,
+							type = "input",
+							name = "",
+							multiline = 20,
+							width = "full",
+							set = false,
+							get = function()
+								return BLINKIISPORTRAITS:GetReportText()
+							end,
+						},
+					},
+				},
 			},
 		},
 	},
