@@ -191,5 +191,6 @@ BLINKIISPORTRAITS.defaults.profile.colors = {
 
 BLINKIISPORTRAITS.defaults.global = {}
 
+BLINKIISPORTRAITS.defaults.global.elvui_options = true
 BLINKIISPORTRAITS.defaults.global.custom_classicons = {}
 BLINKIISPORTRAITS.defaults.global.BossIDs ={}

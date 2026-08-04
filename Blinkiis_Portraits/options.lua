@@ -228,11 +228,19 @@ StaticPopupDialogs["BLINKIISPORTRAITS_PROFILE_EXISTS"] = {
 }
 
 BLINKIISPORTRAITS.options = {
-	name = BLINKIISPORTRAITS.Name,
+	name = BLINKIISPORTRAITS.Icon .. BLINKIISPORTRAITS.Name,
 	handler = BLINKIISPORTRAITS,
 	type = "group",
 	childGroups = "tab",
 	args = {
+		logo = {
+			order = 1,
+			type = "description",
+			name = "",
+			image = BLINKIISPORTRAITS.Logo,
+			imageWidth = 512,
+			imageHeight = 128,
+		},
 		general_group = {
 			order = 2,
 			type = "group",
@@ -283,6 +291,22 @@ BLINKIISPORTRAITS.options = {
 							set = function(info, value)
 								BLINKIISPORTRAITS.db.profile.misc.clickable = value
 								BLINKIISPORTRAITS:LoadPortraits()
+							end,
+						},
+						elvui_options_toggle = {
+							order = 4,
+							type = "toggle",
+							name = L["ElvUI Options"],
+							desc = L["Show the options inside the ElvUI options menu."],
+							hidden = function()
+								return not BLINKIISPORTRAITS.ELVUI
+							end,
+							get = function(info)
+								return BLINKIISPORTRAITS.db.global.elvui_options
+							end,
+							set = function(info, value)
+								BLINKIISPORTRAITS.db.global.elvui_options = value
+								StaticPopup_Show("BLINKIISPORTRAITS_RL")
 							end,
 						},
 					},

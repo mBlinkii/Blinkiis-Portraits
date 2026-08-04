@@ -15,7 +15,7 @@ BLINKIISPORTRAITS = LibStub("AceAddon-3.0"):NewAddon("BLINKIISPORTRAITS", "AceEv
 -- settings
 BLINKIISPORTRAITS.Version = GetAddOnMetadata(addonName, "Version")
 BLINKIISPORTRAITS.Name = L["|CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits"]
-BLINKIISPORTRAITS.Icon = "|TInterface\\Addons\\Blinkiis_Portraits\\media\\icon.tga:14:14|t"
+BLINKIISPORTRAITS.Icon = "|TInterface\\Addons\\Blinkiis_Portraits\\media\\icon_32.tga:16:16|t"
 BLINKIISPORTRAITS.Logo = "Interface\\Addons\\Blinkiis_Portraits\\media\\logo.tga"
 BLINKIISPORTRAITS.media = {}
 BLINKIISPORTRAITS.defaults = {}
@@ -286,6 +286,9 @@ function BLINKIISPORTRAITS:OnInitialize()
 		local EQOL_GF = (_G.EnhanceQoL and _G.EnhanceQoL.Aura and _G.EnhanceQoL.Aura.UF) and _G.EnhanceQoL.Aura.UF.GroupFrames or nil
 		if EQOL_GF then hooksecurefunc(EQOL_GF, "RefreshGroupIcons", BLINKIISPORTRAITS.DelayedUpdate) end
 	end
+
+	-- elvui options integration
+	BLINKIISPORTRAITS:SetupElvUIOptions()
 
 	-- elvui demo mode
 	if BLINKIISPORTRAITS.ELVUI and ElvUI then

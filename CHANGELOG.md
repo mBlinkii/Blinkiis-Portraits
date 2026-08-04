@@ -1,5 +1,10 @@
 # Changelog - Blinkii's Portraits
 
+## [ver. 1.57] - 04.08.2026
+### ✨ NEW
+- NEW - [ElvUI]: The options are shown inside the ElvUI options menu again and the addon is listed in the ElvUI plugin list.
+- NEW - [Options]: Add a toggle to disable the ElvUI options integration.
+
 ## [ver. 1.56] - 30.07.2026
 ### 🔧 UPDATE
 - UPDATE - [System]: Ace3, LibSerialize and LibDeflate are now fetched fresh for every release, so each build ships the current library versions.

@@ -22,6 +22,7 @@ locales\load_localization.xml
 
 core.lua
 options.lua
+elvui.lua
 cmd.lua
 defaults.lua
 popup.lua
