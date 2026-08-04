@@ -1,7 +1,12 @@
 # Changelog - Blinkii's Portraits
 
 ## [ver. 1.57] - 04.08.2026
+### 🐛 FIX
+- FIX - [Portraits]: A portrait no longer stays black when the unit model is still loading, it keeps the previous texture and retries.
 ### 🔧 UPDATE
+- UPDATE - [Party]: Party portraits now listen to their own unit only and follow the unit when the group is reordered, instead of reacting to every unit in the game.
+- UPDATE - [Portraits]: Hidden portraits no longer do any update work and catch up once they become visible again.
+- UPDATE - [Boss]: The boss unit check is skipped outside of encounters.
 - UPDATE - [Profiles]: Profile import and export now use the game's own encoding API, which drops two embedded libraries from the addon.
 - UPDATE - [Profiles]: Export strings use the new prefix !BP2!, older strings are recognised and ask you to export the profile again.
 - UPDATE - [Profiles]: Author, name and version of an import string are shown as soon as it is pasted instead of after pressing accept, and only for the entries the profile actually contains.

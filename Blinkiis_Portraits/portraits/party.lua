@@ -15,8 +15,10 @@ local partyEvents = {
 	"UNIT_NAME_UPDATE",
 }
 
--- forwards "unit" attribute changes of header-based frames (EllesmereUI) to the portrait
-local function HookHeaderUnitChanges(parent)
+-- Forwards "unit" attribute changes of the party button to its portrait. Every unit frame addon that
+-- reorders its party frames through secure attributes fires this, so the unit filtered events follow
+-- the reordering instead of falling back to unfiltered registration.
+local function HookParentUnitChanges(parent)
 	if parent._bpUnitHooked then return end
 	parent._bpUnitHooked = true
 
@@ -25,6 +27,9 @@ local function HookHeaderUnitChanges(parent)
 
 		local portrait = self._bpPortrait
 		if not portrait then return end
+
+		portrait.unit = BLINKIISPORTRAITS:ResolvePortraitUnit(portrait)
+		BLINKIISPORTRAITS:ApplyUnitEvents(portrait)
 
 		local onEvent = portrait:GetScript("OnEvent")
 		if onEvent then onEvent(portrait, "ForceUpdate") end
@@ -66,15 +71,16 @@ local function SetupPartyPortrait(key, parent, parentFrame, unitFallback, demo)
 		parentFrame = parentFrame,
 		events = partyEvents,
 		isGroup = true,
+		isDynamicUnit = true,
 		demo = demo,
 		isHeaderUnit = isHeaderUnit,
 		unitFallback = unitFallback,
 		cellFlag = BLINKIISPORTRAITS.Cell,
 	})
 
-	if portrait and isHeaderUnit then
+	if portrait then
 		parent._bpPortrait = portrait
-		HookHeaderUnitChanges(parent)
+		HookParentUnitChanges(parent)
 	end
 end
 
