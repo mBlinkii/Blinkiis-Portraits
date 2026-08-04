@@ -427,6 +427,10 @@ BLINKIISPORTRAITS.options = {
 			image = BLINKIISPORTRAITS.Logo,
 			imageWidth = 512,
 			imageHeight = 128,
+			-- the standalone dialog already carries the addon name in its title, only ElvUI needs the banner
+			hidden = function(info)
+				return info.appName ~= "ElvUI"
+			end,
 		},
 		general_group = {
 			order = 2,
