@@ -16,7 +16,7 @@
   |
   <a href="https://github.com/mBlinkii/Blinkiis-Portraits/issues">Feature Requests</a>
   |
-  <a href="https://discord.gg/AE9XebMU49">Discord</a>
+  <a href="https://discord.gg/ZScRCUyqjY">Discord</a>
 </p>
 
 ![Blinkiis Portraits banner](./logo.png)
@@ -127,7 +127,7 @@ For the full history, see [CHANGELOG.md](./CHANGELOG.md).
 Feedback, bug reports, and feature ideas are welcome:
 
 - Open an issue on [GitHub](https://github.com/mBlinkii/Blinkiis-Portraits/issues)
-- Share feedback on [Discord](https://discord.gg/AE9XebMU49)
+- Share feedback on [Discord](https://discord.gg/ZScRCUyqjY)
 
 If you enjoy the addon, starring the repository helps a lot.
 

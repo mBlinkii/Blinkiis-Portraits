@@ -3255,7 +3255,7 @@ BLINKIISPORTRAITS.options = {
 							type = "execute",
 							name = "Discord",
 							func = function()
-								StaticPopup_Show("BLINKIISPORTRAITS_EDITBOX", nil, nil, "https://discord.com/invite/AE9XebMU49")
+								StaticPopup_Show("BLINKIISPORTRAITS_EDITBOX", nil, nil, "https://discord.com/invite/ZScRCUyqjY")
 							end,
 						},
 					},
