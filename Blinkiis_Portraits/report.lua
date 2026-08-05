@@ -110,6 +110,7 @@ local function BuildAddonSection()
 	AddRow(rows, "ElvUI Options", YesNo(BLINKIISPORTRAITS.db.global.elvui_options))
 	AddRow(rows, "Import/Export API", YesNo(hasEncoding), not hasEncoding)
 	AddRow(rows, "Debug Log", YesNo(BLINKIISPORTRAITS.DebugEnabled))
+	AddRow(rows, "JiberishIcons", YesNo(BLINKIISPORTRAITS.JI))
 	AddRow(rows, "Cached Boss IDs", tostring(CountBossIDs()))
 
 	return { title = "AddOn Info", rows = rows }
@@ -399,7 +400,9 @@ local function CreateReportWindow()
 	local frame = CreateFrame("Frame", "BP_ReportFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	frame:SetSize(WINDOW_WIDTH, MIN_WINDOW_HEIGHT)
 	frame:SetPoint("CENTER")
-	frame:SetFrameStrata("DIALOG")
+	-- same strata as the AceGUI options window, otherwise the report opens behind it
+	frame:SetFrameStrata("FULLSCREEN_DIALOG")
+	frame:SetToplevel(true)
 	frame:SetMovable(true)
 	frame:EnableMouse(true)
 	frame:RegisterForDrag("LeftButton")
@@ -482,4 +485,5 @@ function BLINKIISPORTRAITS:ShowReport()
 
 	window.scroll:SetVerticalScroll(0)
 	window:Show()
+	window:Raise()
 end

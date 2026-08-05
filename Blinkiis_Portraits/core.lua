@@ -32,6 +32,7 @@ BLINKIISPORTRAITS.BBF = nil
 BLINKIISPORTRAITS.EUI = nil
 BLINKIISPORTRAITS.STUF = nil
 BLINKIISPORTRAITS.DF = nil
+BLINKIISPORTRAITS.JI = nil
 BLINKIISPORTRAITS.CachedBossIDs = {}
 BLINKIISPORTRAITS.DebugEnabled = false
 
@@ -146,6 +147,7 @@ local function CheckAddons()
 	BLINKIISPORTRAITS.EUI = IsAddOnLoaded("EllesmereUI")
 	BLINKIISPORTRAITS.STUF = IsAddOnLoaded("Stuf")
 	BLINKIISPORTRAITS.DF = IsAddOnLoaded("DandersFrames")
+	BLINKIISPORTRAITS.JI = IsAddOnLoaded("ElvUI_JiberishIcons")
 end
 
 local isDelayedUpdateScheduled = false
@@ -230,6 +232,9 @@ local function CreatePartyWatcher()
 end
 
 function BLINKIISPORTRAITS:PLAYER_ENTERING_WORLD()
+	-- JiberishIcons builds its style packs on its own ADDON_LOADED, which can run after ours
+	if BLINKIISPORTRAITS.JI then BLINKIISPORTRAITS:SetupJiberishClassIcons() end
+
 	C_Timer_After(0.5, BLINKIISPORTRAITS.LoadPortraits)
 end
 

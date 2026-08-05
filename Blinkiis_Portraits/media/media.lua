@@ -1,4 +1,13 @@
+local _G = _G
+local format = format
+local pairs = pairs
+local strsub = strsub
+local hooksecurefunc = hooksecurefunc
+
 local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits", true)
+
+local JIBERISH_PREFIX = "ji_"
+local JIBERISH_LABEL = "|cff1784d1JI|r"
 
 local texCoords = {
 	WARRIOR = { 0, 0, 0, 0.125, 0.125, 0, 0.125, 0.125 },
@@ -333,4 +342,58 @@ function BLINKIISPORTRAITS:UpdateCustomClassIcons()
 			}
 		end
 	end
+end
+
+local jiberishKeys = {}
+local isJiberishSetup = false
+
+-- JiberishIcons exposes its addon table as a plain global, the engine sits in slot 1
+local function GetJiberishEngine()
+	local engine = _G.ElvUI_JiberishIcons
+	local JI = engine and engine[1]
+	if not (JI and JI.mergedStylePacks and JI.mergedStylePacks.class and JI.mergedStylePacks.class.styles) then return end
+	return JI
+end
+
+-- JiberishIcons class sheets use the same 8 texcoord layout as the built-in ones
+function BLINKIISPORTRAITS:UpdateJiberishClassIcons()
+	local JI = GetJiberishEngine()
+	if not JI then return end
+
+	for key in pairs(jiberishKeys) do
+		BLINKIISPORTRAITS.media.class[key] = nil
+		jiberishKeys[key] = nil
+	end
+
+	local pack = JI.mergedStylePacks.class
+
+	for style, data in pairs(pack.styles) do
+		local key = JIBERISH_PREFIX .. style
+		jiberishKeys[key] = true
+
+		BLINKIISPORTRAITS.media.class[key] = {
+			texture = (data.path or pack.path) .. style,
+			texCoords = texCoords,
+			name = format("%s %s", JIBERISH_LABEL, data.name or style),
+		}
+	end
+end
+
+local function OnJiberishStylePacksMerged()
+	BLINKIISPORTRAITS:UpdateJiberishClassIcons()
+
+	-- the prefix check also catches a style that was just deleted and is gone from the media table
+	local selected = BLINKIISPORTRAITS.db.profile.misc.class_icon
+	if selected and strsub(selected, 1, #JIBERISH_PREFIX) == JIBERISH_PREFIX then BLINKIISPORTRAITS:LoadPortraits() end
+end
+
+function BLINKIISPORTRAITS:SetupJiberishClassIcons()
+	if isJiberishSetup then return end
+
+	local JI = GetJiberishEngine()
+	if not JI then return end
+
+	isJiberishSetup = true
+	hooksecurefunc(JI, "MergeStylePacks", OnJiberishStylePacksMerged)
+	BLINKIISPORTRAITS:UpdateJiberishClassIcons()
 end

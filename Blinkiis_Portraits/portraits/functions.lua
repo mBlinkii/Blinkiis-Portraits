@@ -966,7 +966,8 @@ function BLINKIISPORTRAITS:SetupUnitPortrait(opts)
 	portrait.db = settings
 	portrait.size = settings.size
 	portrait.point = settings.point
-	portrait.useClassIcon = db.misc.class_icon ~= "none"
+	-- a selected style can vanish when custom or JiberishIcons packs are deleted
+	portrait.useClassIcon = db.misc.class_icon ~= "none" and mediaClass[db.misc.class_icon] ~= nil
 	portrait.realUnit = opts.type
 
 	if opts.isGroup then

@@ -1,5 +1,13 @@
 # Changelog - Blinkii's Portraits
 
+## [ver. 1.58] - 05.08.2026
+### 🐛 FIX
+- FIX - [Class-Icons]: A class icon style that no longer exists is ignored instead of breaking the portrait.
+### 🔧 UPDATE
+- UPDATE - [Options]: The About tab no longer prints the whole diagnostic report, it now has a button that opens the report window.
+### ✨ NEW
+- NEW - [Class-Icons]: All class icon styles of JiberishUI Icons, including your own custom style packs, are offered in the class icon dropdown and follow along when you add or delete a pack.
+
 ## [ver. 1.57] - 04.08.2026
 ### 🐛 FIX
 - FIX - [Portraits]: A portrait no longer stays black when the unit model is still loading, it keeps the previous texture and retries.

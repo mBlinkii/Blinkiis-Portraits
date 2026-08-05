@@ -3448,17 +3448,14 @@ BLINKIISPORTRAITS.options = {
 							order = 1,
 							type = "description",
 							fontSize = "medium",
-							name = L["Attach this to your bug report. The same text is shown by /bp report."],
+							name = L["Opens a snapshot of your settings to attach to a bug report, ready to copy or screenshot. The same window is shown by /bp report."],
 						},
-						text = {
+						show = {
 							order = 2,
-							type = "input",
-							name = "",
-							multiline = 20,
-							width = "full",
-							set = false,
-							get = function()
-								return BLINKIISPORTRAITS:GetReportText()
+							type = "execute",
+							name = L["Show Report"],
+							func = function()
+								BLINKIISPORTRAITS:ShowReport()
 							end,
 						},
 					},
