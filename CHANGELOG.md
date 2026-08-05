@@ -1,16 +1,9 @@
 # Changelog - Blinkii's Portraits
 
-## [ver. 1.58] - 05.08.2026
-### 🐛 FIX
-- FIX - [Class-Icons]: A class icon style that no longer exists is ignored instead of breaking the portrait.
-### 🔧 UPDATE
-- UPDATE - [Options]: The About tab no longer prints the whole diagnostic report, it now has a button that opens the report window.
-### ✨ NEW
-- NEW - [Class-Icons]: All class icon styles of JiberishUI Icons, including your own custom style packs, are offered in the class icon dropdown and follow along when you add or delete a pack.
-
-## [ver. 1.57] - 04.08.2026
+## [ver. 1.56] - 05.08.2026
 ### 🐛 FIX
 - FIX - [Portraits]: A portrait no longer stays black when the unit model is still loading, it keeps the previous texture and retries.
+- FIX - [Class-Icons]: A class icon style that no longer exists is ignored instead of breaking the portrait.
 ### 🔧 UPDATE
 - UPDATE - [Party]: Party portraits now listen to their own unit only and follow the unit when the group is reordered, instead of reacting to every unit in the game.
 - UPDATE - [Portraits]: Hidden portraits no longer do any update work and catch up once they become visible again.
@@ -19,17 +12,16 @@
 - UPDATE - [Profiles]: Export strings use the new prefix !BP2!, older strings are recognised and ask you to export the profile again.
 - UPDATE - [Profiles]: Author, name and version of an import string are shown as soon as it is pasted instead of after pressing accept, and only for the entries the profile actually contains.
 - UPDATE - [Profiles]: Exporting without an author filled in now uses your character name instead of Unknown.
+- UPDATE - [System]: The embedded libraries are now fetched fresh for every release, so each build ships the current versions.
+- UPDATE - [System]: Removed the unused Ace3 modules AceTimer, AceBucket, AceHook, AceComm, AceTab and AceSerializer from the package.
 ### ✨ NEW
 - NEW - [ElvUI]: The options are shown inside the ElvUI options menu again and the addon is listed in the ElvUI plugin list.
 - NEW - [Options]: Add a toggle to disable the ElvUI options integration.
 - NEW - [Options]: Every portrait now has a copy dropdown to take over the settings of another portrait, except its enable state and parent frame.
 - NEW - [ElvUI]: The addon logo is shown above the options and the addon icon on the button in the ElvUI menu.
-- NEW - [System]: New command /bp report opens a window with a diagnostic snapshot for bug reports, ready to copy or screenshot, and the same text sits in the About tab.
-
-## [ver. 1.56] - 30.07.2026
-### 🔧 UPDATE
-- UPDATE - [System]: Ace3, LibSerialize and LibDeflate are now fetched fresh for every release, so each build ships the current library versions.
-- UPDATE - [System]: Removed the unused Ace3 modules AceTimer, AceBucket, AceHook, AceComm, AceTab and AceSerializer from the package.
+- NEW - [System]: New command /bp report opens a window with a diagnostic snapshot for bug reports, ready to copy or screenshot, and a button in the About tab opens the same window.
+- NEW - [Class-Icons]: All class icon styles of JiberishUI Icons, including your own custom style packs, are offered in the class icon dropdown and follow along when you add or delete a pack.
+- NEW - [DandersFrames]: Basic support for DandersFrames, party frames can be selected as a parent frame.
 
 ## [ver. 1.55] - 25.07.2026
 ### 🐛 FIX

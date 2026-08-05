@@ -125,7 +125,7 @@ BLINKIISPORTRAITS.unitFrames = {
 		boss = "Stuf.units.boss",
 		arena = "Stuf.units.arena",
 	},
-		df = {
+	df = {
 		player = nil,
 		target = nil,
 		pet = nil,
