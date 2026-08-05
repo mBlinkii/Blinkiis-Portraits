@@ -26,5 +26,6 @@ elvui.lua
 cmd.lua
 defaults.lua
 popup.lua
+report.lua
 media\media.lua
 portraits\load_portraits.xml

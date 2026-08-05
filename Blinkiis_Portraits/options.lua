@@ -3448,7 +3448,7 @@ BLINKIISPORTRAITS.options = {
 							order = 1,
 							type = "description",
 							fontSize = "medium",
-							name = L["Attach this to your bug report. The same text is printed to chat by /bp report."],
+							name = L["Attach this to your bug report. The same text is shown by /bp report."],
 						},
 						text = {
 							order = 2,
