@@ -44,6 +44,30 @@ do
 	BLINKIISPORTRAITS.Classic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 end
 
+-- secret API (WoW 12.1), missing on the classic clients the other TOCs target
+local issecretvalue = _G.issecretvalue
+local ShouldUnitIdentityBeSecret = _G.C_Secrets and _G.C_Secrets.ShouldUnitIdentityBeSecret
+
+--- Returns true if an API result is a secret value.
+-- Secret values must never be compared, concatenated or used as a table key.
+function BLINKIISPORTRAITS:IsSecretValue(value)
+	return (issecretvalue and issecretvalue(value)) or false
+end
+
+--- Returns the value unchanged, or nil if it is a secret value.
+function BLINKIISPORTRAITS:SafeValue(value)
+	if issecretvalue and issecretvalue(value) then return nil end
+
+	return value
+end
+
+--- Returns true while the identity of a unit is hidden (enemy players in combat).
+-- The unit APIs still answer for such a unit, but every result is a secret value,
+-- so the whole unit has to be treated as unknown instead of guarding each call.
+function BLINKIISPORTRAITS:IsSecretUnit(unit)
+	return (unit and ShouldUnitIdentityBeSecret and ShouldUnitIdentityBeSecret(unit)) or false
+end
+
 -- portraits
 BLINKIISPORTRAITS.Portraits = {}
 

@@ -44,7 +44,7 @@ local function PrintPortraitState()
 				key,
 				(parent and (parent:GetName() or "unnamed")) or "none",
 				tostring(unit),
-				tostring(unit and UnitExists(unit) or false),
+				tostring(unit and BLINKIISPORTRAITS:SafeValue(UnitExists(unit)) or false),
 				tostring(portrait:IsShown())
 			)
 		)

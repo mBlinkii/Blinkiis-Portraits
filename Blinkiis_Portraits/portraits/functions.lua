@@ -27,7 +27,9 @@ local ipairs, type = ipairs, type
 local select = select
 local strfind, strsplit, strsub = strfind, strsplit, strsub
 local tostring = tostring
+-- secret API (WoW 12.1), missing on the classic clients the other TOCs target
 local issecretvalue = issecretvalue
+local ShouldUnitIdentityBeSecret = _G.C_Secrets and _G.C_Secrets.ShouldUnitIdentityBeSecret
 
 local mediaPortraits = BLINKIISPORTRAITS.media.portraits
 local mediaExtra = BLINKIISPORTRAITS.media.extra
@@ -38,8 +40,7 @@ local playerFaction = nil
 -- default texcoords, shared to avoid per-call table allocations
 local DEFAULT_COORDS = { 0, 1, 0, 1 }
 
---- Returns true if the given value is a secret value (WoW 12.x API), false otherwise.
-function BLINKIISPORTRAITS:IsSecretValue(value)
+local function IsSecretValue(value)
 	return (issecretvalue and issecretvalue(value)) or false
 end
 
@@ -50,9 +51,15 @@ local function SafeValue(value)
 	return value
 end
 
+-- True while the identity of a unit is hidden (enemy players in combat). Every identity API
+-- answers such a unit with a secret value, so nothing is read from it at all.
+local function IsSecretUnit(unit)
+	return (unit and ShouldUnitIdentityBeSecret and ShouldUnitIdentityBeSecret(unit)) or false
+end
+
 -- reaction helper (shared by GetUnitColor and UpdateExtraTexture)
 local function GetReactionType(unit)
-	local reaction = (unit == "pet") and UnitReaction("player", unit) or UnitReaction(unit, "player")
+	local reaction = SafeValue((unit == "pet") and UnitReaction("player", unit) or UnitReaction(unit, "player"))
 	return (reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly")) or "enemy"
 end
 
@@ -90,21 +97,27 @@ local function UpdatePortrait(portrait, unit, isNewUnit)
 	end
 
 	local forceDesaturate = BLINKIISPORTRAITS.db.profile.misc.desaturate
+	local portraitUnit = unit or portrait.unit
+	local useClassIcon = portrait.useClassIcon and not portrait.db.ignoreClassIcons and portrait.isPlayer
 
-	if (portrait.useClassIcon and not portrait.db.ignoreClassIcons) and (portrait.isPlayer or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit or portrait.unit))) then
-		portrait.unitClass = portrait.unitClass or select(2, UnitClass(unit or portrait.unit))
-		portrait.texCoords = portrait.classIcons.texCoords[portrait.unitClass]
+	if useClassIcon and not portrait.unitClass and not IsSecretUnit(portraitUnit) then portrait.unitClass = select(2, UnitClass(portraitUnit)) end
+
+	-- a secret unit yields no class, so the class icon is skipped and the game texture takes over
+	local texCoords = (useClassIcon and portrait.unitClass) and portrait.classIcons.texCoords[portrait.unitClass] or nil
+	portrait.texCoords = texCoords
+
+	if texCoords then
 		portrait.portrait:SetTexture(portrait.classIcons.texture, "CLAMP", "CLAMP", "TRILINEAR")
 		portrait.portraitSet = nil
 
 		if BLINKIISPORTRAITS.DebugEnabled then
-			BLINKIISPORTRAITS:Debug(format("  texture <- class icon | unit: %s | class: %s", tostring(unit or portrait.unit), tostring(portrait.unitClass)))
+			BLINKIISPORTRAITS:Debug(format("  texture <- class icon | unit: %s | class: %s", tostring(portraitUnit), tostring(portrait.unitClass)))
 		end
 	else
 		local isAvailable = portrait.state
 
 		-- keep the previous texture while the model is not ready, unless there is nothing worth keeping
-		if isAvailable or isNewUnit or not portrait.portraitSet then SetPortraitTexture(portrait.portrait, unit or portrait.unit, true) end
+		if isAvailable or isNewUnit or not portrait.portraitSet then SetPortraitTexture(portrait.portrait, portraitUnit, true) end
 
 		portrait.portraitSet = isAvailable
 
@@ -116,18 +129,14 @@ local function UpdatePortrait(portrait, unit, isNewUnit)
 
 		if BLINKIISPORTRAITS.DebugEnabled then
 			BLINKIISPORTRAITS:Debug(
-				format("  texture <- SetPortraitTexture | unit: %s | available: %s | result: %s", tostring(unit or portrait.unit), tostring(isAvailable), tostring(portrait.portrait:GetTexture()))
+				format("  texture <- SetPortraitTexture | unit: %s | available: %s | result: %s", tostring(portraitUnit), tostring(isAvailable), tostring(portrait.portrait:GetTexture()))
 			)
 		end
 	end
 
 	BLINKIISPORTRAITS:UpdateDesaturated(portrait, (forceDesaturate or portrait.isDead))
 
-	BLINKIISPORTRAITS:Mirror(
-		portrait.portrait,
-		portrait.isPlayer and portrait.db.mirror,
-		(portrait.isPlayer and (portrait.useClassIcon and not portrait.db.ignoreClassIcons)) and portrait.texCoords
-	)
+	BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, texCoords)
 end
 
 function Update(portrait, event, eventUnit)
@@ -136,9 +145,10 @@ function Update(portrait, event, eventUnit)
 		return
 	end
 
-	local unit = (portrait.demo and not UnitExists(portrait.unit)) and "player" or portrait.unit
+	local unit = (portrait.demo and not SafeValue(UnitExists(portrait.unit))) and "player" or portrait.unit
+	-- a secret GUID must not be compared, the placeholder keeps the change detection working
 	local guid = UnitGUID(unit)
-	guid = BLINKIISPORTRAITS:IsSecretValue(guid) and " " or guid
+	guid = IsSecretValue(guid) and " " or guid
 
 	local isNewUnit = portrait.lastGUID ~= guid
 	local isAvailable = (IsUnitModelReadyForUI(unit) and UnitIsConnected(unit) and UnitIsVisible(unit)) or false
@@ -151,7 +161,7 @@ function Update(portrait, event, eventUnit)
 				tostring(portrait:GetName()),
 				tostring(event),
 				tostring(unit),
-				tostring(UnitExists(unit) and true or false),
+				tostring(SafeValue(UnitExists(unit)) and true or false),
 				tostring(isAvailable),
 				tostring(isNewUnit),
 				tostring(hasStateChanged)
@@ -160,15 +170,18 @@ function Update(portrait, event, eventUnit)
 	end
 
 	if hasStateChanged then
-		local class = select(2, UnitClass(unit))
-		local isPlayer = UnitIsPlayer(unit) or (BLINKIISPORTRAITS.Retail and UnitInPartyIsAI(unit))
+		-- a secret unit is always a player, but of unknown class, and nothing else may be read from it
+		local isSecret = IsSecretUnit(unit)
+		local class = not isSecret and select(2, UnitClass(unit)) or nil
+		local isPlayer = isSecret or SafeValue(UnitIsPlayer(unit)) or (BLINKIISPORTRAITS.Retail and SafeValue(UnitInPartyIsAI(unit))) or false
 
+		portrait.isSecret = isSecret
 		portrait.isPlayer = isPlayer
 		portrait.unitClass = class
 		portrait.lastGUID = guid
 		portrait.state = isAvailable
 		portrait.unit = unit
-		portrait.isDead = UnitIsDead(unit)
+		portrait.isDead = not isSecret and SafeValue(UnitIsDead(unit)) or false
 
 		local color = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead, isPlayer, class)
 		if color then portrait.texture:SetVertexColor(color.r, color.g, color.b, color.a or 1) end
@@ -450,6 +463,8 @@ end
 function BLINKIISPORTRAITS:GetExtraClassification(portrait)
 	local unit = portrait.unit
 	if not unit then return nil end
+	-- a secret unit is a player, so it never carries a rare/elite/boss overlay
+	if portrait.isSecret then return nil end
 
 	local npcID = GetNpcID(portrait.lastGUID)
 	local classification = SafeValue(UnitClassification(unit))
@@ -521,7 +536,7 @@ function BLINKIISPORTRAITS:GetUnitColor(unit, isDead, isPlayer, class)
 
 	if isPlayer then
 		if profile.misc.force_reaction then
-			local unitFaction = UnitFactionGroup(unit)
+			local unitFaction = SafeValue(UnitFactionGroup(unit))
 			playerFaction = playerFaction or UnitFactionGroup("player")
 
 			local reactionType = (playerFaction == unitFaction) and "friendly" or "enemy"

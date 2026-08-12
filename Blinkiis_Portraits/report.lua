@@ -205,27 +205,31 @@ end
 local function BuildTargetSection()
 	local rows = {}
 
-	if not UnitExists("target") then
+	if not BLINKIISPORTRAITS:SafeValue(UnitExists("target")) then
 		AddRow(rows, "Target", "none")
 
 		return { title = "Target Info", rows = rows }
 	end
 
+	local isSecret = BLINKIISPORTRAITS:IsSecretUnit("target")
 	local guid = UnitGUID("target")
+
 	targetProbe.unit = "target"
 	targetProbe.type = "report"
-	targetProbe.isPlayer = UnitIsPlayer("target") or false
+	targetProbe.isSecret = isSecret
+	targetProbe.isPlayer = isSecret or BLINKIISPORTRAITS:SafeValue(UnitIsPlayer("target")) or false
 	targetProbe.lastGUID = BLINKIISPORTRAITS:IsSecretValue(guid) and " " or guid
 
+	AddRow(rows, "Secret Unit", YesNo(isSecret))
 	AddRow(rows, "Name", Safe(UnitName("target")))
 	AddRow(rows, "Is Player", YesNo(targetProbe.isPlayer))
-	AddRow(rows, "Class", tostring(select(2, UnitClass("target")) or "-"))
+	AddRow(rows, "Class", isSecret and "secret" or (select(2, UnitClass("target")) or "-"))
 	AddRow(rows, "Level", Safe(UnitLevel("target")))
 	AddRow(rows, "Classification", Safe(UnitClassification("target")))
 	AddRow(rows, "Extra Texture", tostring(BLINKIISPORTRAITS:GetExtraClassification(targetProbe) or "none"))
 	AddRow(rows, "Reaction", Safe(UnitReaction("target", "player")))
-	AddRow(rows, "Dead", YesNo(UnitIsDead("target")))
-	AddRow(rows, "In Vehicle", YesNo(_G.UnitInVehicle and _G.UnitInVehicle("target")))
+	AddRow(rows, "Dead", YesNo(BLINKIISPORTRAITS:SafeValue(UnitIsDead("target"))))
+	AddRow(rows, "In Vehicle", YesNo(_G.UnitInVehicle and BLINKIISPORTRAITS:SafeValue(_G.UnitInVehicle("target"))))
 	AddRow(rows, "GUID", Safe(guid))
 
 	return { title = "Target Info", rows = rows }

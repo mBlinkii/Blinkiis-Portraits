@@ -1,5 +1,14 @@
 # Changelog - Blinkii's Portraits
 
+## [ver. 1.57] - 12.08.2026
+### 🐛 FIX
+- FIX - [Portraits]: Portraits threw an error on units whose identity is hidden in combat.
+- FIX - [Colors]: The class and faction color of a unit with a hidden identity fell back to an error instead of the default color.
+- FIX - [System]: The diagnostic report and /bp status threw an error while such a unit was targeted.
+### 🔧 UPDATE
+- UPDATE - [System]: Updated for WoW 12.1.
+- UPDATE - [Class-Icons]: A unit whose class cannot be read now shows the game portrait instead of an incomplete class icon.
+
 ## [ver. 1.56] - 05.08.2026
 ### 🐛 FIX
 - FIX - [Portraits]: A portrait no longer stays black when the unit model is still loading, it keeps the previous texture and retries.
