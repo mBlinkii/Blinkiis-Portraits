@@ -3,16 +3,15 @@ local GetAddOnMetadata = _G.C_AddOns and _G.C_AddOns.GetAddOnMetadata or _G.GetA
 local IsAddOnLoaded = _G.C_AddOns and _G.C_AddOns.IsAddOnLoaded or _G.IsAddOnLoaded
 local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits", true)
 
--- addon name and namespace
 local addonName, _ = ...
 local C_Timer_After = C_Timer.After
 local CreateFrame = CreateFrame
 local InCombatLockdown = InCombatLockdown
 local ipairs = ipairs
+local select = select
 
 BLINKIISPORTRAITS = LibStub("AceAddon-3.0"):NewAddon("BLINKIISPORTRAITS", "AceEvent-3.0", "AceConsole-3.0")
 
--- settings
 BLINKIISPORTRAITS.Version = GetAddOnMetadata(addonName, "Version")
 BLINKIISPORTRAITS.Name = L["|CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits"]
 BLINKIISPORTRAITS.Icon = "|TInterface\\Addons\\Blinkiis_Portraits\\media\\icon_32.tga:16:16|t"
@@ -48,30 +47,35 @@ end
 local issecretvalue = _G.issecretvalue
 local ShouldUnitIdentityBeSecret = _G.C_Secrets and _G.C_Secrets.ShouldUnitIdentityBeSecret
 
---- Returns true if an API result is a secret value.
--- Secret values must never be compared, concatenated or used as a table key.
+local UnitClass, UnitInPartyIsAI, UnitIsPlayer = UnitClass, UnitInPartyIsAI, UnitIsPlayer
+
 function BLINKIISPORTRAITS:IsSecretValue(value)
 	return (issecretvalue and issecretvalue(value)) or false
 end
 
---- Returns the value unchanged, or nil if it is a secret value.
 function BLINKIISPORTRAITS:SafeValue(value)
 	if issecretvalue and issecretvalue(value) then return nil end
 
 	return value
 end
 
---- Returns true while the identity of a unit is hidden (enemy players in combat).
--- The unit APIs still answer for such a unit, but every result is a secret value,
--- so the whole unit has to be treated as unknown instead of guarding each call.
+-- enemy players in combat: every identity API answers them with a secret value
 function BLINKIISPORTRAITS:IsSecretUnit(unit)
 	return (unit and ShouldUnitIdentityBeSecret and ShouldUnitIdentityBeSecret(unit)) or false
 end
 
--- portraits
+-- a secret unit is always a player, its class token stays secret
+function BLINKIISPORTRAITS:GetUnitIdentity(unit)
+	if not unit then return false, false, nil end
+
+	local isSecret = BLINKIISPORTRAITS:IsSecretUnit(unit)
+	local isPlayer = isSecret or BLINKIISPORTRAITS:SafeValue(UnitIsPlayer(unit)) or (BLINKIISPORTRAITS.Retail and BLINKIISPORTRAITS:SafeValue(UnitInPartyIsAI(unit))) or false
+
+	return isSecret, isPlayer, select(2, UnitClass(unit))
+end
+
 BLINKIISPORTRAITS.Portraits = {}
 
--- addonCompartment functions
 function BLINKIISPORTRAITS_OnAddonCompartmentClick()
 	LibStub("AceConfigDialog-3.0"):Open("BLINKIISPORTRAITS")
 end
@@ -87,20 +91,15 @@ function BLINKIISPORTRAITS_OnAddonCompartmentOnLeave()
 	GameTooltip:Hide()
 end
 
--- default functions
 function BLINKIISPORTRAITS:Print(...)
 	print(BLINKIISPORTRAITS.Name .. ":", ...)
 end
 
---- Prints a debug message, but only while debug output is enabled ("/bp log").
--- Call sites in hot paths (per event, per portrait) must additionally guard with
--- "if BLINKIISPORTRAITS.DebugEnabled then" so no strings are built while it is off.
 function BLINKIISPORTRAITS:Debug(...)
 	if not BLINKIISPORTRAITS.DebugEnabled then return end
 	print("|cff888888[BP]|r", ...)
 end
 
--- Counts all entries of a table (also works for non-array tables).
 local function GetTableLength(tbl)
 	local count = 0
 	for _ in pairs(tbl) do
@@ -206,10 +205,7 @@ function BLINKIISPORTRAITS:DelayedUpdate()
 	C_Timer_After(0.5, BLINKIISPORTRAITS.LoadPortraits)
 end
 
--- party portraits attach to the unit buttons of the configured unit frame addon. Header-based
--- addons (EllesmereUI, Cell, EQOL, NDui, ...) create those buttons lazily as the group grows,
--- so the portraits must be created again whenever the roster changes - PLAYER_ENTERING_WORLD
--- alone would miss every button that appears after login.
+-- header based addons create their unit buttons lazily, so every roster change needs a re-check
 local partyWatcherEvents = {
 	"GROUP_ROSTER_UPDATE",
 	"PARTY_MEMBER_ENABLE",
@@ -218,9 +214,7 @@ local partyWatcherEvents = {
 
 local isPartyRefreshScheduled = false
 
---- Re-initializes the party portraits if unit buttons without a portrait exist.
--- Throttled to coalesce roster event bursts and deferred while in combat, because
--- anchoring and secure attributes cannot be changed during combat lockdown.
+-- throttled to coalesce event bursts, deferred while anchors and attributes are locked
 function BLINKIISPORTRAITS:RefreshPartyPortraits()
 	if isPartyRefreshScheduled then return end
 	isPartyRefreshScheduled = true
@@ -241,7 +235,6 @@ local function OnPartyWatcherEvent()
 	BLINKIISPORTRAITS:RefreshPartyPortraits()
 end
 
--- Creates the single event watcher that keeps the party portraits in sync with the roster.
 local function CreatePartyWatcher()
 	if BLINKIISPORTRAITS.PartyWatcher then return end
 
@@ -290,15 +283,12 @@ function BLINKIISPORTRAITS:OnInitialize()
 	BLINKIISPORTRAITS:RegisterEvent("PLAYER_ENTERING_WORLD")
 	CreatePartyWatcher()
 
-	-- add options profile tab
 	BLINKIISPORTRAITS.options.args.profile_group.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(BLINKIISPORTRAITS.db)
 
 	BLINKIISPORTRAITS.CachedBossIDs = BLINKIISPORTRAITS.db.global.BossIDs or {}
 
-	-- callback on profile change
 	self.db.RegisterCallback(self, "OnProfileChanged", BLINKIISPORTRAITS.LoadPortraits)
 
-	-- fix for suf
 	if BLINKIISPORTRAITS.SUF and IsSUFParent() and ShadowUF then
 		if not BLINKIISPORTRAITS.SUF_Hook then
 			hooksecurefunc(ShadowUF.Units, "CheckUnitStatus", BLINKIISPORTRAITS.DelayedUpdate)
@@ -310,28 +300,23 @@ function BLINKIISPORTRAITS:OnInitialize()
 		end
 	end
 
-	--fix for EQOL
 	if BLINKIISPORTRAITS.EQOL then
 		local EQOL_GF = (_G.EnhanceQoL and _G.EnhanceQoL.Aura and _G.EnhanceQoL.Aura.UF) and _G.EnhanceQoL.Aura.UF.GroupFrames or nil
 		if EQOL_GF then hooksecurefunc(EQOL_GF, "RefreshGroupIcons", BLINKIISPORTRAITS.DelayedUpdate) end
 	end
 
-	-- elvui options integration
 	BLINKIISPORTRAITS:SetupElvUIOptions()
 
-	-- elvui demo mode
 	if BLINKIISPORTRAITS.ELVUI and ElvUI then
 		local UF = ElvUI[1]:GetModule("UnitFrames")
 		hooksecurefunc(UF, "ToggleForceShowGroupFrames", UpdateGroupPortraits)
 		hooksecurefunc(UF, "HeaderConfig", UpdateGroupPortraits)
 	end
 
-	-- update custom class icons
 	BLINKIISPORTRAITS:UpdateCustomClassIcons()
 
-	-- db updates/ fixes
 	if not BLINKIISPORTRAITS.db.profile.db_Update or BLINKIISPORTRAITS.db.profile.db_Update < 1.30 then
-		-- extract a numeric version even if the version string contains suffixes (e.g. "1.52.1" or "1.52-beta")
+		-- the version string can carry suffixes ("1.52.1", "1.52-beta")
 		local versionNumber = tonumber(BLINKIISPORTRAITS.Version) or tonumber(strmatch(BLINKIISPORTRAITS.Version or "", "%d+%.?%d*")) or 1.30
 		BLINKIISPORTRAITS.db.profile.db_Update = versionNumber
 		BLINKIISPORTRAITS.db.profile.misc.zoom = 0

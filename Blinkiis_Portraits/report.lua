@@ -4,12 +4,12 @@ local UIParent = UIParent
 local format = format
 local ipairs, pairs = ipairs, pairs
 local concat, sort = table.concat, table.sort
-local select, tostring = select, tostring
+local tostring = tostring
 local max, min = math.max, math.min
 local GetBuildInfo, GetLocale, GetInstanceInfo = GetBuildInfo, GetLocale, GetInstanceInfo
 local InCombatLockdown = InCombatLockdown
-local UnitClass, UnitClassification, UnitExists, UnitGUID = UnitClass, UnitClassification, UnitExists, UnitGUID
-local UnitIsDead, UnitIsPlayer, UnitLevel, UnitName, UnitReaction = UnitIsDead, UnitIsPlayer, UnitLevel, UnitName, UnitReaction
+local UnitClassification, UnitExists, UnitGUID = UnitClassification, UnitExists, UnitGUID
+local UnitIsDead, UnitLevel, UnitName, UnitReaction = UnitIsDead, UnitLevel, UnitName, UnitReaction
 local GetAddOnMetadata = _G.C_AddOns and _G.C_AddOns.GetAddOnMetadata or _G.GetAddOnMetadata
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits", true)
@@ -26,7 +26,6 @@ local WARN_COLOR = { r = 1, g = 0.4, b = 0.4 }
 
 local reportUnits = { "player", "target", "targettarget", "pet", "focus", "party", "boss", "arena" }
 
--- flag on the namespace mapped to the addon folder the version is read from
 local unitFrameAddons = {
 	{ flag = "ELVUI", name = "ElvUI" },
 	{ flag = "SUF", name = "ShadowedUnitFrames" },
@@ -44,14 +43,14 @@ local unitFrameAddons = {
 
 local flavors = { "Retail", "Mists", "Cata", "Wrath", "Classic" }
 
--- reused so a repeated report does not allocate; GetExtraClassification only reads these fields
+-- reused so a repeated report does not allocate
 local targetProbe = {}
 
 local function YesNo(value)
 	return value and "yes" or "no"
 end
 
--- API results can be secret values (WoW 12.x), which must not be concatenated
+-- a secret value must not be concatenated
 local function Safe(value)
 	if BLINKIISPORTRAITS:IsSecretValue(value) then return "secret" end
 
@@ -93,8 +92,7 @@ local function CountBossIDs()
 	return count
 end
 
--- "ok" = the model was ready, "pending" = the old texture was kept and a retry is running,
--- "icon" = a class icon replaced the unit portrait
+-- ok = model ready, pending = old texture kept and retrying, icon = class icon instead
 local function GetModelState(portrait)
 	if portrait.portraitSet == nil then return "icon" end
 
@@ -211,19 +209,19 @@ local function BuildTargetSection()
 		return { title = "Target Info", rows = rows }
 	end
 
-	local isSecret = BLINKIISPORTRAITS:IsSecretUnit("target")
+	local isSecret, isPlayer, class = BLINKIISPORTRAITS:GetUnitIdentity("target")
 	local guid = UnitGUID("target")
 
 	targetProbe.unit = "target"
 	targetProbe.type = "report"
 	targetProbe.isSecret = isSecret
-	targetProbe.isPlayer = isSecret or BLINKIISPORTRAITS:SafeValue(UnitIsPlayer("target")) or false
+	targetProbe.isPlayer = isPlayer
 	targetProbe.lastGUID = BLINKIISPORTRAITS:IsSecretValue(guid) and " " or guid
 
 	AddRow(rows, "Secret Unit", YesNo(isSecret))
 	AddRow(rows, "Name", Safe(UnitName("target")))
-	AddRow(rows, "Is Player", YesNo(targetProbe.isPlayer))
-	AddRow(rows, "Class", isSecret and "secret" or (select(2, UnitClass("target")) or "-"))
+	AddRow(rows, "Is Player", YesNo(isPlayer))
+	AddRow(rows, "Class", BLINKIISPORTRAITS:IsSecretValue(class) and "secret" or (class or "-"))
 	AddRow(rows, "Level", Safe(UnitLevel("target")))
 	AddRow(rows, "Classification", Safe(UnitClassification("target")))
 	AddRow(rows, "Extra Texture", tostring(BLINKIISPORTRAITS:GetExtraClassification(targetProbe) or "none"))
@@ -235,8 +233,6 @@ local function BuildTargetSection()
 	return { title = "Target Info", rows = rows }
 end
 
---- Collects a diagnostic snapshot of addon, client, unit frame, portrait and target state.
--- @return an array of { title, rows = { { label, value, warn } } }
 function BLINKIISPORTRAITS:BuildReport()
 	return {
 		BuildAddonSection(),
@@ -248,7 +244,6 @@ function BLINKIISPORTRAITS:BuildReport()
 	}
 end
 
---- Returns the diagnostic report as plain text, without any color codes, ready to be pasted.
 function BLINKIISPORTRAITS:GetReportText()
 	local lines = {}
 
@@ -376,8 +371,7 @@ local function GetScrollBar(scroll)
 	return scroll.ScrollBar or _G[(scroll:GetName() or "") .. "ScrollBar"]
 end
 
--- ElvUI only skins AceGUI windows, this one is a plain frame - run the same skin functions over its
--- widgets so it does not sit next to the skinned options looking like a different addon
+-- ElvUI only skins AceGUI windows, so its skin functions are run over this plain frame
 local function SkinWindow(frame)
 	if not BLINKIISPORTRAITS.ELVUI then return end
 
@@ -404,7 +398,7 @@ local function CreateReportWindow()
 	local frame = CreateFrame("Frame", "BP_ReportFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	frame:SetSize(WINDOW_WIDTH, MIN_WINDOW_HEIGHT)
 	frame:SetPoint("CENTER")
-	-- same strata as the AceGUI options window, otherwise the report opens behind it
+	-- otherwise the report opens behind the AceGUI options window
 	frame:SetFrameStrata("FULLSCREEN_DIALOG")
 	frame:SetToplevel(true)
 	frame:SetMovable(true)
@@ -473,7 +467,6 @@ local function CreateReportWindow()
 	return frame
 end
 
---- Opens the diagnostic window, rebuilding its content from the current state.
 function BLINKIISPORTRAITS:ShowReport()
 	window = window or CreateReportWindow()
 
@@ -483,7 +476,7 @@ function BLINKIISPORTRAITS:ShowReport()
 
 	LayoutReport(window.content, window.content:GetWidth())
 
-	-- grow with the content so the report needs no scrolling, capped at the screen height
+	-- grows with the content, capped at the screen height
 	local height = window.content:GetHeight() + TOP_INSET + BOTTOM_INSET
 	window:SetHeight(min(max(height, MIN_WINDOW_HEIGHT), UIParent:GetHeight() * MAX_HEIGHT_RATIO))
 

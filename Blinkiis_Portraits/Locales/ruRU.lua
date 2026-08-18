@@ -1,11 +1,11 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("Blinkiis_Portraits", "ruRU")
 if not L then return end
 --Translator ZamestoTV
--------- core.lua --------
+-- core.lua
 L["|CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits"] = "|CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits"
 L["|CFFF7DC6FVer. %s|r"] = "|CFFF7DC6FВер. %s|r"
 
--------- options.lua --------
+-- options.lua
 L["General"] = "Общие"
 L["The profile you tried to import already exists. Choose a new name or accept to overwrite the existing profile."] = "Профиль, который вы пытались импортировать, уже существует. Выберите новое имя или согласитесь на перезапись существующего профиля."
 L["Misc"] = "Разное"
@@ -250,13 +250,13 @@ L["Space Color"] = "Цвет Космоса"
 L["Climbing Plant"] = "Вьющиеся растения"
 L["Climbing Plant V2"] = "Вьющиеся растения V2"
 
--------- popup.lua --------
+-- popup.lua
 L["Some settings require you to reload the interface. Do you want to do that now?"] = "Некоторые настройки требуют перезагрузки интерфейса. Хотите сделать это сейчас?"
 L["Yes"] = "Да"
 L["No"] = "Нет"
 L["Are you sure you want to delete this |cffff0000%s|r icon?"] = "Вы уверены, что хотите удалить эту иконку |cffff0000%s|r?"
 
--------- media.lua --------
+-- media.lua
 L["Blizzard"] = "Blizzard"
 L["Blizzard HD"] = "Blizzard HD"
 L["New Style"] = "Новый стиль"

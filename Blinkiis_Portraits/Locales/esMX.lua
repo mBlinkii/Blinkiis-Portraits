@@ -1,11 +1,11 @@
 ﻿local L = LibStub("AceLocale-3.0"):NewLocale("Blinkiis_Portraits", "esMX")
 if not L then return end
 
--------- core.lua --------
+-- core.lua
 L["|CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits"] = "|CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits"
 L["|CFFF7DC6FVer. %s|r"] = "|CFFF7DC6FVer. %s|r"
 
--------- options.lua --------
+-- options.lua
 L["General"] = "General"
 L["The profile you tried to import already exists. Choose a new name or accept to overwrite the existing profile."] = "The profile you tried to import already exists. Choose a new name or accept to overwrite the existing profile."
 L["Misc"] = "Misc"
@@ -250,13 +250,13 @@ L["Space Color"] = "Space Color"
 L["Climbing Plant"] = "Climbing Plant"
 L["Climbing Plant V2"] = "Climbing Plant V2"
 
--------- popup.lua --------
+-- popup.lua
 L["Some settings require you to reload the interface. Do you want to do that now?"] = "Some settings require you to reload the interface. Do you want to do that now?"
 L["Yes"] = "Yes"
 L["No"] = "No"
 L["Are you sure you want to delete this |cffff0000%s|r icon?"] = "Are you sure you want to delete this |cffff0000%s|r icon?"
 
--------- media.lua --------
+-- media.lua
 L["Blizzard"] = "Blizzard"
 L["Blizzard HD"] = "Blizzard HD"
 L["New Style"] = "New Style"

@@ -1,6 +1,5 @@
 local playerEvents = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_CONNECTION", "UNIT_ENTERED_VEHICLE", "UNIT_EXITING_VEHICLE", "UNIT_EXITED_VEHICLE", "VEHICLE_UPDATE" }
 
---- Creates or updates the player portrait based on the current profile settings.
 function BLINKIISPORTRAITS:InitializePlayerPortrait()
 	if not BLINKIISPORTRAITS.db.profile.player.enable then return end
 
@@ -18,7 +17,6 @@ function BLINKIISPORTRAITS:InitializePlayerPortrait()
 	})
 end
 
---- Removes the player portrait.
 function BLINKIISPORTRAITS:KillPlayerPortrait()
 	BLINKIISPORTRAITS:KillPortrait("player")
 end

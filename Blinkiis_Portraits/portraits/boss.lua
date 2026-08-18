@@ -2,8 +2,6 @@ local format = format
 
 local bossEvents = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_TARGETABLE_CHANGED", "INSTANCE_ENCOUNTER_ENGAGE_UNIT" }
 
---- Creates or updates the boss portraits (boss1-boss5) based on the current profile settings.
--- @param demo toggles the demo mode of the portraits
 function BLINKIISPORTRAITS:InitializeBossPortrait(demo)
 	if not BLINKIISPORTRAITS.db.profile.boss.enable then return end
 
@@ -30,7 +28,6 @@ function BLINKIISPORTRAITS:InitializeBossPortrait(demo)
 	end
 end
 
---- Removes all boss portraits.
 function BLINKIISPORTRAITS:KillBossPortrait()
 	for i = 1, 5 do
 		BLINKIISPORTRAITS:KillPortrait("boss" .. i)

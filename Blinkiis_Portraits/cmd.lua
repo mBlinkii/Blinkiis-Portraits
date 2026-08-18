@@ -9,8 +9,6 @@ local UnitExists = UnitExists
 
 local debugUnits = { "player", "target", "targettarget", "pet", "focus", "party", "boss", "arena" }
 
-
--- Prints which unit frame addon was resolved for every unit type.
 local function PrintResolvedUnitFrames()
 	BLINKIISPORTRAITS:Print("Resolved unit frames:")
 
@@ -22,8 +20,6 @@ local function PrintResolvedUnitFrames()
 	end
 end
 
--- Prints parent frame and resolved unit of every active portrait.
--- A missing portrait texture on an otherwise visible frame means the unit could not be resolved.
 local function PrintPortraitState()
 	local keys = {}
 	for key in pairs(BLINKIISPORTRAITS.Portraits) do
@@ -51,16 +47,12 @@ local function PrintPortraitState()
 	end
 end
 
--- Toggles the live event log and reports the new state.
 local function ToggleDebugLog()
 	BLINKIISPORTRAITS.DebugEnabled = not BLINKIISPORTRAITS.DebugEnabled
 
 	BLINKIISPORTRAITS:Print(BLINKIISPORTRAITS.DebugEnabled and "Debug log |cff40ff40ON|r - run /bp log again to stop." or "Debug log |cffff4040OFF|r.")
 end
 
---- Handles the /bp chat command. Without arguments the options dialog is opened.
--- @param msg "report" prints the diagnostic snapshot, "debug" prints the short frame overview,
---            "log" toggles the live event log
 function BLINKIISPORTRAITS:CMD(msg)
 	local command = strlower(strtrim(msg or ""))
 
@@ -78,7 +70,6 @@ end
 
 BLINKIISPORTRAITS:RegisterChatCommand("bp", "CMD")
 
--- reloadui shortcut
 if not SlashCmdList.RELOADUI then
 	SLASH_RELOADUI1 = "/rl"
 	SLASH_RELOADUI2 = "/reloadui"

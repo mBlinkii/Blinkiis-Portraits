@@ -185,7 +185,7 @@ local function copyTable(src, dest)
 	if type(src) == "table" then
 		for k, v in pairs(src) do
 			if type(v) == "table" then
-				-- try to index the key first so that the metatable creates the defaults, if set, and use that table
+				-- index the key first so the metatable creates the defaults
 				v = copyTable(v, dest[k])
 			end
 			dest[k] = v
@@ -296,7 +296,7 @@ local function ReadImportString(import)
 	return importInfos.display ~= previous
 end
 
--- AceConfigDialog only wires OnEnterPressed, so reading the string while it is typed needs the text change script of the widget itself
+-- AceConfigDialog only wires OnEnterPressed, so live reading needs the widget's own text change script
 local function ConstructImportEditBox()
 	local widget = AceGUI:Create("MultiLineEditBox")
 	widget.type = IMPORT_EDITBOX
@@ -377,7 +377,7 @@ for _, unit in ipairs(UNIT_ORDER) do
 	copySources[unit], copySorting[unit] = sources, sorting
 end
 
--- the defaults table drives the key set, so units without a key (boss/arena have no forceExtra) never receive it
+-- the defaults drive the key set, so units without a key never receive it
 local function CopyUnitSettings(source, target)
 	local from, to, keys = BLINKIISPORTRAITS.db.profile[source], BLINKIISPORTRAITS.db.profile[target], BLINKIISPORTRAITS.defaults.profile[target]
 	if not (from and to and keys) then return end
@@ -427,7 +427,7 @@ BLINKIISPORTRAITS.options = {
 			image = BLINKIISPORTRAITS.Logo,
 			imageWidth = 512,
 			imageHeight = 128,
-			-- the standalone dialog already carries the addon name in its title, only ElvUI needs the banner
+			-- only ElvUI needs the banner, the standalone dialog has the name in its title
 			hidden = function(info)
 				return info.appName ~= "ElvUI"
 			end,
@@ -3256,7 +3256,6 @@ BLINKIISPORTRAITS.options = {
 								return not importInfos.success
 							end,
 							func = function()
-								-- import the profile
 								if importInfos and importInfos.success then
 									if importInfos.exists then
 										StaticPopup_Show("BLINKIISPORTRAITS_PROFILE_EXISTS", "", nil, importInfos.name)
@@ -3308,18 +3307,15 @@ BLINKIISPORTRAITS.options = {
 								return not C_EncodingUtil
 							end,
 							func = function()
-								-- get profile infos
 								exportProfile.author = ExportValue(exportProfile.author, UnitName("player"))
 								exportProfile.name = ExportValue(exportProfile.name, BLINKIISPORTRAITS.db:GetCurrentProfile())
 								exportProfile.version = ExportValue(exportProfile.version, "1.0")
 								exportProfile.bp_version = BLINKIISPORTRAITS.Version
 
-								-- get profile db
 								exportProfile.profile = BLINKIISPORTRAITS.db.profile
 
 								exportString = EncodeProfile(exportProfile)
 
-								-- cleanup the export data
 								exportProfile = {}
 							end,
 						},
@@ -3331,7 +3327,7 @@ BLINKIISPORTRAITS.options = {
 							width = "full",
 							set = false,
 							get = function(info, import)
-								return exportString -- return the finished export string
+								return exportString
 							end,
 						},
 						info = {

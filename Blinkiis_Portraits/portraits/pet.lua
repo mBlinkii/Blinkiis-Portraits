@@ -1,6 +1,5 @@
 local petEvents = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_EXITED_VEHICLE", "VEHICLE_UPDATE", "UNIT_EXITING_VEHICLE", "UNIT_ENTERED_VEHICLE" }
 
---- Creates or updates the pet portrait based on the current profile settings.
 function BLINKIISPORTRAITS:InitializePetPortrait()
 	if not BLINKIISPORTRAITS.db.profile.pet.enable then return end
 
@@ -18,7 +17,6 @@ function BLINKIISPORTRAITS:InitializePetPortrait()
 	})
 end
 
---- Removes the pet portrait.
 function BLINKIISPORTRAITS:KillPetPortrait()
 	BLINKIISPORTRAITS:KillPortrait("pet")
 end

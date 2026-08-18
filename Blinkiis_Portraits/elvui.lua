@@ -9,8 +9,7 @@ local ELVUI_OPTIONS_ORDER = 100
 
 local isOptionsInserted = false
 
--- ElvUI writes key and func onto every group it lists in its left menu, and AceConfigRegistry
--- rejects key. Its own root table takes those writes, args stays the shared one.
+-- ElvUI stamps key onto every menu group and AceConfigRegistry rejects it, so ElvUI gets its own root
 local function BuildElvUIOptions()
 	local options = {}
 	for key, value in pairs(BLINKIISPORTRAITS.options) do
@@ -22,7 +21,7 @@ local function BuildElvUIOptions()
 	return options
 end
 
--- ElvUI keeps its options in the on demand addon ElvUI_Options, LibElvUIPlugin fires this once it is loaded
+-- ElvUI_Options is loaded on demand, LibElvUIPlugin fires this once it is there
 local function InsertOptions()
 	if isOptionsInserted then return end
 
@@ -33,7 +32,7 @@ local function InsertOptions()
 	isOptionsInserted = true
 end
 
--- The args table is shared with the standalone AceConfig registration, so both dialogs stay in sync
+-- args is shared with the standalone registration so both dialogs stay in sync
 function BLINKIISPORTRAITS:SetupElvUIOptions()
 	if not BLINKIISPORTRAITS.ELVUI then return end
 	if not BLINKIISPORTRAITS.db.global.elvui_options then return end

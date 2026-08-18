@@ -1,6 +1,5 @@
 local targetTargetEvents = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_CONNECTION", "UNIT_TARGET", "PLAYER_TARGET_CHANGED", "INSTANCE_ENCOUNTER_ENGAGE_UNIT" }
 
---- Creates or updates the target-of-target portrait based on the current profile settings.
 function BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
 	if not BLINKIISPORTRAITS.db.profile.targettarget.enable then return end
 
@@ -18,7 +17,6 @@ function BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
 	})
 end
 
---- Removes the target-of-target portrait.
 function BLINKIISPORTRAITS:KillTargetTargetPortrait()
 	BLINKIISPORTRAITS:KillPortrait("targettarget")
 end

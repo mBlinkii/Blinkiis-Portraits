@@ -1,11 +1,11 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("Blinkiis_Portraits", "zhCN")
 if not L then return end
 
--------- core.lua --------
+-- core.lua
 L["|CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits"] = "|CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r 头像"
 L["|CFFF7DC6FVer. %s|r"] = "|CFFF7DC6F版本 %s|r"
 
--------- options.lua --------
+-- options.lua
 L["General"] = "通用"
 L["The profile you tried to import already exists. Choose a new name or accept to overwrite the existing profile."] = "您尝试导入的配置文件已存在。请选择新名称或接受覆盖现有配置文件。"
 L["Misc"] = "杂项"
@@ -250,13 +250,13 @@ L["Space Color"] = "太空颜色"
 L["Climbing Plant"] = "攀爬植物"
 L["Climbing Plant V2"] = "攀爬植物 V2"
 
--------- popup.lua --------
+-- popup.lua
 L["Some settings require you to reload the interface. Do you want to do that now?"] = "某些设置需要你重新加载界面。你现在要这么做吗？"
 L["Yes"] = "是"
 L["No"] = "否"
 L["Are you sure you want to delete this |cffff0000%s|r icon?"] = "你确定要删除这个 |cffff0000%s|r 图标吗？"
 
--------- media.lua --------
+-- media.lua
 L["Blizzard"] = "暴雪"
 L["Blizzard HD"] = "暴雪高清"
 L["New Style"] = "新风格"

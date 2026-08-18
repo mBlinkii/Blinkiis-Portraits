@@ -1,5 +1,12 @@
 # Changelog - Blinkii's Portraits
 
+## [ver. 1.58] - 18.08.2026
+### 🐛 FIX
+- FIX - [ElvUI]: Portraits stayed empty on the latest ElvUI development version, which renamed the unit token of its unit frames.
+### 🔧 UPDATE
+- UPDATE - [Colors]: A unit whose identity is hidden keeps its class color again, using the game's class color instead of the one configured in the options.
+- UPDATE - [Unitframes]: The unit of a unit frame is read from every known source now, which makes reordered and header based frames resolve their unit more reliably.
+
 ## [ver. 1.57] - 12.08.2026
 ### 🐛 FIX
 - FIX - [Portraits]: Portraits threw an error on units whose identity is hidden in combat.

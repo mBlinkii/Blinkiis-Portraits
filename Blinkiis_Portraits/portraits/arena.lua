@@ -3,8 +3,6 @@ local tinsert = tinsert
 local arenaEvents = { "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED", "UNIT_MODEL_CHANGED", "UNIT_CONNECTION", "ARENA_OPPONENT_UPDATE", "UPDATE_ACTIVE_BATTLEFIELD", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE" }
 if BLINKIISPORTRAITS.Retail then tinsert(arenaEvents, "ARENA_PREP_OPPONENT_SPECIALIZATIONS") end
 
---- Creates or updates the arena portraits (arena1-arena5) based on the current profile settings.
--- @param demo toggles the demo mode of the portraits
 function BLINKIISPORTRAITS:InitializeArenaPortrait(demo)
 	if not BLINKIISPORTRAITS.db.profile.arena.enable then return end
 
@@ -28,7 +26,6 @@ function BLINKIISPORTRAITS:InitializeArenaPortrait(demo)
 	end
 end
 
---- Removes all arena portraits.
 function BLINKIISPORTRAITS:KillArenaPortrait()
 	for i = 1, 5 do
 		BLINKIISPORTRAITS:KillPortrait("arena" .. i)
