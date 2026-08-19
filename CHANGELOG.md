@@ -1,6 +1,6 @@
 # Changelog - Blinkii's Portraits
 
-## [ver. 1.58] - 18.08.2026
+## [ver. 1.58] - 19.08.2026
 ### 🐛 FIX
 - FIX - [ElvUI]: Portraits stayed empty on the latest ElvUI development version, which renamed the unit token of its unit frames.
 ### 🔧 UPDATE
