@@ -59,12 +59,12 @@ function BLINKIISPORTRAITS:SafeValue(value)
 	return value
 end
 
--- enemy players in combat: every identity API answers them with a secret value
+-- hidden identity in combat: enemy players and hostile NPCs in dungeons, every identity API answers them with a secret value
 function BLINKIISPORTRAITS:IsSecretUnit(unit)
 	return (unit and ShouldUnitIdentityBeSecret and ShouldUnitIdentityBeSecret(unit)) or false
 end
 
--- a secret unit is always a player, its class token stays secret
+-- a secret unit is hostile but not necessarily a player, only icon and mirror handling treat it as one
 function BLINKIISPORTRAITS:GetUnitIdentity(unit)
 	if not unit then return false, false, nil end
 

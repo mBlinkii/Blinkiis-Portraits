@@ -1,5 +1,10 @@
 # Changelog - Blinkii's Portraits
 
+## [ver. 1.59] - 22.08.2026
+### 🐛 FIX
+- FIX - [Colors]: Hostile NPCs in dungeons showed a class color instead of the enemy color, because the game hides their identity just like that of an enemy player.
+- FIX - [Textures]: The rare, elite and boss texture stayed hidden on units whose identity is hidden.
+
 ## [ver. 1.58] - 19.08.2026
 ### 🐛 FIX
 - FIX - [ElvUI]: Portraits stayed empty on the latest ElvUI development version, which renamed the unit token of its unit frames.

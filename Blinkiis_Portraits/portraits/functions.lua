@@ -12,6 +12,7 @@ local UnitFactionGroup = UnitFactionGroup
 local UnitGUID = UnitGUID
 local UnitIsConnected = UnitIsConnected
 local UnitIsDead = UnitIsDead
+local UnitIsPlayer = UnitIsPlayer
 local UnitIsUnit = UnitIsUnit
 local UnitIsVisible = UnitIsVisible
 -- not present on the long dead classic clients the TBC/Wrath TOCs target
@@ -24,9 +25,11 @@ local ipairs, type = ipairs, type
 local select = select
 local strfind, strsplit, strsub = strfind, strsplit, strsub
 local tostring = tostring
+local CreateColor = CreateColor
 -- secret API (WoW 12.1), missing on the classic clients the other TOCs target
 local issecretvalue = issecretvalue
 local C_ClassColor_GetClassColor = _G.C_ClassColor and _G.C_ClassColor.GetClassColor
+local EvalColor = _G.C_CurveUtil and _G.C_CurveUtil.EvaluateColorFromBoolean
 
 local mediaPortraits = BLINKIISPORTRAITS.media.portraits
 local mediaExtra = BLINKIISPORTRAITS.media.extra
@@ -174,7 +177,7 @@ function Update(portrait, event, eventUnit)
 		portrait.unit = unit
 		portrait.isDead = not isSecret and SafeValue(UnitIsDead(unit)) or false
 
-		local color = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead, isPlayer, class)
+		local color = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead, isPlayer, class, isSecret)
 		SetColor(portrait.texture, color)
 
 		UpdatePortrait(portrait, unit, isNewUnit)
@@ -416,9 +419,9 @@ end
 function BLINKIISPORTRAITS:GetExtraClassification(portrait)
 	local unit = portrait.unit
 	if not unit then return nil end
-	-- a secret unit is a player, so it never carries a rare/elite/boss overlay
-	if portrait.isSecret then return nil end
 
+	-- a secret unit can be a hostile NPC, so only a proven player skips the NPC checks
+	local isKnownPlayer = portrait.isPlayer and not portrait.isSecret
 	local npcID = GetNpcID(portrait.lastGUID)
 	local classification = SafeValue(UnitClassification(unit))
 	if classification == "worldboss" then classification = "boss" end
@@ -426,8 +429,8 @@ function BLINKIISPORTRAITS:GetExtraClassification(portrait)
 	local isBoss = (portrait.type == "boss")
 		or (npcID and BLINKIISPORTRAITS.CachedBossIDs[npcID])
 		or (classification == "boss")
-		or (not portrait.isPlayer and IsBossTokenUnit(unit))
-		or (not portrait.isPlayer and SafeValue(UnitLevel(unit)) == -1)
+		or (not isKnownPlayer and IsBossTokenUnit(unit))
+		or (not isKnownPlayer and SafeValue(UnitLevel(unit)) == -1)
 
 	if isBoss then
 		-- learn the npcID for reliable pre-pull detection in future sessions
@@ -479,7 +482,18 @@ local function GetClassColor(class)
 	return BLINKIISPORTRAITS.db.profile.colors.class[class]
 end
 
-function BLINKIISPORTRAITS:GetUnitColor(unit, isDead, isPlayer, class)
+-- a secret unit is hostile but can still be an NPC, so let the API branch on the identity instead of guessing
+local function GetSecretColor(unit, colors, class)
+	local enemy = colors.reaction.enemy
+	local c = EvalColor and GetClassColor(class)
+
+	-- EvaluateColorFromBoolean only takes a plain colorRGBA, and a class color carries no alpha
+	if not c or IsSecretValue(c.r) then return enemy end
+
+	return EvalColor(UnitIsPlayer(unit), CreateColor(c.r, c.g, c.b, c.a or 1), CreateColor(enemy.r, enemy.g, enemy.b, enemy.a or 1))
+end
+
+function BLINKIISPORTRAITS:GetUnitColor(unit, isDead, isPlayer, class, isSecret)
 	if not unit then return end
 
 	local profile = BLINKIISPORTRAITS.db.profile
@@ -488,6 +502,8 @@ function BLINKIISPORTRAITS:GetUnitColor(unit, isDead, isPlayer, class)
 	if isDead then return colors.misc.death, isPlayer end
 
 	if profile.misc.force_default then return colors.misc.default, isPlayer end
+
+	if isSecret then return (profile.misc.force_reaction and colors.reaction.enemy or GetSecretColor(unit, colors, class)), isPlayer end
 
 	if isPlayer then
 		if profile.misc.force_reaction then
