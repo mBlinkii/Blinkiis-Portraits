@@ -1,5 +1,9 @@
 # Changelog - Blinkii's Portraits
 
+## [ver. 1.60] - 23.08.2026
+### 🐛 FIX
+- FIX - [Colors]: Enemy players in combat were colored with the enemy color instead of their class color.
+
 ## [ver. 1.59] - 22.08.2026
 ### 🐛 FIX
 - FIX - [Colors]: Hostile NPCs in dungeons showed a class color instead of the enemy color, because the game hides their identity just like that of an enemy player.

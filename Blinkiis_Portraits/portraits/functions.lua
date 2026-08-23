@@ -473,11 +473,11 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, force)
 	end
 end
 
--- a secret class token cannot be a table key, the game API answers it with a secret color
+-- a secret class token must not be nil checked or used as a table key, the game API answers it with a secret color
 local function GetClassColor(class)
-	if not class then return nil end
-
 	if IsSecretValue(class) then return C_ClassColor_GetClassColor and C_ClassColor_GetClassColor(class) end
+
+	if not class then return nil end
 
 	return BLINKIISPORTRAITS.db.profile.colors.class[class]
 end
@@ -487,10 +487,10 @@ local function GetSecretColor(unit, colors, class)
 	local enemy = colors.reaction.enemy
 	local c = EvalColor and GetClassColor(class)
 
-	-- EvaluateColorFromBoolean only takes a plain colorRGBA, and a class color carries no alpha
-	if not c or IsSecretValue(c.r) then return enemy end
+	if not c then return enemy end
 
-	return EvalColor(UnitIsPlayer(unit), CreateColor(c.r, c.g, c.b, c.a or 1), CreateColor(enemy.r, enemy.g, enemy.b, enemy.a or 1))
+	-- secret color channels are fine here, only the alpha has to stay plain
+	return EvalColor(UnitIsPlayer(unit), CreateColor(c.r, c.g, c.b, 1), CreateColor(enemy.r, enemy.g, enemy.b, 1))
 end
 
 function BLINKIISPORTRAITS:GetUnitColor(unit, isDead, isPlayer, class, isSecret)
