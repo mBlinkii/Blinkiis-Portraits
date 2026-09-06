@@ -17,6 +17,7 @@ local UnitIsDead = UnitIsDead
 local UnitIsPlayer = UnitIsPlayer
 local UnitIsUnit = UnitIsUnit
 local UnitIsVisible = UnitIsVisible
+local UnitCanAttack = UnitCanAttack
 -- not present on the long dead classic clients the TBC/Wrath TOCs target
 local IsUnitModelReadyForUI = IsUnitModelReadyForUI or function() return true end
 local UnitLevel = UnitLevel
@@ -67,9 +68,15 @@ local function SetColor(texture, color)
 	texture:SetVertexColor(color.r, color.g, color.b, (IsSecretValue(alpha) or alpha == nil) and 1 or alpha)
 end
 
-local function GetReactionType(unit)
+-- UnitReaction stays readable on most secret units, only when it does not the API branches on attackability
+local function GetReactionColor(unit, colors)
 	local reaction = SafeValue((unit == "pet") and UnitReaction("player", unit) or UnitReaction(unit, "player"))
-	return (reaction and ((reaction <= 3) and "enemy" or (reaction == 4) and "neutral" or "friendly")) or "enemy"
+	if reaction then return colors.reaction[(reaction <= 3 and "enemy") or (reaction == 4 and "neutral") or "friendly"] end
+
+	local enemy, friendly = colors.reaction.enemy, colors.reaction.friendly
+	if not EvalColor then return enemy end
+
+	return EvalColor(UnitCanAttack("player", unit), CreateColor(enemy.r, enemy.g, enemy.b, 1), CreateColor(friendly.r, friendly.g, friendly.b, 1))
 end
 
 local function GetCastIcon(unit)
@@ -261,7 +268,7 @@ function Update(portrait, event, eventUnit)
 	end
 
 	if hasStateChanged then
-		local isSecret, isPlayer, class = BLINKIISPORTRAITS:GetUnitIdentity(unit)
+		local isSecret, isPlayer, class = BLINKIISPORTRAITS:GetUnitIdentity(unit, portrait.type == "arena")
 
 		portrait.isSecret = isSecret
 		portrait.isPlayer = isPlayer
@@ -564,7 +571,7 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, force)
 	if isExtraUnit and not color then
 		local colors = BLINKIISPORTRAITS.db.profile.colors
 		if BLINKIISPORTRAITS.db.profile.misc.force_reaction then
-			color = colors.reaction[GetReactionType(portrait.unit)]
+			color = GetReactionColor(portrait.unit, colors)
 		else
 			color = colors.classification[c]
 		end
@@ -588,15 +595,15 @@ local function GetClassColor(class)
 	return BLINKIISPORTRAITS.db.profile.colors.class[class]
 end
 
--- a secret unit is hostile but can still be an NPC, so let the API branch on the identity instead of guessing
+-- a secret unit can be a friendly NPC too, so start from its reaction and let the API branch on the identity instead of guessing
 local function GetSecretColor(unit, colors, class)
-	local enemy = colors.reaction.enemy
+	local fallback = GetReactionColor(unit, colors)
 	local c = EvalColor and GetClassColor(class)
 
-	if not c then return enemy end
+	if not c then return fallback end
 
 	-- secret color channels are fine here, only the alpha has to stay plain
-	return EvalColor(UnitIsPlayer(unit), CreateColor(c.r, c.g, c.b, 1), CreateColor(enemy.r, enemy.g, enemy.b, 1))
+	return EvalColor(UnitIsPlayer(unit), CreateColor(c.r, c.g, c.b, 1), CreateColor(fallback.r, fallback.g, fallback.b, 1))
 end
 
 function BLINKIISPORTRAITS:GetUnitColor(unit, isDead, isPlayer, class, isSecret)
@@ -609,7 +616,7 @@ function BLINKIISPORTRAITS:GetUnitColor(unit, isDead, isPlayer, class, isSecret)
 
 	if profile.misc.force_default then return colors.misc.default, isPlayer end
 
-	if isSecret then return (profile.misc.force_reaction and colors.reaction.enemy or GetSecretColor(unit, colors, class)), isPlayer end
+	if isSecret then return (profile.misc.force_reaction and GetReactionColor(unit, colors) or GetSecretColor(unit, colors, class)), isPlayer end
 
 	if isPlayer then
 		if profile.misc.force_reaction then
@@ -622,7 +629,7 @@ function BLINKIISPORTRAITS:GetUnitColor(unit, isDead, isPlayer, class, isSecret)
 			return GetClassColor(class) or colors.misc.default
 		end
 	else
-		return colors.reaction[GetReactionType(unit)], isPlayer
+		return GetReactionColor(unit, colors), isPlayer
 	end
 end
 

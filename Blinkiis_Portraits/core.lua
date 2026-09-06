@@ -56,12 +56,13 @@ function BLINKIISPORTRAITS:IsSecretUnit(unit)
 	return (unit and ShouldUnitIdentityBeSecret and ShouldUnitIdentityBeSecret(unit)) or false
 end
 
--- a secret unit is hostile but not necessarily a player, only icon and mirror handling treat it as one
-function BLINKIISPORTRAITS:GetUnitIdentity(unit)
+-- a secret unit hides its class token, but UnitIsPlayer usually stays plain: never infer the one from the other
+-- isPlayerFrame marks a frame that can only ever hold players, the single case where an unreadable unit is one
+function BLINKIISPORTRAITS:GetUnitIdentity(unit, isPlayerFrame)
 	if not unit then return false, false, nil end
 
 	local isSecret = BLINKIISPORTRAITS:IsSecretUnit(unit)
-	local isPlayer = isSecret or BLINKIISPORTRAITS:SafeValue(UnitIsPlayer(unit)) or (BLINKIISPORTRAITS.Retail and BLINKIISPORTRAITS:SafeValue(UnitInPartyIsAI(unit))) or false
+	local isPlayer = BLINKIISPORTRAITS:SafeValue(UnitIsPlayer(unit)) or (BLINKIISPORTRAITS.Retail and BLINKIISPORTRAITS:SafeValue(UnitInPartyIsAI(unit))) or (isSecret and isPlayerFrame) or false
 
 	return isSecret, isPlayer, select(2, UnitClass(unit))
 end

@@ -4,6 +4,8 @@
 ### 🐛 FIX
 - FIX - [Colors]: Enemy players in combat were colored with the enemy color instead of their class color.
 - FIX - [Cell]: Portraits never showed up on the Cell Unit Frames player, target, target of target, focus, pet and boss frames.
+- FIX - [Colors]: Friendly NPCs inside a dungeon were colored like an enemy, because the game hides their identity there.
+- FIX - [Portraits]: A unit whose identity is hidden was mirrored and given a class icon as if it were a player, even when it was an NPC.
 ### 🔧 UPDATE
 - UPDATE - [System]: The diagnostic report lists the unit frame addon that is really loaded, so a fork shows its own name and version.
 ### ✨ NEW
