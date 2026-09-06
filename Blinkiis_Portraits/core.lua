@@ -8,6 +8,7 @@ local C_Timer_After = C_Timer.After
 local CreateFrame = CreateFrame
 local InCombatLockdown = InCombatLockdown
 local ipairs = ipairs
+local pairs = pairs
 local select = select
 
 BLINKIISPORTRAITS = LibStub("AceAddon-3.0"):NewAddon("BLINKIISPORTRAITS", "AceEvent-3.0", "AceConsole-3.0")
@@ -19,19 +20,7 @@ BLINKIISPORTRAITS.Logo = "Interface\\Addons\\Blinkiis_Portraits\\media\\logo.tga
 BLINKIISPORTRAITS.media = {}
 BLINKIISPORTRAITS.defaults = {}
 BLINKIISPORTRAITS.dialogs = {}
-BLINKIISPORTRAITS.SUF = nil
-BLINKIISPORTRAITS.ELVUI = nil
-BLINKIISPORTRAITS.PB4 = nil
-BLINKIISPORTRAITS.Cell = nil
-BLINKIISPORTRAITS.Cell_UF = nil
-BLINKIISPORTRAITS.UUF = nil
-BLINKIISPORTRAITS.NDUI = nil
-BLINKIISPORTRAITS.EQOL = nil
-BLINKIISPORTRAITS.BBF = nil
-BLINKIISPORTRAITS.EUI = nil
-BLINKIISPORTRAITS.STUF = nil
-BLINKIISPORTRAITS.DF = nil
-BLINKIISPORTRAITS.JI = nil
+BLINKIISPORTRAITS.LoadedAddons = {}
 BLINKIISPORTRAITS.CachedBossIDs = {}
 BLINKIISPORTRAITS.DebugEnabled = false
 
@@ -42,6 +31,9 @@ do
 	BLINKIISPORTRAITS.Retail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 	BLINKIISPORTRAITS.Classic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 end
+
+-- radial status bars (WoW 12.1), missing on the classic clients the other TOCs target
+BLINKIISPORTRAITS.RadialRenderMode = _G.Enum and _G.Enum.StatusBarRenderMode and _G.Enum.StatusBarRenderMode.Radial
 
 -- secret API (WoW 12.1), missing on the classic clients the other TOCs target
 local issecretvalue = _G.issecretvalue
@@ -157,20 +149,36 @@ function BLINKIISPORTRAITS:LoadDB()
 	self.db = LibStub("AceDB-3.0"):New("BlinkiisPortraitsDB", BLINKIISPORTRAITS.defaults, true)
 end
 
+-- a fork ships under its own folder but keeps the frame names of the original, so it shares its flag
+local ADDON_FOLDERS = {
+	SUF = { "ShadowedUnitFrames", "ShadowedUnitFrames-WorgenFix" },
+	ELVUI = { "ElvUI" },
+	PB4 = { "PitBull4" },
+	Cell = { "Cell" },
+	Cell_UF = { "Cell_UnitFrames" },
+	UUF = { "UnhaltedUnitFrames" },
+	NDUI = { "NDui" },
+	EQOL = { "EnhanceQoL" },
+	BBF = { "BetterBlizzFrames" },
+	EUI = { "EllesmereUI" },
+	STUF = { "Stuf" },
+	DF = { "DandersFrames" },
+	JI = { "ElvUI_JiberishIcons" },
+}
+
+local function GetLoadedAddon(folders)
+	for _, folder in ipairs(folders) do
+		if IsAddOnLoaded(folder) then return folder end
+	end
+end
+
 local function CheckAddons()
-	BLINKIISPORTRAITS.SUF = IsAddOnLoaded("ShadowedUnitFrames")
-	BLINKIISPORTRAITS.ELVUI = IsAddOnLoaded("ElvUI")
-	BLINKIISPORTRAITS.PB4 = IsAddOnLoaded("PitBull4")
-	BLINKIISPORTRAITS.Cell = IsAddOnLoaded("Cell")
-	BLINKIISPORTRAITS.Cell_UF = IsAddOnLoaded("Cell_UnitFrames")
-	BLINKIISPORTRAITS.UUF = IsAddOnLoaded("UnhaltedUnitFrames")
-	BLINKIISPORTRAITS.NDUI = IsAddOnLoaded("NDui")
-	BLINKIISPORTRAITS.EQOL = IsAddOnLoaded("EnhanceQoL")
-	BLINKIISPORTRAITS.BBF = IsAddOnLoaded("BetterBlizzFrames")
-	BLINKIISPORTRAITS.EUI = IsAddOnLoaded("EllesmereUI")
-	BLINKIISPORTRAITS.STUF = IsAddOnLoaded("Stuf")
-	BLINKIISPORTRAITS.DF = IsAddOnLoaded("DandersFrames")
-	BLINKIISPORTRAITS.JI = IsAddOnLoaded("ElvUI_JiberishIcons")
+	for flag, folders in pairs(ADDON_FOLDERS) do
+		local loaded = GetLoadedAddon(folders)
+
+		BLINKIISPORTRAITS.LoadedAddons[flag] = loaded
+		BLINKIISPORTRAITS[flag] = loaded ~= nil
+	end
 end
 
 local isDelayedUpdateScheduled = false

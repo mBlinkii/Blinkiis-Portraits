@@ -31,6 +31,15 @@ BLINKIISPORTRAITS.defaults.profile.custom = {
 
 BLINKIISPORTRAITS.defaults.profile.player = {
 	cast = false,
+	ring = {
+		mode = "none",
+		reverse = true,
+		invert = false,
+		start = 0,
+		alpha = 1,
+		baseAlpha = 0.35,
+		feather = 0.004,
+	},
 	enable = true,
 	extra = false,
 	level = 20,
@@ -47,6 +56,15 @@ BLINKIISPORTRAITS.defaults.profile.player = {
 
 BLINKIISPORTRAITS.defaults.profile.target = {
 	cast = false,
+	ring = {
+		mode = "none",
+		reverse = true,
+		invert = false,
+		start = 0,
+		alpha = 1,
+		baseAlpha = 0.35,
+		feather = 0.004,
+	},
 	enable = true,
 	extra = true,
 	forceExtra = "none",
@@ -63,6 +81,15 @@ BLINKIISPORTRAITS.defaults.profile.target = {
 
 BLINKIISPORTRAITS.defaults.profile.focus = {
 	cast = false,
+	ring = {
+		mode = "none",
+		reverse = true,
+		invert = false,
+		start = 0,
+		alpha = 1,
+		baseAlpha = 0.35,
+		feather = 0.004,
+	},
 	enable = true,
 	extra = false,
 	forceExtra = "none",
@@ -79,6 +106,15 @@ BLINKIISPORTRAITS.defaults.profile.focus = {
 
 BLINKIISPORTRAITS.defaults.profile.targettarget = {
 	cast = false,
+	ring = {
+		mode = "none",
+		reverse = true,
+		invert = false,
+		start = 0,
+		alpha = 1,
+		baseAlpha = 0.35,
+		feather = 0.004,
+	},
 	enable = true,
 	extra = false,
 	forceExtra = "none",
@@ -95,6 +131,15 @@ BLINKIISPORTRAITS.defaults.profile.targettarget = {
 
 BLINKIISPORTRAITS.defaults.profile.pet = {
 	cast = false,
+	ring = {
+		mode = "none",
+		reverse = true,
+		invert = false,
+		start = 0,
+		alpha = 1,
+		baseAlpha = 0.35,
+		feather = 0.004,
+	},
 	enable = true,
 	extra = false,
 	forceExtra = "none",
@@ -111,6 +156,15 @@ BLINKIISPORTRAITS.defaults.profile.pet = {
 
 BLINKIISPORTRAITS.defaults.profile.party = {
 	cast = false,
+	ring = {
+		mode = "none",
+		reverse = true,
+		invert = false,
+		start = 0,
+		alpha = 1,
+		baseAlpha = 0.35,
+		feather = 0.004,
+	},
 	enable = true,
 	extra = false,
 	forceExtra = "none",
@@ -127,6 +181,15 @@ BLINKIISPORTRAITS.defaults.profile.party = {
 
 BLINKIISPORTRAITS.defaults.profile.boss = {
 	cast = false,
+	ring = {
+		mode = "none",
+		reverse = true,
+		invert = false,
+		start = 0,
+		alpha = 1,
+		baseAlpha = 0.35,
+		feather = 0.004,
+	},
 	enable = true,
 	extra = true,
 	level = 20,
@@ -142,6 +205,15 @@ BLINKIISPORTRAITS.defaults.profile.boss = {
 
 BLINKIISPORTRAITS.defaults.profile.arena = {
 	cast = false,
+	ring = {
+		mode = "none",
+		reverse = true,
+		invert = false,
+		start = 0,
+		alpha = 1,
+		baseAlpha = 0.35,
+		feather = 0.004,
+	},
 	enable = true,
 	extra = false,
 	level = 20,
@@ -186,6 +258,10 @@ BLINKIISPORTRAITS.defaults.profile.colors = {
 		enemy = { r = 0.78, g = 0.12, b = 0.12, a = 1 },
 		friendly = { r = 0.17, g = 0.75, b = 0, a = 1 },
 		neutral = { r = 1.00, g = 0.70, b = 0, a = 1 },
+	},
+	ring = {
+		health = { r = 0, g = 1.00, b = 0.28, a = 1 },
+		cast = { r = 1, g = 0.84, b = 0.18, a = 1 },
 	},
 }
 

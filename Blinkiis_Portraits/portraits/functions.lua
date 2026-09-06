@@ -10,6 +10,8 @@ local UnitClassification = UnitClassification
 local UnitExists = UnitExists
 local UnitFactionGroup = UnitFactionGroup
 local UnitGUID = UnitGUID
+local UnitHealth = UnitHealth
+local UnitHealthMax = UnitHealthMax
 local UnitIsConnected = UnitIsConnected
 local UnitIsDead = UnitIsDead
 local UnitIsPlayer = UnitIsPlayer
@@ -30,6 +32,14 @@ local CreateColor = CreateColor
 local issecretvalue = issecretvalue
 local C_ClassColor_GetClassColor = _G.C_ClassColor and _G.C_ClassColor.GetClassColor
 local EvalColor = _G.C_CurveUtil and _G.C_CurveUtil.EvaluateColorFromBoolean
+-- radial ring API (WoW 12.1), missing on the classic clients the other TOCs target
+local UnitHealthMissing = _G.UnitHealthMissing
+local UnitCastingDuration = _G.UnitCastingDuration
+local UnitChannelDuration = _G.UnitChannelDuration
+local UnitEmpoweredChannelDuration = _G.UnitEmpoweredChannelDuration
+local RADIAL_RENDER_MODE = BLINKIISPORTRAITS.RadialRenderMode
+local StatusBarInterpolation = _G.Enum and _G.Enum.StatusBarInterpolation
+local StatusBarTimerDirection = _G.Enum and _G.Enum.StatusBarTimerDirection
 
 local mediaPortraits = BLINKIISPORTRAITS.media.portraits
 local mediaExtra = BLINKIISPORTRAITS.media.extra
@@ -64,6 +74,90 @@ end
 
 local function GetCastIcon(unit)
 	return select(3, UnitCastingInfo(unit)) or select(3, UnitChannelInfo(unit))
+end
+
+local function CreateRing(portrait)
+	if portrait.ring or not portrait.ringMode then return end
+
+	local ring = CreateFrame("StatusBar", nil, portrait)
+	ring:SetStatusBarTexture(portrait.textureFile)
+	ring:SetRenderMode(RADIAL_RENDER_MODE)
+	ring:Hide()
+
+	portrait.ring = ring
+end
+
+local function GetRingColor(mode)
+	local colors = BLINKIISPORTRAITS.db.profile.colors.ring
+	return (mode == "cast") and colors.cast or colors.health
+end
+
+-- the bar owns its fill texture, so it has to be read again after every SetStatusBarTexture
+local function UpdateRingTexture(portrait)
+	local ring = portrait.ring
+	if not ring then return end
+
+	local db = portrait.db.ring
+	local color = GetRingColor(portrait.ringMode)
+
+	ring:SetStatusBarTexture(portrait.textureFile)
+	ring:SetStatusBarColor(color.r, color.g, color.b, db.alpha)
+	-- SetTimerDuration keeps the range, so the max health of the health mode would stay in here
+	if portrait.ringMode == "cast" then ring:SetMinMaxValues(0, 1) end
+
+	local fill = ring:GetStatusBarTexture()
+	fill:SetDrawLayer("ARTWORK", 6)
+	fill:SetRadialProgressBarFeather(db.feather)
+	fill:SetRadialProgressBarReverse(db.reverse)
+	-- the option is in degrees, the API takes a fraction of a full turn
+	fill:SetRadialProgressBarStartOffset(db.start / 360)
+	BLINKIISPORTRAITS:Mirror(fill, portrait.db.mirror)
+end
+
+local function UpdateRingSize(portrait)
+	local ring = portrait.ring
+	if not ring then return end
+
+	ring:ClearAllPoints()
+	ring:SetPoint("CENTER", portrait.texture, "CENTER")
+	ring:SetSize(portrait.size, portrait.size)
+	-- same frame level, so the fill sorts against the portrait regions by draw layer
+	ring:SetFrameLevel(portrait:GetFrameLevel())
+end
+
+-- the health of a secret unit stays secret and is only handed on, arithmetic on it errors
+local function UpdateRingHealth(portrait)
+	local ring = portrait.ring
+	if not (ring and portrait.unit and portrait.ringMode == "health") then return end
+
+	ring:SetMinMaxValues(0, UnitHealthMax(portrait.unit))
+
+	if portrait.db.ring.invert then
+		ring:SetValue(UnitHealthMissing(portrait.unit))
+	else
+		ring:SetValue(UnitHealth(portrait.unit))
+	end
+
+	ring:Show()
+end
+
+-- the duration object renders itself, so there is no OnUpdate and no reading of cast times
+local function UpdateRingCast(portrait)
+	local ring = portrait.ring
+	if not (ring and portrait.unit and portrait.ringMode == "cast") then return end
+
+	-- UnitChannelInfo may be secret, the duration objects never are
+	local channel = UnitChannelDuration(portrait.unit) or UnitEmpoweredChannelDuration(portrait.unit)
+	local duration = channel or UnitCastingDuration(portrait.unit)
+	if not duration then return ring:Hide() end
+
+	ring:SetTimerDuration(duration, StatusBarInterpolation.Immediate, channel and StatusBarTimerDirection.RemainingTime or StatusBarTimerDirection.ElapsedTime)
+	ring:Show()
+end
+
+local function UpdateRing(portrait)
+	UpdateRingHealth(portrait)
+	UpdateRingCast(portrait)
 end
 
 local Update
@@ -188,6 +282,9 @@ function Update(portrait, event, eventUnit)
 end
 
 local function CastStart(portrait, _, unit)
+	UpdateRingCast(portrait)
+	if not portrait.db.cast then return end
+
 	-- without an icon nothing is replaced, so the casting state must stay unset
 	local castIcon = GetCastIcon(unit)
 	if not castIcon then return end
@@ -204,6 +301,8 @@ local function CastStart(portrait, _, unit)
 end
 
 local function CastStop(portrait, event, unit)
+	if portrait.ring and portrait.ringMode == "cast" then portrait.ring:Hide() end
+
 	-- STOP and INTERRUPTED both fire for one cast, so the portrait is restored only once
 	if not portrait.isCasting then return end
 
@@ -254,6 +353,9 @@ local eventHandlers = {
 	PARTY_MEMBER_DISABLE = Update,
 	ForceUpdate = Update,
 
+	UNIT_HEALTH = UpdateRingHealth,
+	UNIT_MAXHEALTH = UpdateRingHealth,
+
 	UNIT_SPELLCAST_CHANNEL_START = CastStart,
 	UNIT_SPELLCAST_START = CastStart,
 
@@ -286,6 +388,7 @@ local eventHandlers = {
 
 local castEvents = { "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_STOP" }
 local empowerEvents = { "UNIT_SPELLCAST_EMPOWER_START", "UNIT_SPELLCAST_EMPOWER_STOP" }
+local healthEvents = { "UNIT_HEALTH", "UNIT_MAXHEALTH" }
 
 -- cast events skip the unit re-resolution
 local castEventLookup = {}
@@ -338,6 +441,7 @@ local function OnShow(portrait)
 	portrait.unit = BLINKIISPORTRAITS:ResolvePortraitUnit(portrait)
 	BLINKIISPORTRAITS:ApplyUnitEvents(portrait)
 	Update(portrait, "ForceUpdate", portrait.unit)
+	UpdateRing(portrait)
 end
 
 -- mirrored texcoords are precomputed once per coords table to avoid per-call allocations
@@ -382,6 +486,8 @@ function BLINKIISPORTRAITS:UpdateTextures(portrait)
 
 	if portrait.extraMask then SetTexture(portrait.extraMask, portrait.extraMaskFile, "CLAMPTOBLACKADDITIVE") end
 	SetTexture(portrait.bg, portrait.bgFile, "CLAMP")
+
+	UpdateRingTexture(portrait)
 
 	BLINKIISPORTRAITS:Mirror(portrait.texture, mirror)
 	BLINKIISPORTRAITS:Mirror(portrait.extra, mirror)
@@ -554,6 +660,8 @@ function BLINKIISPORTRAITS:UpdateSize(portrait, size, point)
 
 		if portrait.db.strata ~= "AUTO" then portrait:SetFrameStrata(portrait.db.strata) end
 		portrait:SetFrameLevel(portrait.db.level)
+
+		UpdateRingSize(portrait)
 	end
 end
 
@@ -704,6 +812,8 @@ function BLINKIISPORTRAITS:ApplyUnitEvents(portrait, force)
 
 		if BLINKIISPORTRAITS.Retail then BLINKIISPORTRAITS:RegisterEvents(portrait, empowerEvents) end
 	end
+
+	BLINKIISPORTRAITS:UpdateRingEvents(portrait)
 end
 
 function BLINKIISPORTRAITS:RemovePortrait(frame)
@@ -717,11 +827,16 @@ function BLINKIISPORTRAITS:RemovePortrait(frame)
 		frame.portraitRetry = nil
 	end
 
+	if frame.ring then frame.ring:Hide() end
+	if frame.texture then frame.texture:SetAlpha(1) end
+
 	frame:UnregisterAllEvents()
 	frame:SetScript("OnEvent", nil)
 	frame:SetScript("OnShow", nil)
 	frame.eventsSet = nil
 	frame.castEventsSet = nil
+	frame.ringMode = nil
+	frame.ringEventsSet = nil
 	frame.cast = nil
 	frame.eventList = nil
 	frame.registeredUnit = nil
@@ -828,6 +943,7 @@ function BLINKIISPORTRAITS:InitPortrait(portrait, events)
 
 		BLINKIISPORTRAITS:ApplyUnitEvents(portrait, true)
 		OnEvent(portrait, "ForceUpdate", portrait.unit)
+		UpdateRing(portrait)
 
 		UpdateZoom(portrait)
 	end
@@ -856,13 +972,36 @@ function BLINKIISPORTRAITS:UnregisterCastEvents(portrait)
 end
 
 function BLINKIISPORTRAITS:UpdateCastSettings(portrait)
-	if portrait.db.cast then
+	local needsCast = (portrait.db.cast or portrait.ringMode == "cast") and true or false
+
+	if needsCast then
 		BLINKIISPORTRAITS:RegisterCastEvents(portrait)
-		portrait.cast = true
 	elseif portrait.cast then
 		BLINKIISPORTRAITS:UnregisterCastEvents(portrait)
-		portrait.cast = false
 	end
+
+	portrait.cast = needsCast
+end
+
+function BLINKIISPORTRAITS:UpdateRingEvents(portrait)
+	if portrait.ringMode == "health" then
+		BLINKIISPORTRAITS:RegisterEvents(portrait, healthEvents)
+		portrait.ringEventsSet = true
+	elseif portrait.ringEventsSet then
+		UnregisterEvents(portrait, healthEvents)
+		portrait.ringEventsSet = false
+	end
+end
+
+-- the border below the fill is dimmed, otherwise the ring is not readable against it
+function BLINKIISPORTRAITS:UpdateRingSettings(portrait)
+	local db = portrait.db.ring
+	portrait.ringMode = (RADIAL_RENDER_MODE and db and db.mode ~= "none") and db.mode or nil
+
+	CreateRing(portrait)
+
+	portrait.texture:SetAlpha(portrait.ringMode and db.baseAlpha or 1)
+	if portrait.ring and not portrait.ringMode then portrait.ring:Hide() end
 end
 
 function BLINKIISPORTRAITS:SetupUnitPortrait(opts)
@@ -907,6 +1046,7 @@ function BLINKIISPORTRAITS:SetupUnitPortrait(opts)
 	portrait.lastGUID = nil
 
 	BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, settings)
+	BLINKIISPORTRAITS:UpdateRingSettings(portrait)
 	BLINKIISPORTRAITS:UpdateSize(portrait)
 	BLINKIISPORTRAITS:UpdateCastSettings(portrait)
 

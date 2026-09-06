@@ -414,6 +414,134 @@ local function BuildCopyGroup(unit, order)
 	}
 end
 
+local ringModes = {
+	none = L["None"],
+	health = L["Health"],
+	cast = L["Cast"],
+}
+
+local function RefreshUnitPortrait(unit)
+	BLINKIISPORTRAITS[unitPortraits[unit].init](BLINKIISPORTRAITS)
+end
+
+local function RingGet(unit, key)
+	return function()
+		return BLINKIISPORTRAITS.db.profile[unit].ring[key]
+	end
+end
+
+local function RingSet(unit, key)
+	return function(info, value)
+		BLINKIISPORTRAITS.db.profile[unit].ring[key] = value
+		RefreshUnitPortrait(unit)
+	end
+end
+
+local function RingDisabled(unit)
+	return function()
+		return BLINKIISPORTRAITS.db.profile[unit].ring.mode == "none"
+	end
+end
+
+local function RingHidden()
+	return not BLINKIISPORTRAITS.RadialRenderMode
+end
+
+local function BuildRingGroup(unit, order)
+	return {
+		order = order,
+		type = "group",
+		inline = true,
+		name = L["Ring"],
+		hidden = RingHidden,
+		args = {
+			mode_select = {
+				order = 1,
+				type = "select",
+				name = L["Mode"],
+				desc = L["Fills the portrait border radially with the health or the cast of the unit."],
+				values = ringModes,
+				get = RingGet(unit, "mode"),
+				set = function(info, value)
+					local ring = BLINKIISPORTRAITS.db.profile[unit].ring
+					-- a reverse fill is a health idea, on a cast it would only be the timer direction
+					if value ~= "health" then ring.invert = false end
+					ring.mode = value
+					RefreshUnitPortrait(unit)
+				end,
+			},
+			reverse_toggle = {
+				order = 2,
+				type = "toggle",
+				name = L["Clockwise"],
+				desc = L["Fills the ring clockwise, counter-clockwise when disabled."],
+				disabled = RingDisabled(unit),
+				get = RingGet(unit, "reverse"),
+				set = RingSet(unit, "reverse"),
+			},
+			invert_toggle = {
+				order = 3,
+				type = "toggle",
+				name = L["Reverse Fill"],
+				desc = L["The ring fills with the missing health instead of draining, so it stays empty at full health."],
+				disabled = function()
+					return BLINKIISPORTRAITS.db.profile[unit].ring.mode ~= "health"
+				end,
+				get = RingGet(unit, "invert"),
+				set = RingSet(unit, "invert"),
+			},
+			start_range = {
+				order = 4,
+				type = "range",
+				name = L["Start Point"],
+				desc = L["Where the fill starts, 0 is the twelve o'clock position."],
+				min = 0,
+				max = 360,
+				step = 1,
+				bigStep = 90,
+				disabled = RingDisabled(unit),
+				get = RingGet(unit, "start"),
+				set = RingSet(unit, "start"),
+			},
+			alpha_range = {
+				order = 5,
+				type = "range",
+				name = L["Ring Alpha"],
+				min = 0,
+				max = 1,
+				step = 0.01,
+				disabled = RingDisabled(unit),
+				get = RingGet(unit, "alpha"),
+				set = RingSet(unit, "alpha"),
+			},
+			base_alpha_range = {
+				order = 6,
+				type = "range",
+				name = L["Border Alpha"],
+				desc = L["Opacity of the portrait border below the ring."],
+				min = 0,
+				max = 1,
+				step = 0.01,
+				disabled = RingDisabled(unit),
+				get = RingGet(unit, "baseAlpha"),
+				set = RingSet(unit, "baseAlpha"),
+			},
+			feather_range = {
+				order = 7,
+				type = "range",
+				name = L["Edge Softness"],
+				desc = L["Softens the edge of the radial fill."],
+				min = 0,
+				max = 0.05,
+				step = 0.001,
+				disabled = RingDisabled(unit),
+				get = RingGet(unit, "feather"),
+				set = RingSet(unit, "feather"),
+			},
+		},
+	}
+end
+
 BLINKIISPORTRAITS.options = {
 	name = BLINKIISPORTRAITS.Icon .. BLINKIISPORTRAITS.Name,
 	handler = BLINKIISPORTRAITS,
@@ -900,7 +1028,8 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
-				copy_group = BuildCopyGroup("player", 5),
+				ring_group = BuildRingGroup("player", 5),
+				copy_group = BuildCopyGroup("player", 6),
 			},
 		},
 		target_group = {
@@ -1147,7 +1276,8 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
-				copy_group = BuildCopyGroup("target", 5),
+				ring_group = BuildRingGroup("target", 5),
+				copy_group = BuildCopyGroup("target", 6),
 			},
 		},
 		focus_group = {
@@ -1394,7 +1524,8 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
-				copy_group = BuildCopyGroup("focus", 5),
+				ring_group = BuildRingGroup("focus", 5),
+				copy_group = BuildCopyGroup("focus", 6),
 			},
 		},
 		targettarget_group = {
@@ -1641,7 +1772,8 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
-				copy_group = BuildCopyGroup("targettarget", 5),
+				ring_group = BuildRingGroup("targettarget", 5),
+				copy_group = BuildCopyGroup("targettarget", 6),
 			},
 		},
 		pet_group = {
@@ -1888,7 +2020,8 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
-				copy_group = BuildCopyGroup("pet", 5),
+				ring_group = BuildRingGroup("pet", 5),
+				copy_group = BuildCopyGroup("pet", 6),
 			},
 		},
 		party_group = {
@@ -2135,7 +2268,8 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
-				copy_group = BuildCopyGroup("party", 5),
+				ring_group = BuildRingGroup("party", 5),
+				copy_group = BuildCopyGroup("party", 6),
 			},
 		},
 		boss_group = {
@@ -2361,7 +2495,8 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
-				copy_group = BuildCopyGroup("boss", 5),
+				ring_group = BuildRingGroup("boss", 5),
+				copy_group = BuildCopyGroup("boss", 6),
 			},
 		},
 		arena_group = {
@@ -2587,7 +2722,8 @@ BLINKIISPORTRAITS.options = {
 						},
 					},
 				},
-				copy_group = BuildCopyGroup("arena", 5),
+				ring_group = BuildRingGroup("arena", 5),
+				copy_group = BuildCopyGroup("arena", 6),
 			},
 		},
 		extra_group = {
@@ -2784,6 +2920,34 @@ BLINKIISPORTRAITS.options = {
 							set = function(info, r, g, b, a)
 								local t = BLINKIISPORTRAITS.db.profile.colors.misc.death
 								t.r, t.g, t.b, t.a = r, g, b, a
+							end,
+						},
+						ring_health_color = {
+							type = "color",
+							order = 3,
+							name = L["Ring Health"],
+							hidden = RingHidden,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.ring.health
+								return t.r, t.g, t.b
+							end,
+							set = function(info, r, g, b)
+								local t = BLINKIISPORTRAITS.db.profile.colors.ring.health
+								t.r, t.g, t.b = r, g, b
+							end,
+						},
+						ring_cast_color = {
+							type = "color",
+							order = 4,
+							name = L["Ring Cast"],
+							hidden = RingHidden,
+							get = function(info)
+								local t = BLINKIISPORTRAITS.db.profile.colors.ring.cast
+								return t.r, t.g, t.b
+							end,
+							set = function(info, r, g, b)
+								local t = BLINKIISPORTRAITS.db.profile.colors.ring.cast
+								t.r, t.g, t.b = r, g, b
 							end,
 						},
 					},

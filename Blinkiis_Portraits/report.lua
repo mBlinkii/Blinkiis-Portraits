@@ -26,20 +26,7 @@ local WARN_COLOR = { r = 1, g = 0.4, b = 0.4 }
 
 local reportUnits = { "player", "target", "targettarget", "pet", "focus", "party", "boss", "arena" }
 
-local unitFrameAddons = {
-	{ flag = "ELVUI", name = "ElvUI" },
-	{ flag = "SUF", name = "ShadowedUnitFrames" },
-	{ flag = "PB4", name = "PitBull4" },
-	{ flag = "Cell", name = "Cell" },
-	{ flag = "Cell_UF", name = "Cell_UnitFrames" },
-	{ flag = "UUF", name = "UnhaltedUnitFrames" },
-	{ flag = "NDUI", name = "NDui" },
-	{ flag = "EQOL", name = "EnhanceQoL" },
-	{ flag = "BBF", name = "BetterBlizzFrames" },
-	{ flag = "EUI", name = "EllesmereUI" },
-	{ flag = "STUF", name = "Stuf" },
-	{ flag = "DF", name = "DandersFrames" },
-}
+local unitFrameAddons = { "ELVUI", "SUF", "PB4", "Cell", "Cell_UF", "UUF", "NDUI", "EQOL", "BBF", "EUI", "STUF", "DF" }
 
 local flavors = { "Retail", "Mists", "Cata", "Wrath", "Classic" }
 
@@ -132,8 +119,9 @@ end
 local function BuildUnitFrameSection()
 	local rows = {}
 
-	for _, addon in ipairs(unitFrameAddons) do
-		if BLINKIISPORTRAITS[addon.flag] then AddRow(rows, addon.name, tostring(GetAddOnMetadata(addon.name, "Version") or "?")) end
+	for _, flag in ipairs(unitFrameAddons) do
+		local folder = BLINKIISPORTRAITS.LoadedAddons[flag]
+		if folder then AddRow(rows, folder, tostring(GetAddOnMetadata(folder, "Version") or "?")) end
 	end
 
 	if not rows[1] then AddRow(rows, "Loaded", "none", true) end

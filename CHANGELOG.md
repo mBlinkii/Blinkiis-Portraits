@@ -3,6 +3,13 @@
 ## [ver. 1.60] - 23.08.2026
 ### 🐛 FIX
 - FIX - [Colors]: Enemy players in combat were colored with the enemy color instead of their class color.
+- FIX - [Cell]: Portraits never showed up on the Cell Unit Frames player, target, target of target, focus, pet and boss frames.
+### 🔧 UPDATE
+- UPDATE - [System]: The diagnostic report lists the unit frame addon that is really loaded, so a fork shows its own name and version.
+### ✨ NEW
+- NEW - [Portraits]: The portrait border can fill like a ring, showing either the health or the cast of the unit, set up separately for player, target, target of target, focus, pet, party, boss and arena.
+- NEW - [Colors]: Added a color for the health ring and one for the cast ring.
+- NEW - [SUF]: Added support for Shadowed Unit Frames - Worgen Fix.
 
 ## [ver. 1.59] - 22.08.2026
 ### 🐛 FIX

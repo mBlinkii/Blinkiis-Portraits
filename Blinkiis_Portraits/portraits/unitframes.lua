@@ -19,14 +19,15 @@ BLINKIISPORTRAITS.unitFrames = {
 		boss = BLINKIISPORTRAITS.Classic and nil or "SUFHeaderbossUnitButton",
 		arena = "SUFHeaderarenaUnitButton",
 	},
+	-- Cell owns the party header, every other frame here belongs to Cell_UnitFrames; the flags separate them at runtime
 	cell = {
-		player = BLINKIISPORTRAITS.Cell_UF and "CUF_Player",
-		target = BLINKIISPORTRAITS.Cell_UF and "CUF_Target",
-		pet = BLINKIISPORTRAITS.Cell_UF and "CUF_Pet",
-		targettarget = BLINKIISPORTRAITS.Cell_UF and "CUF_TargetTarget",
-		focus = BLINKIISPORTRAITS.Classic and nil or (BLINKIISPORTRAITS.Cell_UF and "CUF_Focus"),
+		player = "CUF_Player",
+		target = "CUF_Target",
+		pet = "CUF_Pet",
+		targettarget = "CUF_TargetTarget",
+		focus = BLINKIISPORTRAITS.Classic and nil or "CUF_Focus",
 		party = "CellPartyFrameHeaderUnitButton",
-		boss = BLINKIISPORTRAITS.Cell_UF and "CUF_Boss",
+		boss = "CUF_Boss",
 		arena = nil, -- Cell_UnitFrames has no arena frames (see CUF Data/Constants.lua TITLE_CASED_UNITS)
 	},
 	pb4 = {
