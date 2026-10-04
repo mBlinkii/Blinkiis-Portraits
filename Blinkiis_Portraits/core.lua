@@ -318,6 +318,7 @@ function BLINKIISPORTRAITS:OnInitialize()
 	end
 
 	BLINKIISPORTRAITS:SetupElvUIOptions()
+	BLINKIISPORTRAITS:SetupEllesmereUIOptions()
 
 	if BLINKIISPORTRAITS.ELVUI and ElvUI then
 		local UF = ElvUI[1]:GetModule("UnitFrames")

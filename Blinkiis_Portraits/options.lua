@@ -612,22 +612,6 @@ BLINKIISPORTRAITS.options = {
 								BLINKIISPORTRAITS:LoadPortraits()
 							end,
 						},
-						elvui_options_toggle = {
-							order = 4,
-							type = "toggle",
-							name = L["ElvUI Options"],
-							desc = L["Show the options inside the ElvUI options menu."],
-							hidden = function()
-								return not BLINKIISPORTRAITS.ELVUI
-							end,
-							get = function(info)
-								return BLINKIISPORTRAITS.db.global.elvui_options
-							end,
-							set = function(info, value)
-								BLINKIISPORTRAITS.db.global.elvui_options = value
-								StaticPopup_Show("BLINKIISPORTRAITS_RL")
-							end,
-						},
 					},
 				},
 				custom_textures_group = {

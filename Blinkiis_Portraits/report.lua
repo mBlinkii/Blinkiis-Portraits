@@ -92,7 +92,6 @@ local function BuildAddonSection()
 
 	AddRow(rows, "Version", tostring(BLINKIISPORTRAITS.Version))
 	AddRow(rows, "Profile", tostring(BLINKIISPORTRAITS.db:GetCurrentProfile()))
-	AddRow(rows, "ElvUI Options", YesNo(BLINKIISPORTRAITS.db.global.elvui_options))
 	AddRow(rows, "Import/Export API", YesNo(hasEncoding), not hasEncoding)
 	AddRow(rows, "Debug Log", YesNo(BLINKIISPORTRAITS.DebugEnabled))
 	AddRow(rows, "JiberishIcons", YesNo(BLINKIISPORTRAITS.JI))

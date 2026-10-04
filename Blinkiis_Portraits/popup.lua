@@ -18,6 +18,19 @@ StaticPopupDialogs["BLINKIISPORTRAITS_RL"] = {
 	preferredIndex = 3,
 }
 
+StaticPopupDialogs["BLINKIISPORTRAITS_CONFIRM"] = {
+	text = "%s",
+	button1 = L["Yes"],
+	button2 = L["No"],
+	OnAccept = function(self, data)
+		data()
+	end,
+	timeout = 0,
+	whileDead = true,
+	hideOnEscape = true,
+	preferredIndex = 3,
+}
+
 StaticPopupDialogs["BLINKIISPORTRAITS_DELETE_ICON"] = {
 	text = L["Are you sure you want to delete this |cffff0000%s|r icon?"],
 	button1 = L["Yes"],

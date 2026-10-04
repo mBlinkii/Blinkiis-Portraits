@@ -6,8 +6,10 @@
 - FIX - [EQOL]: Enhance QoL group frames on Burning Crusade Classic update their portraits again when the group changes.
 ### 🔧 UPDATE
 - UPDATE - [System]: Updated the Wrath Classic interface version.
+- UPDATE - [ElvUI]: The settings always show up in the ElvUI options when ElvUI is loaded, the option to hide them is gone.
 ### ✨ NEW
 - NEW - [System]: Added support for WoW Forever.
+- NEW - [EllesmereUI]: All settings are also available in the EllesmereUI options panel, with their own section in its sidebar, as soon as EllesmereUI ships its plugin support.
 
 ## [ver. 1.60] - 23.08.2026
 ### 🐛 FIX

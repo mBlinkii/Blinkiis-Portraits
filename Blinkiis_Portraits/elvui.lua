@@ -35,7 +35,6 @@ end
 -- args is shared with the standalone registration so both dialogs stay in sync
 function BLINKIISPORTRAITS:SetupElvUIOptions()
 	if not BLINKIISPORTRAITS.ELVUI then return end
-	if not BLINKIISPORTRAITS.db.global.elvui_options then return end
 
 	local EP = LibStub("LibElvUIPlugin-1.0", true)
 	if not EP then return end
