@@ -135,6 +135,7 @@ local function BuildSettingsSection()
 
 	AddRow(rows, "Clickable Portraits", YesNo(misc.clickable))
 	AddRow(rows, "Class Icons", tostring(misc.class_icon))
+	AddRow(rows, "Spec Icons", tostring(misc.spec_icon))
 	AddRow(rows, "Custom Textures", YesNo(profile.custom.enable))
 	AddRow(rows, "Extra on Top", YesNo(misc.extratop))
 	AddRow(rows, "Zoom", tostring(misc.zoom))

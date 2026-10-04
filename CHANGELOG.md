@@ -4,11 +4,16 @@
 ### 🐛 FIX
 - FIX - [Class-Icons]: JiberishIcons class icons are available again after its rename to Jiberish Fabled Icons.
 - FIX - [EQOL]: Enhance QoL group frames on Burning Crusade Classic update their portraits again when the group changes.
+- FIX - [Boss]: Mobs far above your level are no longer remembered as bosses for good, they only show the boss texture while their level is hidden.
+- FIX - [Colors]: Portraits switch to the death color and back as soon as a unit dies or is revived, and released ghosts count as dead.
+- FIX - [Portraits]: Switching between two units whose identity is hidden updates the portrait again.
+- FIX - [Vehicle]: Entering, leaving and switching vehicles always repaints the portrait.
 ### 🔧 UPDATE
 - UPDATE - [System]: Updated the Wrath Classic interface version.
 - UPDATE - [ElvUI]: The settings always show up in the ElvUI options when ElvUI is loaded, the option to hide them is gone.
 ### ✨ NEW
 - NEW - [System]: Added support for WoW Forever.
+- NEW - [Class-Icons]: Added spec icons in four styles that show the specialization of players, with the class icon as fallback until it is known.
 - NEW - [EllesmereUI]: All settings are also available in the EllesmereUI options panel, with their own section in its sidebar, as soon as EllesmereUI ships its plugin support.
 
 ## [ver. 1.60] - 23.08.2026

@@ -3285,6 +3285,30 @@ BLINKIISPORTRAITS.options = {
 						return t
 					end,
 				},
+				specIcon_select = {
+					order = 1.5,
+					type = "select",
+					name = L["Spec Icons"],
+					desc = L["Shows the specialization of players instead of the class icon. Until the specialization is known, the class icon is shown."],
+					hidden = function()
+						return not BLINKIISPORTRAITS.SpecIconsSupported
+					end,
+					get = function(info)
+						return BLINKIISPORTRAITS.db.profile.misc.spec_icon
+					end,
+					set = function(info, value)
+						BLINKIISPORTRAITS.db.profile.misc.spec_icon = value
+						BLINKIISPORTRAITS:LoadPortraits()
+					end,
+					values = function()
+						local t = {}
+						for k, v in pairs(BLINKIISPORTRAITS.media.spec) do
+							t[k] = v.name
+						end
+						t.none = L["None"]
+						return t
+					end,
+				},
 				customicons_group = {
 					order = 2,
 					type = "group",
@@ -3628,7 +3652,7 @@ local function AddIgnoreClassIconsOptions()
 			order = 5.5,
 			type = "toggle",
 			name = L["Ignore Class Icons"],
-			desc = L["Ignore the global class icon setting for this portrait."],
+			desc = L["Ignore the global class and spec icon settings for this portrait."],
 			get = function()
 				return BLINKIISPORTRAITS.db.profile[unit].ignoreClassIcons
 			end,

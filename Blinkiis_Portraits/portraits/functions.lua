@@ -13,7 +13,7 @@ local UnitGUID = UnitGUID
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
 local UnitIsConnected = UnitIsConnected
-local UnitIsDead = UnitIsDead
+local UnitIsDeadOrGhost = UnitIsDeadOrGhost
 local UnitIsPlayer = UnitIsPlayer
 local UnitIsUnit = UnitIsUnit
 local UnitIsVisible = UnitIsVisible
@@ -45,6 +45,7 @@ local StatusBarTimerDirection = _G.Enum and _G.Enum.StatusBarTimerDirection
 local mediaPortraits = BLINKIISPORTRAITS.media.portraits
 local mediaExtra = BLINKIISPORTRAITS.media.extra
 local mediaClass = BLINKIISPORTRAITS.media.class
+local mediaSpec = BLINKIISPORTRAITS.media.spec
 
 local playerFaction = nil
 
@@ -183,6 +184,27 @@ local function RetryPortrait(portrait)
 	end)
 end
 
+-- the spec icon comes first, the class icon covers a player whose specialization is not known yet
+local function GetUnitIcon(portrait, unit)
+	if not portrait.isPlayer then return nil end
+
+	if portrait.specIcons and not portrait.isSecret then
+		local specID = BLINKIISPORTRAITS:GetUnitSpecID(unit)
+		if specID then
+			local texture, coords = BLINKIISPORTRAITS:GetSpecIcon(portrait.specIcons, specID)
+			if texture then return texture, coords end
+		end
+	end
+
+	if portrait.classIcons then
+		if not portrait.unitClass then portrait.unitClass = SafeValue(select(2, UnitClass(unit))) end
+
+		-- a secret class token cannot be a table key, so the class icon is skipped
+		local coords = portrait.unitClass and portrait.classIcons.texCoords[portrait.unitClass]
+		if coords then return portrait.classIcons.texture, coords end
+	end
+end
+
 local function UpdatePortrait(portrait, unit, isNewUnit)
 	if portrait.isCasting then
 		local castIcon = GetCastIcon(unit)
@@ -196,21 +218,14 @@ local function UpdatePortrait(portrait, unit, isNewUnit)
 
 	local forceDesaturate = BLINKIISPORTRAITS.db.profile.misc.desaturate
 	local portraitUnit = unit or portrait.unit
-	local useClassIcon = portrait.useClassIcon and not portrait.db.ignoreClassIcons and portrait.isPlayer
-
-	if useClassIcon and not portrait.unitClass then portrait.unitClass = SafeValue(select(2, UnitClass(portraitUnit))) end
-
-	-- a secret class token cannot be a table key, so the class icon is skipped
-	local texCoords = (useClassIcon and portrait.unitClass) and portrait.classIcons.texCoords[portrait.unitClass] or nil
+	local icon, texCoords = GetUnitIcon(portrait, portraitUnit)
 	portrait.texCoords = texCoords
 
-	if texCoords then
-		portrait.portrait:SetTexture(portrait.classIcons.texture, "CLAMP", "CLAMP", "TRILINEAR")
+	if icon then
+		portrait.portrait:SetTexture(icon, "CLAMP", "CLAMP", "TRILINEAR")
 		portrait.portraitSet = nil
 
-		if BLINKIISPORTRAITS.DebugEnabled then
-			BLINKIISPORTRAITS:Debug(format("  texture <- class icon | unit: %s | class: %s", tostring(portraitUnit), tostring(portrait.unitClass)))
-		end
+		if BLINKIISPORTRAITS.DebugEnabled then BLINKIISPORTRAITS:Debug(format("  texture <- icon | unit: %s | icon: %s", tostring(portraitUnit), tostring(icon))) end
 	else
 		local isAvailable = portrait.state
 
@@ -244,13 +259,15 @@ function Update(portrait, event, eventUnit)
 	end
 
 	local unit = (portrait.demo and not SafeValue(UnitExists(portrait.unit))) and "player" or portrait.unit
-	-- a secret GUID must not be compared, the placeholder keeps the change detection working
+	-- a secret GUID must not be compared, and two secret units share the placeholder, so a secret one always counts as new
 	local guid = UnitGUID(unit)
-	guid = IsSecretValue(guid) and " " or guid
+	local isSecretGUID = IsSecretValue(guid)
+	guid = isSecretGUID and " " or guid
 
-	local isNewUnit = portrait.lastGUID ~= guid
+	local isNewUnit = isSecretGUID or portrait.lastGUID ~= guid
+	local isDead = not BLINKIISPORTRAITS:IsSecretUnit(unit) and SafeValue(UnitIsDeadOrGhost(unit)) or false
 	local isAvailable = (IsUnitModelReadyForUI(unit) and UnitIsConnected(unit) and UnitIsVisible(unit)) or false
-	local hasStateChanged = ((event == "ForceUpdate") or isNewUnit or (portrait.state ~= isAvailable))
+	local hasStateChanged = ((event == "ForceUpdate") or isNewUnit or (portrait.state ~= isAvailable) or (portrait.isDead ~= isDead))
 
 	if BLINKIISPORTRAITS.DebugEnabled then
 		BLINKIISPORTRAITS:Debug(
@@ -276,7 +293,7 @@ function Update(portrait, event, eventUnit)
 		portrait.lastGUID = guid
 		portrait.state = isAvailable
 		portrait.unit = unit
-		portrait.isDead = not isSecret and SafeValue(UnitIsDead(unit)) or false
+		portrait.isDead = isDead
 
 		local color = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead, isPlayer, class, isSecret)
 		SetColor(portrait.texture, color)
@@ -299,10 +316,8 @@ local function CastStart(portrait, _, unit)
 	portrait.isCasting = true
 	portrait.portrait:SetTexture(castIcon)
 
-	-- the class icon is a slice of an atlas, the cast icon a full texture: reset the texcoords
-	if (portrait.useClassIcon and not portrait.db.ignoreClassIcons) and portrait.texCoords then
-		BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, DEFAULT_COORDS)
-	end
+	-- class and spec icons are slices of a sheet, the cast icon a full texture: reset the texcoords
+	if portrait.texCoords then BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, DEFAULT_COORDS) end
 
 	if BLINKIISPORTRAITS.DebugEnabled then BLINKIISPORTRAITS:Debug(format("  texture <- cast icon | unit: %s | icon: %s", tostring(unit), tostring(castIcon))) end
 end
@@ -343,12 +358,32 @@ local function UnitTextureChanged(portrait, event, eventUnit)
 	Update(portrait, "ForceUpdate", portrait.unit)
 end
 
-local function DelayedUpdate(portrait, event)
+-- a vehicle swaps the model without a new GUID, so the change detection would skip it
+local function DelayedUpdate(portrait)
 	if portrait._delayedUpdateTimer then portrait._delayedUpdateTimer:Cancel() end
 	portrait._delayedUpdateTimer = C_Timer.NewTimer(0.6, function()
-		Update(portrait, event, portrait.unit)
+		Update(portrait, "ForceUpdate", portrait.unit)
 		portrait._delayedUpdateTimer = nil
 	end)
+end
+
+-- an inspect or a respec reveals a new specialization without a new GUID
+local function SpecChanged(portrait, event, arg)
+	if event == "INSPECT_READY" then
+		if IsSecretValue(arg) or arg ~= portrait.lastGUID then return end
+	elseif arg and portrait.unit and SafeValue(UnitIsUnit(arg, portrait.unit)) == false then
+		return
+	end
+
+	Update(portrait, "ForceUpdate", portrait.unit)
+end
+
+-- dying and being revived keep the GUID, UNIT_HEALTH is the only event that sees it
+local function UnitHealthChanged(portrait, event)
+	UpdateRingHealth(portrait)
+
+	local isDead = not portrait.isSecret and SafeValue(UnitIsDeadOrGhost(portrait.unit)) or false
+	if portrait.isDead ~= isDead then Update(portrait, event, portrait.unit) end
 end
 
 local eventHandlers = {
@@ -360,7 +395,9 @@ local eventHandlers = {
 	PARTY_MEMBER_DISABLE = Update,
 	ForceUpdate = Update,
 
-	UNIT_HEALTH = UpdateRingHealth,
+	UNIT_HEALTH = UnitHealthChanged,
+	INSPECT_READY = SpecChanged,
+	PLAYER_SPECIALIZATION_CHANGED = SpecChanged,
 	UNIT_MAXHEALTH = UpdateRingHealth,
 
 	UNIT_SPELLCAST_CHANNEL_START = CastStart,
@@ -374,9 +411,9 @@ local eventHandlers = {
 	UNIT_SPELLCAST_EMPOWER_STOP = CastStop,
 
 	UNIT_ENTERED_VEHICLE = DelayedUpdate,
-	UNIT_EXITING_VEHICLE = SimpleUpdate,
-	UNIT_EXITED_VEHICLE = SimpleUpdate,
-	VEHICLE_UPDATE = SimpleUpdate,
+	UNIT_EXITING_VEHICLE = ForceUpdate,
+	UNIT_EXITED_VEHICLE = ForceUpdate,
+	VEHICLE_UPDATE = ForceUpdate,
 
 	PLAYER_TARGET_CHANGED = ForceUpdate,
 	PLAYER_FOCUS_CHANGED = ForceUpdate,
@@ -387,7 +424,7 @@ local eventHandlers = {
 
 	ARENA_OPPONENT_UPDATE = Update,
 	UNIT_TARGETABLE_CHANGED = Update,
-	ARENA_PREP_OPPONENT_SPECIALIZATIONS = SimpleUpdate,
+	ARENA_PREP_OPPONENT_SPECIALIZATIONS = ForceUpdate,
 	UPDATE_ACTIVE_BATTLEFIELD = SimpleUpdate,
 
 	INSTANCE_ENCOUNTER_ENGAGE_UNIT = ForceUpdate,
@@ -395,15 +432,14 @@ local eventHandlers = {
 
 local castEvents = { "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_STOP" }
 local empowerEvents = { "UNIT_SPELLCAST_EMPOWER_START", "UNIT_SPELLCAST_EMPOWER_STOP" }
-local healthEvents = { "UNIT_HEALTH", "UNIT_MAXHEALTH" }
 
--- cast events skip the unit re-resolution
-local castEventLookup = {}
+-- cast and health events skip the unit re-resolution, they fire constantly and a unit change arrives through its own events
+local keepUnitLookup = { UNIT_HEALTH = true, UNIT_MAXHEALTH = true }
 for _, event in ipairs(castEvents) do
-	castEventLookup[event] = true
+	keepUnitLookup[event] = true
 end
 for _, event in ipairs(empowerEvents) do
-	castEventLookup[event] = true
+	keepUnitLookup[event] = true
 end
 
 -- oUF renamed frame.unit to __unit (ElvUI 15.22), Cell uses _unit, header frames only the attribute
@@ -432,8 +468,8 @@ local function OnEvent(portrait, event, eventUnit, arg)
 
 	if not handler then return end
 
-	-- the unit cannot change mid cast, and only group frames hand out new unit tokens at all
-	if not castEventLookup[event] and (portrait.isDynamicUnit or not portrait.unit) then
+	-- only group frames hand out new unit tokens at all
+	if not keepUnitLookup[event] and (portrait.isDynamicUnit or not portrait.unit) then
 		portrait.unit = BLINKIISPORTRAITS:ResolvePortraitUnit(portrait)
 		BLINKIISPORTRAITS:ApplyUnitEvents(portrait)
 	end
@@ -528,7 +564,7 @@ local function IsBossTokenUnit(unit)
 	return false
 end
 
--- boss detection in order: portrait type, cached npcID, boss token, classification, level -1
+-- boss detection in order: cached npcID, portrait type, classification, boss token, level -1
 function BLINKIISPORTRAITS:GetExtraClassification(portrait)
 	local unit = portrait.unit
 	if not unit then return nil end
@@ -539,17 +575,16 @@ function BLINKIISPORTRAITS:GetExtraClassification(portrait)
 	local classification = SafeValue(UnitClassification(unit))
 	if classification == "worldboss" then classification = "boss" end
 
-	local isBoss = (portrait.type == "boss")
-		or (npcID and BLINKIISPORTRAITS.CachedBossIDs[npcID])
-		or (classification == "boss")
-		or (not isKnownPlayer and IsBossTokenUnit(unit))
-		or (not isKnownPlayer and SafeValue(UnitLevel(unit)) == -1)
+	if npcID and BLINKIISPORTRAITS.CachedBossIDs[npcID] then return "boss" end
 
-	if isBoss then
+	if (portrait.type == "boss") or (classification == "boss") or (not isKnownPlayer and IsBossTokenUnit(unit)) then
 		-- learn the npcID for reliable pre-pull detection in future sessions
-		if npcID and not BLINKIISPORTRAITS.CachedBossIDs[npcID] then BLINKIISPORTRAITS.CachedBossIDs[npcID] = true end
+		if npcID then BLINKIISPORTRAITS.CachedBossIDs[npcID] = true end
 		return "boss"
 	end
+
+	-- level -1 is also any mob far above the player, so it is shown as boss but never learned
+	if not isKnownPlayer and SafeValue(UnitLevel(unit)) == -1 then return "boss" end
 
 	return extraTypes[classification] and classification or nil
 end
@@ -681,6 +716,7 @@ function BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, settings)
 	portrait.bgFile = "Interface\\Addons\\Blinkiis_Portraits\\media\\blank.tga"
 
 	portrait.classIcons = (portrait.useClassIcon and not portrait.db.ignoreClassIcons) and mediaClass[dbMisc.class_icon] or nil
+	portrait.specIcons = (portrait.useSpecIcon and not portrait.db.ignoreClassIcons) and mediaSpec[dbMisc.spec_icon] or nil
 
 	if dbCustom.enable then
 		portrait.textureFile = "Interface\\Addons\\" .. dbCustom.texture
@@ -820,7 +856,8 @@ function BLINKIISPORTRAITS:ApplyUnitEvents(portrait, force)
 		if BLINKIISPORTRAITS.Retail then BLINKIISPORTRAITS:RegisterEvents(portrait, empowerEvents) end
 	end
 
-	BLINKIISPORTRAITS:UpdateRingEvents(portrait)
+	BLINKIISPORTRAITS:UpdateHealthEvents(portrait)
+	BLINKIISPORTRAITS:UpdateSpecEvents(portrait)
 end
 
 function BLINKIISPORTRAITS:RemovePortrait(frame)
@@ -843,7 +880,6 @@ function BLINKIISPORTRAITS:RemovePortrait(frame)
 	frame.eventsSet = nil
 	frame.castEventsSet = nil
 	frame.ringMode = nil
-	frame.ringEventsSet = nil
 	frame.cast = nil
 	frame.eventList = nil
 	frame.registeredUnit = nil
@@ -990,13 +1026,30 @@ function BLINKIISPORTRAITS:UpdateCastSettings(portrait)
 	portrait.cast = needsCast
 end
 
-function BLINKIISPORTRAITS:UpdateRingEvents(portrait)
-	if portrait.ringMode == "health" then
-		BLINKIISPORTRAITS:RegisterEvents(portrait, healthEvents)
-		portrait.ringEventsSet = true
-	elseif portrait.ringEventsSet then
-		UnregisterEvents(portrait, healthEvents)
-		portrait.ringEventsSet = false
+function BLINKIISPORTRAITS:UpdateSpecEvents(portrait)
+	if portrait.specIcons and portrait.unit then
+		portrait:RegisterEvent("INSPECT_READY")
+		portrait:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", portrait.unit)
+	else
+		portrait:UnregisterEvent("INSPECT_READY")
+		portrait:UnregisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+	end
+end
+
+-- UNIT_HEALTH also drives the dead state, so it follows every resolved unit; unfiltered it would fire for every unit in the game
+function BLINKIISPORTRAITS:UpdateHealthEvents(portrait)
+	local unit = portrait.unit
+
+	if unit then
+		portrait:RegisterUnitEvent("UNIT_HEALTH", unit)
+	else
+		portrait:UnregisterEvent("UNIT_HEALTH")
+	end
+
+	if unit and portrait.ringMode == "health" then
+		portrait:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
+	else
+		portrait:UnregisterEvent("UNIT_MAXHEALTH")
 	end
 end
 
@@ -1036,6 +1089,7 @@ function BLINKIISPORTRAITS:SetupUnitPortrait(opts)
 	portrait.point = settings.point
 	-- a selected style can vanish when custom or JiberishIcons packs are deleted
 	portrait.useClassIcon = db.misc.class_icon ~= "none" and mediaClass[db.misc.class_icon] ~= nil
+	portrait.useSpecIcon = BLINKIISPORTRAITS.SpecIconsSupported and mediaSpec[db.misc.spec_icon] ~= nil
 	portrait.realUnit = opts.type
 
 	if opts.isGroup then

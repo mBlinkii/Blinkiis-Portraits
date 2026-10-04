@@ -11,6 +11,7 @@ BLINKIISPORTRAITS.defaults.profile.misc = {
 	extratop = true,
 	zoom = 0,
 	class_icon = "none",
+	spec_icon = "none",
 	desaturate = false,
 	clickable = true,
 }
