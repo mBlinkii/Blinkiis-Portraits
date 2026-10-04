@@ -262,7 +262,7 @@ end
 
 function BLINKIISPORTRAITS:PLAYER_ENTERING_WORLD()
 	-- JiberishIcons builds its style packs on its own ADDON_LOADED, which can run after ours
-	if BLINKIISPORTRAITS.JI then BLINKIISPORTRAITS:SetupJiberishClassIcons() end
+	if BLINKIISPORTRAITS.JI then BLINKIISPORTRAITS:SetupJiberishIcons() end
 
 	C_Timer_After(0.5, BLINKIISPORTRAITS.LoadPortraits)
 end

@@ -14,6 +14,7 @@
 ### ✨ NEW
 - NEW - [System]: Added support for WoW Forever.
 - NEW - [Class-Icons]: Added spec icons in four styles that show the specialization of players, with the class icon as fallback until it is known.
+- NEW - [Class-Icons]: The spec icon packs of JiberishIcons can be selected as spec icons.
 - NEW - [EllesmereUI]: All settings are also available in the EllesmereUI options panel, with their own section in its sidebar, as soon as EllesmereUI ships its plugin support.
 
 ## [ver. 1.60] - 23.08.2026

@@ -409,7 +409,7 @@ function BLINKIISPORTRAITS:UpdateCustomClassIcons()
 	end
 end
 
-local jiberishKeys = {}
+local jiberishKeys = { class = {}, spec = {} }
 local isJiberishSetup = false
 
 -- JiberishIcons exposes its addon table as a plain global, the engine sits in slot 1
@@ -420,39 +420,62 @@ local function GetJiberishEngine()
 	return JI
 end
 
--- JiberishIcons class sheets use the same 8 texcoord layout as the built-in ones
-function BLINKIISPORTRAITS:UpdateJiberishClassIcons()
-	local JI = GetJiberishEngine()
-	if not JI then return end
+local function IsJiberishStyle(key)
+	return key and strsub(key, 1, #JIBERISH_PREFIX) == JIBERISH_PREFIX
+end
 
-	for key in pairs(jiberishKeys) do
-		BLINKIISPORTRAITS.media.class[key] = nil
-		jiberishKeys[key] = nil
+-- the spec sheets are keyed by specID like the built-in ones, older JiberishIcons versions ship none
+local function GetJiberishSpecCoords(JI)
+	local specs = JI.dataHelper and JI.dataHelper.specialization
+	if not specs then return nil end
+
+	local coords = {}
+	for specID, info in pairs(specs) do
+		coords[specID] = info.texCoords
+	end
+	return coords
+end
+
+local function AddJiberishPack(kind, pack, coords)
+	local target, keys = BLINKIISPORTRAITS.media[kind], jiberishKeys[kind]
+
+	for key in pairs(keys) do
+		target[key] = nil
+		keys[key] = nil
 	end
 
-	local pack = JI.mergedStylePacks.class
+	if not (pack and pack.styles and coords) then return end
 
 	for style, data in pairs(pack.styles) do
 		local key = JIBERISH_PREFIX .. style
-		jiberishKeys[key] = true
+		keys[key] = true
 
-		BLINKIISPORTRAITS.media.class[key] = {
+		target[key] = {
 			texture = (data.path or pack.path) .. style,
-			texCoords = texCoords,
+			texCoords = coords,
 			name = format("%s %s", JIBERISH_LABEL, data.name or style),
 		}
 	end
 end
 
-local function OnJiberishStylePacksMerged()
-	BLINKIISPORTRAITS:UpdateJiberishClassIcons()
+-- JiberishIcons class sheets use the same 8 texcoord layout as the built-in ones
+function BLINKIISPORTRAITS:UpdateJiberishIcons()
+	local JI = GetJiberishEngine()
+	if not JI then return end
 
-	-- the prefix check also catches a style that was just deleted and is gone from the media table
-	local selected = BLINKIISPORTRAITS.db.profile.misc.class_icon
-	if selected and strsub(selected, 1, #JIBERISH_PREFIX) == JIBERISH_PREFIX then BLINKIISPORTRAITS:LoadPortraits() end
+	AddJiberishPack("class", JI.mergedStylePacks.class, texCoords)
+	AddJiberishPack("spec", JI.mergedStylePacks.spec, GetJiberishSpecCoords(JI))
 end
 
-function BLINKIISPORTRAITS:SetupJiberishClassIcons()
+local function OnJiberishStylePacksMerged()
+	BLINKIISPORTRAITS:UpdateJiberishIcons()
+
+	-- the prefix check also catches a style that was just deleted and is gone from the media table
+	local misc = BLINKIISPORTRAITS.db.profile.misc
+	if IsJiberishStyle(misc.class_icon) or IsJiberishStyle(misc.spec_icon) then BLINKIISPORTRAITS:LoadPortraits() end
+end
+
+function BLINKIISPORTRAITS:SetupJiberishIcons()
 	if isJiberishSetup then return end
 
 	local JI = GetJiberishEngine()
@@ -460,5 +483,5 @@ function BLINKIISPORTRAITS:SetupJiberishClassIcons()
 
 	isJiberishSetup = true
 	hooksecurefunc(JI, "MergeStylePacks", OnJiberishStylePacksMerged)
-	BLINKIISPORTRAITS:UpdateJiberishClassIcons()
+	BLINKIISPORTRAITS:UpdateJiberishIcons()
 end
