@@ -154,7 +154,7 @@ local function UpdateRingCast(portrait)
 	if not (ring and portrait.unit and portrait.ringMode == "cast") then return end
 
 	-- UnitChannelInfo may be secret, the duration objects never are
-	local channel = UnitChannelDuration(portrait.unit) or UnitEmpoweredChannelDuration(portrait.unit)
+	local channel = UnitChannelDuration(portrait.unit) or (UnitEmpoweredChannelDuration and UnitEmpoweredChannelDuration(portrait.unit))
 	local duration = channel or UnitCastingDuration(portrait.unit)
 	if not duration then return ring:Hide() end
 

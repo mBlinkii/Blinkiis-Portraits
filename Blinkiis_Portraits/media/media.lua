@@ -349,7 +349,7 @@ local isJiberishSetup = false
 
 -- JiberishIcons exposes its addon table as a plain global, the engine sits in slot 1
 local function GetJiberishEngine()
-	local engine = _G.ElvUI_JiberishIcons
+	local engine = _G.JiberishIcons or _G.ElvUI_JiberishIcons
 	local JI = engine and engine[1]
 	if not (JI and JI.mergedStylePacks and JI.mergedStylePacks.class and JI.mergedStylePacks.class.styles) then return end
 	return JI

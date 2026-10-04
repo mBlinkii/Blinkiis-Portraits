@@ -99,7 +99,7 @@ jobs:
           # here. Mapping is the same one Wago itself uses to read a
           # project's .toc filename suffix (see /api/data/game
           # "toc_suffixes"): _Mainline->retail, _Mists->mop, _Cata->cata,
-          # _TBC->bc, _Vanilla->classic, _Wrath->wotlk.
+          # _TBC->bc, _Vanilla->classic, _Wrath->wotlk, _Camelot->forever.
           VERSIONS=""
           RETAIL_PATCH=""
           MOP_PATCH=""
@@ -107,6 +107,7 @@ jobs:
           BC_PATCH=""
           CLASSIC_PATCH=""
           WOTLK_PATCH=""
+          FOREVER_PATCH=""
           for TOC in "$ADDON"/"$ADDON"_*.toc; do
             IFACE=$(grep -oP '^## Interface:\s*\K.+' "$TOC" | tr -d '\r ')
             IFS=',' read -ra ARR <<< "$IFACE"
@@ -123,6 +124,7 @@ jobs:
                 *_TBC.toc) BC_PATCH="$V" ;;
                 *_Vanilla.toc) CLASSIC_PATCH="$V" ;;
                 *_Wrath.toc) WOTLK_PATCH="$V" ;;
+                *_Camelot.toc) FOREVER_PATCH="$V" ;;
               esac
             done
           done
@@ -133,6 +135,7 @@ jobs:
           echo "bc_patch=$BC_PATCH" >> "$GITHUB_OUTPUT"
           echo "classic_patch=$CLASSIC_PATCH" >> "$GITHUB_OUTPUT"
           echo "wotlk_patch=$WOTLK_PATCH" >> "$GITHUB_OUTPUT"
+          echo "forever_patch=$FOREVER_PATCH" >> "$GITHUB_OUTPUT"
 
       - name: Extract release notes from CHANGELOG.md
         id: notes
@@ -273,6 +276,7 @@ jobs:
             --arg bc "${{ steps.meta.outputs.bc_patch }}" \
             --arg classic "${{ steps.meta.outputs.classic_patch }}" \
             --arg wotlk "${{ steps.meta.outputs.wotlk_patch }}" \
+            --arg forever "${{ steps.meta.outputs.forever_patch }}" \
             --rawfile changelog RELEASE_NOTES.md \
             '{label: $label, stability: "stable", changelog: $changelog}
              + (if $retail  != "" then {supported_retail_patch: $retail}   else {} end)
@@ -280,7 +284,8 @@ jobs:
              + (if $cata    != "" then {supported_cata_patch: $cata}       else {} end)
              + (if $bc      != "" then {supported_bc_patch: $bc}           else {} end)
              + (if $classic != "" then {supported_classic_patch: $classic} else {} end)
-             + (if $wotlk   != "" then {supported_wotlk_patch: $wotlk}     else {} end)' \
+             + (if $wotlk   != "" then {supported_wotlk_patch: $wotlk}     else {} end)
+             + (if $forever != "" then {supported_forever_patch: $forever} else {} end)' \
             > wago_metadata.json
 
           # "|| true" keeps the step alive under "bash -e" when curl fails

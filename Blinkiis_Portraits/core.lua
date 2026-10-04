@@ -30,6 +30,9 @@ do
 	BLINKIISPORTRAITS.Wrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 	BLINKIISPORTRAITS.Retail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 	BLINKIISPORTRAITS.Classic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+	BLINKIISPORTRAITS.Forever = WOW_PROJECT_ID == WOW_PROJECT_CAMELOT
+	-- Forever runs classic content on the modern client and shares its API
+	BLINKIISPORTRAITS.Modern = BLINKIISPORTRAITS.Retail or BLINKIISPORTRAITS.Forever
 end
 
 -- radial status bars (WoW 12.1), missing on the classic clients the other TOCs target
@@ -62,7 +65,7 @@ function BLINKIISPORTRAITS:GetUnitIdentity(unit, isPlayerFrame)
 	if not unit then return false, false, nil end
 
 	local isSecret = BLINKIISPORTRAITS:IsSecretUnit(unit)
-	local isPlayer = BLINKIISPORTRAITS:SafeValue(UnitIsPlayer(unit)) or (BLINKIISPORTRAITS.Retail and BLINKIISPORTRAITS:SafeValue(UnitInPartyIsAI(unit))) or (isSecret and isPlayerFrame) or false
+	local isPlayer = BLINKIISPORTRAITS:SafeValue(UnitIsPlayer(unit)) or (BLINKIISPORTRAITS.Modern and BLINKIISPORTRAITS:SafeValue(UnitInPartyIsAI(unit))) or (isSecret and isPlayerFrame) or false
 
 	return isSecret, isPlayer, select(2, UnitClass(unit))
 end
@@ -164,7 +167,7 @@ local ADDON_FOLDERS = {
 	EUI = { "EllesmereUI" },
 	STUF = { "Stuf" },
 	DF = { "DandersFrames" },
-	JI = { "ElvUI_JiberishIcons" },
+	JI = { "JiberishIcons", "ElvUI_JiberishIcons" },
 }
 
 local function GetLoadedAddon(folders)

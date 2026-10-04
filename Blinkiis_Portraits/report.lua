@@ -28,7 +28,7 @@ local reportUnits = { "player", "target", "targettarget", "pet", "focus", "party
 
 local unitFrameAddons = { "ELVUI", "SUF", "PB4", "Cell", "Cell_UF", "UUF", "NDUI", "EQOL", "BBF", "EUI", "STUF", "DF" }
 
-local flavors = { "Retail", "Mists", "Cata", "Wrath", "Classic" }
+local flavors = { "Retail", "Forever", "Mists", "Cata", "Wrath", "Classic" }
 
 -- reused so a repeated report does not allocate
 local targetProbe = {}

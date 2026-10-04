@@ -1,5 +1,14 @@
 # Changelog - Blinkii's Portraits
 
+## [ver. 1.61] - 04.10.2026
+### 🐛 FIX
+- FIX - [Class-Icons]: JiberishIcons class icons are available again after its rename to Jiberish Fabled Icons.
+- FIX - [EQOL]: Enhance QoL group frames on Burning Crusade Classic update their portraits again when the group changes.
+### 🔧 UPDATE
+- UPDATE - [System]: Updated the Wrath Classic interface version.
+### ✨ NEW
+- NEW - [System]: Added support for WoW Forever.
+
 ## [ver. 1.60] - 23.08.2026
 ### 🐛 FIX
 - FIX - [Colors]: Enemy players in combat were colored with the enemy color instead of their class color.
