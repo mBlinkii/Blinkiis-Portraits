@@ -1,6 +1,6 @@
 # Changelog - Blinkii's Portraits
 
-## [ver. 1.61] - 04.10.2026
+## [ver. 1.61] - 11.10.2026
 ### 🐛 FIX
 - FIX - [Class-Icons]: JiberishIcons class icons are available again after its rename to Jiberish Fabled Icons.
 - FIX - [EQOL]: Enhance QoL group frames on Burning Crusade Classic update their portraits again when the group changes.
@@ -15,7 +15,7 @@
 - NEW - [System]: Added support for WoW Forever.
 - NEW - [Class-Icons]: Added spec icons in four styles that show the specialization of players, with the class icon as fallback until it is known.
 - NEW - [Class-Icons]: The spec icon packs of JiberishIcons can be selected as spec icons.
-- NEW - [EllesmereUI]: All settings are also available in the EllesmereUI options panel, with their own section in its sidebar, as soon as EllesmereUI ships its plugin support.
+- NEW - [EllesmereUI]: All settings are also available in the EllesmereUI options panel with their own section in its sidebar, starting with EllesmereUI 9.3.5.
 
 ## [ver. 1.60] - 23.08.2026
 ### 🐛 FIX
