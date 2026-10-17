@@ -1,5 +1,9 @@
 # Changelog - Blinkii's Portraits
 
+## [ver. 1.62] - 14.10.2026
+### 🔧 UPDATE
+- UPDATE - [System]: Updated the Retail and Wrath Classic interface versions.
+
 ## [ver. 1.61] - 11.10.2026
 ### 🐛 FIX
 - FIX - [Class-Icons]: JiberishIcons class icons are available again after its rename to Jiberish Fabled Icons.
