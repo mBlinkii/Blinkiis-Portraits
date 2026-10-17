@@ -1,6 +1,6 @@
 # Changelog - Blinkii's Portraits
 
-## [ver. 1.62] - 14.10.2026
+## [ver. 1.62] - 17.10.2026
 ### 🔧 UPDATE
 - UPDATE - [System]: Updated the Retail and Wrath Classic interface versions.
 
