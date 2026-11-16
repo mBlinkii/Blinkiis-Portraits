@@ -344,6 +344,10 @@ BLINKIISPORTRAITS.media = {
 
 		elite = "Interface\\Addons\\Blinkiis_Portraits\\media\\extra_elite.tga",
 
+		forever_hd_elite = "Interface\\Addons\\Blinkiis_Portraits\\media\\forever_hd_elite.tga",
+		forever_hd_elite_neutral = "Interface\\Addons\\Blinkiis_Portraits\\media\\forever_hd_elite_neutral.tga",
+		forever_hd_boss = "Interface\\Addons\\Blinkiis_Portraits\\media\\forever_hd_boss.tga",
+		forever_hd_boss_neutral = "Interface\\Addons\\Blinkiis_Portraits\\media\\forever_hd_boss_neutral.tga",
 	},
 	class = {
 		blizzard = {

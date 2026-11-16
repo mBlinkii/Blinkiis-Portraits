@@ -250,6 +250,10 @@ L["Blizz Silver"] = "Blizz Silver"
 L["Blizz Boss"] = "Blizz Boss"
 L["Blizz Neutral"] = "Blizz Neutral"
 L["Blizz Boss Neutral"] = "Blizz Boss Neutral"
+L["Forever HD Elite"] = "Forever HD Elite"
+L["Forever HD Elite Neutral"] = "Forever HD Elite Neutral"
+L["Forever HD Boss"] = "Forever HD Boss"
+L["Forever HD Boss Neutral"] = "Forever HD Boss Neutral"
 
 L["Dragon"] = "Dragon"
 

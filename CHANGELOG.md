@@ -1,5 +1,9 @@
 # Changelog - Blinkii's Portraits
 
+## [ver. 1.63] - 16.11.2026
+### ✨ NEW
+- NEW - [Textures]: Add the extra textures Forever HD Elite, Forever HD Elite Neutral, Forever HD Boss and Forever HD Boss Neutral.
+
 ## [ver. 1.62] - 17.10.2026
 ### 🔧 UPDATE
 - UPDATE - [System]: Updated the Retail and Wrath Classic interface versions.

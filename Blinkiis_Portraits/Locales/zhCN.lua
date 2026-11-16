@@ -227,6 +227,10 @@ L["Blizz Silver"] = "暴雪银色"
 L["Blizz Boss"] = "暴雪首领"
 L["Blizz Neutral"] = "暴雪中立"
 L["Blizz Boss Neutral"] = "暴雪中立首领"
+L["Forever HD Elite"] = "Forever HD 精英"
+L["Forever HD Elite Neutral"] = "Forever HD 中立精英"
+L["Forever HD Boss"] = "Forever HD 首领"
+L["Forever HD Boss Neutral"] = "Forever HD 中立首领"
 
 L["Dragon"] = "龙"
 

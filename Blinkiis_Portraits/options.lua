@@ -119,6 +119,11 @@ local extra = {
 	climbing_plant_v2 = L["Climbing Plant V2"],
 
 	elite = L["Elite"],
+
+	forever_hd_elite = L["Forever HD Elite"],
+	forever_hd_elite_neutral = L["Forever HD Elite Neutral"],
+	forever_hd_boss = L["Forever HD Boss"],
+	forever_hd_boss_neutral = L["Forever HD Boss Neutral"],
 }
 
 local frameStrata = {
