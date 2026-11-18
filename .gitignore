@@ -1,5 +1,6 @@
 # Editor / IDE
 /.vscode/
+.luarc.json
 *.code-workspace
 *.bak
 *.swp
