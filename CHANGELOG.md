@@ -4,8 +4,7 @@
 ### 🐛 FIX
 - FIX - [Textures]: The extra texture is masked correctly again on the Blizz Round, Blizz Round Up, Cookie, Leaf, Moon, Octagon, Pentagon, Shield and Trapezoid textures when it is not drawn on top.
 ### ✨ NEW
-- NEW - [Textures]: Add the extra textures Forever HD Elite, Forever HD Elite Neutral, Forever HD Boss and Forever HD Boss Neutral.
-- NEW - [Textures]: Add the extra textures Forever Blizz Elite, Forever Blizz Elite Neutral, Forever Blizz Boss and Forever Blizz Boss Neutral.
+- NEW - [Textures]: Add the extra textures Forever HD and Forever Blizz, each in the variants Elite, Elite Neutral, Boss and Boss Neutral.
 
 ## [ver. 1.62] - 17.10.2026
 ### 🔧 UPDATE
