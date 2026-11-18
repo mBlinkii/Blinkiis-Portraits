@@ -231,6 +231,10 @@ L["Forever HD Elite"] = "Forever HD 精英"
 L["Forever HD Elite Neutral"] = "Forever HD 中立精英"
 L["Forever HD Boss"] = "Forever HD 首领"
 L["Forever HD Boss Neutral"] = "Forever HD 中立首领"
+L["Forever Blizz Elite"] = "Forever 暴雪精英"
+L["Forever Blizz Elite Neutral"] = "Forever 暴雪中立精英"
+L["Forever Blizz Boss"] = "Forever 暴雪首领"
+L["Forever Blizz Boss Neutral"] = "Forever 暴雪中立首领"
 
 L["Dragon"] = "龙"
 

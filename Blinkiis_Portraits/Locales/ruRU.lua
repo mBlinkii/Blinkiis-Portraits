@@ -231,6 +231,10 @@ L["Forever HD Elite"] = "Forever HD Элитный"
 L["Forever HD Elite Neutral"] = "Forever HD Элитный Нейтральный"
 L["Forever HD Boss"] = "Forever HD Босс"
 L["Forever HD Boss Neutral"] = "Forever HD Босс Нейтральный"
+L["Forever Blizz Elite"] = "Forever Blizz Элитный"
+L["Forever Blizz Elite Neutral"] = "Forever Blizz Элитный Нейтральный"
+L["Forever Blizz Boss"] = "Forever Blizz Босс"
+L["Forever Blizz Boss Neutral"] = "Forever Blizz Босс Нейтральный"
 
 L["Dragon"] = "Дракон"
 

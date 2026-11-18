@@ -124,6 +124,10 @@ local extra = {
 	forever_hd_elite_neutral = L["Forever HD Elite Neutral"],
 	forever_hd_boss = L["Forever HD Boss"],
 	forever_hd_boss_neutral = L["Forever HD Boss Neutral"],
+	forever_blizz_elite = L["Forever Blizz Elite"],
+	forever_blizz_elite_neutral = L["Forever Blizz Elite Neutral"],
+	forever_blizz_boss = L["Forever Blizz Boss"],
+	forever_blizz_boss_neutral = L["Forever Blizz Boss Neutral"],
 }
 
 local frameStrata = {
