@@ -95,16 +95,16 @@ BLINKIISPORTRAITS.media = {
 		blizz_round = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\blizz_round.tga",
 			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\blizz_round_mask.tga",
-			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\blizz_round_extra.tga",
+			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\blizz_round_extra_mask.tga",
 			mask_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\blizz_round_mask_mirror.tga",
-			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\blizz_round_extra_mirror.tga",
+			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\blizz_round_extra_mask_mirror.tga",
 		},
 		blizz_round_up = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\blizz_round_up.tga",
 			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\blizz_round_up_mask.tga",
-			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\blizz_round_up_extra.tga",
+			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\blizz_round_up_extra_mask.tga",
 			mask_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\blizz_round_up_mask_mirror.tga",
-			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\blizz_round_up_extra_mirror.tga",
+			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\blizz_round_up_extra_mask_mirror.tga",
 		},
 		circle = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\circle.tga",
@@ -114,9 +114,9 @@ BLINKIISPORTRAITS.media = {
 		cookie = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\cookie.tga",
 			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\cookie_mask.tga",
-			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\cookie_extra.tga",
+			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\cookie_extra_mask.tga",
 			mask_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\cookie_mask_mirror.tga",
-			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\cookie_extra_mirror.tga",
+			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\cookie_extra_mask_mirror.tga",
 		},
 		diagonal = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\diagonal.tga",
@@ -178,21 +178,21 @@ BLINKIISPORTRAITS.media = {
 		leaf = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\leaf.tga",
 			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\leaf_mask.tga",
-			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\leaf_extra.tga",
+			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\leaf_extra_mask.tga",
 			mask_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\leaf_mask_mirror.tga",
-			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\leaf_extra_mirror.tga",
+			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\leaf_extra_mask_mirror.tga",
 		},
 		leaf_mirror = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\leaf_mirror.tga",
 			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\leaf_mask_mirror.tga",
-			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\leaf_extra_mirror.tga",
+			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\leaf_extra_mask_mirror.tga",
 			mask_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\leaf_mask.tga",
-			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\leaf_extra.tga",
+			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\leaf_extra_mask.tga",
 		},
 		octagon = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\octagon.tga",
 			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\octagon_mask.tga",
-			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\octagon_extra.tga",
+			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\octagon_extra_mask.tga",
 		},
 		pad = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\pad.tga",
@@ -216,14 +216,14 @@ BLINKIISPORTRAITS.media = {
 		pentagon = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\pentagon.tga",
 			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\pentagon_mask.tga",
-			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\pentagon_extra.tga",
+			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\pentagon_extra_mask.tga",
 			mask_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\pentagon_mask_mirror.tga",
-			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\pentagon_extra_mirror.tga",
+			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\pentagon_extra_mask_mirror.tga",
 		},
 		shield = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\shield.tga",
 			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\shield_mask.tga",
-			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\shield_extra.tga",
+			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\shield_extra_mask.tga",
 		},
 		square = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\square.tga",
@@ -238,16 +238,16 @@ BLINKIISPORTRAITS.media = {
 		trapezoid = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\trapezoid.tga",
 			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\trapezoid_mask.tga",
-			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\trapezoid_extra.tga",
+			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\trapezoid_extra_mask.tga",
 			mask_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\trapezoid_mask_mirror.tga",
-			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\trapezoid_extra_mirror.tga",
+			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\trapezoid_extra_mask_mirror.tga",
 		},
 		trapezoid_mirror = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\trapezoid_mirror.tga",
 			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\trapezoid_mask_mirror.tga",
-			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\trapezoid_extra_mirror.tga",
+			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\trapezoid_extra_mask_mirror.tga",
 			mask_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\trapezoid_mask.tga",
-			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\trapezoid_extra.tga",
+			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\trapezoid_extra_mask.tga",
 		},
 		oval = {
 			texture = "Interface\\Addons\\Blinkiis_Portraits\\media\\oval.tga",
@@ -269,7 +269,7 @@ BLINKIISPORTRAITS.media = {
 			mask = "Interface\\Addons\\Blinkiis_Portraits\\media\\moon_mask.tga",
 			extra = "Interface\\Addons\\Blinkiis_Portraits\\media\\moon_extra_mask.tga",
 			mask_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\moon_mask_mirror.tga",
-			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\moon_extra_mirror.tga",
+			extra_mirror = "Interface\\Addons\\Blinkiis_Portraits\\media\\moon_extra_mask_mirror.tga",
 		},
 	},
 	extra = {

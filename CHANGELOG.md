@@ -1,6 +1,8 @@
 # Changelog - Blinkii's Portraits
 
-## [ver. 1.63] - 16.11.2026
+## [ver. 1.63] - 18.11.2026
+### 🐛 FIX
+- FIX - [Textures]: The extra texture is masked correctly again on the Blizz Round, Blizz Round Up, Cookie, Leaf, Moon, Octagon, Pentagon, Shield and Trapezoid textures when it is not drawn on top.
 ### ✨ NEW
 - NEW - [Textures]: Add the extra textures Forever HD Elite, Forever HD Elite Neutral, Forever HD Boss and Forever HD Boss Neutral.
 
