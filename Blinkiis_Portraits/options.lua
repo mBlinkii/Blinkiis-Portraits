@@ -3417,6 +3417,13 @@ BLINKIISPORTRAITS.options = {
 				},
 			},
 		},
+		plugins_group = {
+			order = 13.5,
+			type = "group",
+			childGroups = "tab",
+			name = L["Plugins"],
+			args = {},
+		},
 		profile_group = {
 			order = 14,
 			type = "group",

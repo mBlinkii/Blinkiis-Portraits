@@ -312,3 +312,10 @@ L["Blizzard HD"] = "Blizzard HD"
 L["New Style"] = "New Style"
 L["Simple"] = "Simple"
 L["Simple with Border"] = "Simple with Border"
+
+-- api.lua
+L["Plugins"] = "Plugins"
+L["Plugin registration needs a name."] = "Plugin registration needs a name."
+L["Plugin %s is already registered."] = "Plugin %s is already registered."
+L["Plugin %s needs API version %s, Blinkiis Portraits provides %d."] = "Plugin %s needs API version %s, Blinkiis Portraits provides %d."
+L["Plugin %s registered before Blinkiis Portraits was initialized."] = "Plugin %s registered before Blinkiis Portraits was initialized."

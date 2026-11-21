@@ -1,0 +1,9 @@
+## Interface: 120105, 16001, 50504, 38001, 20506, 11509
+## Title: Blinkiis Portraits - Example Plugin
+## Notes: Example and self test for the Blinkiis Portraits plugin API.
+## Author: Blinkii
+## Version: 1.0
+## Dependencies: Blinkiis_Portraits
+
+checks.lua
+core.lua
