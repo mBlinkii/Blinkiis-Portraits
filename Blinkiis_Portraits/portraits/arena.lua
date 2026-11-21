@@ -10,7 +10,7 @@ function BLINKIISPORTRAITS:InitializeArenaPortrait(demo)
 	if not unitframe then return end
 
 	for i = 1, 5 do
-		local parent = BLINKIISPORTRAITS:ResolveFrame(unitframe .. i)
+		local parent = BLINKIISPORTRAITS:ResolveGroupFrame(unitframe, i)
 
 		if parent then
 			BLINKIISPORTRAITS:SetupUnitPortrait({

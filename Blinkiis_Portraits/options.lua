@@ -147,20 +147,10 @@ local custom_classicons = {
 	texCoords = nil,
 }
 
-local parentFrames = {
-	elvui = "ElvUI",
-	suf = "Shadowed Unit Frames",
-	pb4 = "PitBull 4",
-	cell = "Cell",
-	uuf = "Unhalted Unit Frames",
-	ndui = "NDui",
-	eqol = "EQOL",
-	bbf = "BetterBlizzFrames",
-	eui = "EllesmereUI",
-	stuf = "Stuf",
-	df = "DandersFrames",
-	auto = L["AUTO"],
-}
+-- built on demand so frame providers registered by plugins show up
+local function parentFrames()
+	return BLINKIISPORTRAITS:GetProviderOptionValues()
+end
 
 local exportProfile = {
 	author = nil,

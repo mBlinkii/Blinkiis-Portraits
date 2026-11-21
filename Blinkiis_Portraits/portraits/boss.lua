@@ -11,8 +11,7 @@ function BLINKIISPORTRAITS:InitializeBossPortrait(demo)
 	if not (unitframe or isEQOL_Frame) then return end
 
 	for i = 1, 5 do
-		local frameName = isEQOL_Frame and format("%s%sFrame", unitframe, i) or (unitframe .. i)
-		local parent = BLINKIISPORTRAITS:ResolveFrame(frameName)
+		local parent = isEQOL_Frame and BLINKIISPORTRAITS:ResolveFrame(format("%s%sFrame", unitframe, i)) or BLINKIISPORTRAITS:ResolveGroupFrame(unitframe, i)
 
 		if parent then
 			BLINKIISPORTRAITS:SetupUnitPortrait({

@@ -153,20 +153,8 @@ function BLINKIISPORTRAITS:LoadDB()
 	self.db = LibStub("AceDB-3.0"):New("BlinkiisPortraitsDB", BLINKIISPORTRAITS.defaults, true)
 end
 
--- a fork ships under its own folder but keeps the frame names of the original, so it shares its flag
+-- unit frame addons are tracked by the provider registry, only the class icon source is left here
 local ADDON_FOLDERS = {
-	SUF = { "ShadowedUnitFrames", "ShadowedUnitFrames-WorgenFix" },
-	ELVUI = { "ElvUI" },
-	PB4 = { "PitBull4" },
-	Cell = { "Cell" },
-	Cell_UF = { "Cell_UnitFrames" },
-	UUF = { "UnhaltedUnitFrames" },
-	NDUI = { "NDui" },
-	EQOL = { "EnhanceQoL" },
-	BBF = { "BetterBlizzFrames" },
-	EUI = { "EllesmereUI" },
-	STUF = { "Stuf" },
-	DF = { "DandersFrames" },
 	JI = { "JiberishIcons", "ElvUI_JiberishIcons" },
 }
 
@@ -183,6 +171,8 @@ local function CheckAddons()
 		BLINKIISPORTRAITS.LoadedAddons[flag] = loaded
 		BLINKIISPORTRAITS[flag] = loaded ~= nil
 	end
+
+	BLINKIISPORTRAITS:RefreshProviderAvailability()
 end
 
 local isDelayedUpdateScheduled = false

@@ -1,5 +1,3 @@
-local _G = _G
-
 local MAX_PARTY_MEMBERS = 5
 
 local partyEvents = {
@@ -35,13 +33,8 @@ local function HookParentUnitChanges(parent)
 end
 
 -- nil while the button does not exist yet, header frames create them on demand
-local function ResolvePartyParent(unitframe, parentFrame, index)
-	if parentFrame == "bbf" then
-		local partyFrame = _G.PartyFrame
-		return partyFrame and partyFrame[unitframe .. index]
-	end
-
-	return BLINKIISPORTRAITS:ResolveFrame(unitframe .. index)
+local function ResolvePartyParent(unitframe, index)
+	return BLINKIISPORTRAITS:ResolveGroupFrame(unitframe, index)
 end
 
 -- some layouts put the player next to the party frames instead of into them (EllesmereUI, UUF)
@@ -81,7 +74,7 @@ function BLINKIISPORTRAITS:HasPendingPartyPortraits()
 	if not unitframe then return false end
 
 	for i = 1, MAX_PARTY_MEMBERS do
-		local parent = ResolvePartyParent(unitframe, parentFrame, i)
+		local parent = ResolvePartyParent(unitframe, i)
 		if parent and IsPortraitOutdated("party" .. i, parent) then return true end
 	end
 
@@ -98,7 +91,7 @@ function BLINKIISPORTRAITS:InitializePartyPortrait(demo)
 	if not unitframe then return end
 
 	for i = 1, MAX_PARTY_MEMBERS do
-		local parent = ResolvePartyParent(unitframe, parentFrame, i)
+		local parent = ResolvePartyParent(unitframe, i)
 
 		-- only a fallback, a header may assign a different unit to this button
 		if parent then SetupPartyPortrait("party" .. i, parent, parentFrame, "party" .. i, demo) end

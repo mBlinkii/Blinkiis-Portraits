@@ -32,6 +32,25 @@ local plugin = API:NewPlugin("BP_ExamplePlugin", { apiVersion = 1, defaults = { 
 Check("NewPlugin returns plugin", plugin ~= nil)
 ns.plugin = plugin
 
+local playerFrame = CreateFrame("Frame", "BPEX_PlayerFrame", UIParent, "BackdropTemplate")
+playerFrame:SetSize(100, 40)
+playerFrame:SetPoint("CENTER", UIParent, "CENTER", 0, -200)
+playerFrame:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8" })
+playerFrame:SetBackdropColor(0, 0, 0, 0.5)
+playerFrame.unit = "player"
+
+local registered = API:RegisterFrameProvider("bpex", { label = "BP Example", addons = { "BP_ExamplePlugin" }, units = { player = "BPEX_PlayerFrame" } })
+Check("provider registered", registered == true)
+Check("duplicate provider rejected", API:RegisterFrameProvider("bpex", { label = "x", addons = {}, units = {} }) == false)
+
+ns.Later(function()
+	local portrait
+	for key, p in API:GetPortraits() do
+		if key == "player" then portrait = p end
+	end
+	print("BP_ExamplePlugin: player portrait parent is " .. tostring(portrait and portrait.parentFrame and portrait.parentFrame:GetName()))
+end)
+
 local seen = {}
 local function Remember(event, portrait)
 	seen[event] = portrait or true

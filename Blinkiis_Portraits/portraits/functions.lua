@@ -23,10 +23,9 @@ local IsUnitModelReadyForUI = IsUnitModelReadyForUI or function() return true en
 local UnitLevel = UnitLevel
 local UnitReaction = UnitReaction
 local format = format
-local gmatch = string.gmatch
-local ipairs, type = ipairs, type
+local ipairs = ipairs
 local select = select
-local strfind, strsplit, strsub = strfind, strsplit, strsub
+local strsplit, strsub = strsplit, strsub
 local tostring = tostring
 local CreateColor = CreateColor
 -- secret API (WoW 12.1), missing on the classic clients the other TOCs target
@@ -449,18 +448,11 @@ for _, event in ipairs(empowerEvents) do
 	keepUnitLookup[event] = true
 end
 
--- oUF renamed frame.unit to __unit (ElvUI 15.22), Cell uses _unit, header frames only the attribute
-function BLINKIISPORTRAITS:GetFrameUnit(frame)
-	if not frame then return nil end
-
-	return frame.__unit or frame._unit or (frame.GetAttribute and frame:GetAttribute("unit")) or frame.unit
-end
-
 function BLINKIISPORTRAITS:ResolvePortraitUnit(portrait)
 	local parent = portrait.parentFrame
 	if not parent then return portrait.unit end
 
-	return portrait.unitOverride or BLINKIISPORTRAITS:GetFrameUnit(parent) or portrait.unit or portrait.unitFallback
+	return portrait.unitOverride or BLINKIISPORTRAITS:GetFrameUnit(parent, portrait.parentAddon) or portrait.unit or portrait.unitFallback
 end
 
 local function OnEvent(portrait, event, eventUnit, arg)
@@ -758,75 +750,6 @@ function BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, settings)
 		portrait.eliteFile = mediaExtra[dbMisc.elite]
 		portrait.rareeliteFile = mediaExtra[dbMisc.rareelite]
 		portrait.bossFile = mediaExtra[dbMisc.boss]
-	end
-end
-
--- supports dotted paths like "Stuf.units.player"
-function BLINKIISPORTRAITS:ResolveFrame(path)
-	if type(path) ~= "string" then return path end
-	if not strfind(path, ".", 1, true) then return _G[path] end
-
-	local obj = _G
-	for part in gmatch(path, "[^%.]+") do
-		obj = obj[part]
-		if not obj then return nil end
-	end
-	return obj
-end
-
-local function GetUnitFrame(unit, type)
-	local unitFrames = BLINKIISPORTRAITS.unitFrames
-
-	if type == "pb4" then
-		local singleFrames = unitFrames.pb4.singleUnits()
-		local groupFrames = unitFrames.pb4.groupUnits()
-		return singleFrames[unit] or groupFrames[unit]
-	else
-		return unitFrames[type][unit]
-	end
-end
-
-function BLINKIISPORTRAITS:GetUnitFrameName(unit, addonType)
-	if not addonType then return nil end
-	return GetUnitFrame(unit, addonType)
-end
-
--- "unit" restricts an entry to a specific unit (Cell and DandersFrames: party only)
-local ufTypePriority = {
-	{ type = "df", flag = "DF", unit = "party" },
-	{ type = "cell", flag = "Cell", unit = "party" },
-	{ type = "elvui", flag = "ELVUI" },
-	{ type = "pb4", flag = "PB4" },
-	{ type = "suf", flag = "SUF" },
-	{ type = "uuf", flag = "UUF" },
-	{ type = "ndui", flag = "NDUI" },
-	{ type = "cell", flag = "Cell_UF" },
-	{ type = "eqol", flag = "EQOL" },
-	{ type = "bbf", flag = "BBF" },
-	{ type = "eui", flag = "EUI" },
-	{ type = "stuf", flag = "STUF" },
-}
-
-local function IsEntryAvailable(entry, unit)
-	return BLINKIISPORTRAITS[entry.flag] and (not entry.unit or entry.unit == unit)
-end
-
--- a loaded addon with a gap in its mapping must not block a lower priority addon
-function BLINKIISPORTRAITS:GetUnitFrames(unit, parent)
-	-- explicit selection or "auto" priority
-	for _, entry in ipairs(ufTypePriority) do
-		if IsEntryAvailable(entry, unit) and (parent == "auto" or parent == entry.type) then
-			local frame = GetUnitFrame(unit, entry.type)
-			if frame then return frame, entry.type end
-		end
-	end
-
-	-- fallback: first loaded unit frame addon providing the unit, ignoring the configured parent
-	for _, entry in ipairs(ufTypePriority) do
-		if IsEntryAvailable(entry, unit) then
-			local frame = GetUnitFrame(unit, entry.type)
-			if frame then return frame, entry.type end
-		end
 	end
 end
 
