@@ -27,6 +27,7 @@ api.lua
 elvui.lua
 eui.lua
 cmd.lua
+debugmode.lua
 defaults.lua
 popup.lua
 report.lua

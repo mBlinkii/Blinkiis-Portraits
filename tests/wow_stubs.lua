@@ -130,3 +130,52 @@ function env.setLoadedAddons(list)
 end
 
 env.noop = noop
+
+local addonList = {}
+
+function env.setAddOnList(list)
+	addonList = list
+end
+
+local function FindAddOn(name)
+	for _, addon in ipairs(addonList) do
+		if addon.name == name then return addon end
+	end
+end
+
+function env.UnitName()
+	return "Tester"
+end
+
+env.C_AddOns.GetNumAddOns = function()
+	return #addonList
+end
+env.C_AddOns.GetAddOnInfo = function(index)
+	local addon = addonList[index]
+	return addon and addon.name
+end
+env.C_AddOns.GetAddOnEnableState = function(name)
+	local addon = FindAddOn(name)
+	return (addon and addon.enabled) and 2 or 0
+end
+env.C_AddOns.IsAddOnLoadOnDemand = function(name)
+	local addon = FindAddOn(name)
+	return addon and addon.lod or false
+end
+env.C_AddOns.GetAddOnDependencies = function(name)
+	local addon = FindAddOn(name)
+	return unpack(addon and addon.deps or {})
+end
+env.C_AddOns.DisableAddOn = function(name)
+	local addon = FindAddOn(name)
+	if addon then addon.enabled = false end
+end
+env.C_AddOns.EnableAddOn = function(name)
+	local addon = FindAddOn(name)
+	if addon then addon.enabled = true end
+end
+
+function env.isAddOnEnabled(name)
+	local addon = FindAddOn(name)
+	return addon and addon.enabled or false
+end
