@@ -214,7 +214,6 @@ local function UpdatePortrait(portrait, unit, isNewUnit)
 		end
 	end
 
-	local forceDesaturate = BLINKIISPORTRAITS.db.profile.misc.desaturate
 	local portraitUnit = unit or portrait.unit
 	local icon, texCoords = GetUnitIcon(portrait, portraitUnit)
 	portrait.texCoords = texCoords
@@ -245,7 +244,7 @@ local function UpdatePortrait(portrait, unit, isNewUnit)
 		end
 	end
 
-	BLINKIISPORTRAITS:UpdateDesaturated(portrait, (forceDesaturate or portrait.isDead))
+	BLINKIISPORTRAITS:RunElement(portrait, "Desaturate", "Update", portraitUnit)
 
 	BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, texCoords)
 end
@@ -666,17 +665,18 @@ function BLINKIISPORTRAITS:GetUnitColor(unit, isDead, isPlayer, class, isSecret)
 	end
 end
 
-function BLINKIISPORTRAITS:UpdateDesaturated(portrait, isDead)
-	if isDead then
-		if not portrait.isDesaturated then
-			portrait.portrait:SetDesaturated(true)
-			portrait.isDesaturated = true
+BLINKIISPORTRAITS:DefineElement("Desaturate", {
+	Update = function(_, portrait)
+		local isDesaturated = (BLINKIISPORTRAITS.db.profile.misc.desaturate or portrait.isDead) and true or false
+
+		if portrait.isDesaturated ~= isDesaturated then
+			portrait.portrait:SetDesaturated(isDesaturated)
+			portrait.isDesaturated = isDesaturated
 		end
-	elseif portrait.isDesaturated then
-		portrait.portrait:SetDesaturated(false)
-		portrait.isDesaturated = false
-	end
-end
+
+		return isDesaturated
+	end,
+})
 
 local function UpdateZoom(portrait)
 	local zoom = BLINKIISPORTRAITS.db.profile.misc.zoom

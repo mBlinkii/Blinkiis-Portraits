@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Script file="providers.lua"/>
+	<Script file="elements.lua"/>
 	<Script file="spec.lua"/>
 	<Script file="functions.lua"/>
     <Script file="arena.lua"/>

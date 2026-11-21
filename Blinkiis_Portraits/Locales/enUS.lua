@@ -320,3 +320,6 @@ L["Plugin %s is already registered."] = "Plugin %s is already registered."
 L["Plugin %s needs API version %s, Blinkiis Portraits provides %d."] = "Plugin %s needs API version %s, Blinkiis Portraits provides %d."
 L["Plugin %s registered before Blinkiis Portraits was initialized."] = "Plugin %s registered before Blinkiis Portraits was initialized."
 L["Skipped settings of plugins that are not loaded: %s"] = "Skipped settings of plugins that are not loaded: %s"
+
+-- portraits/elements.lua
+L["%s cannot override the portrait element %s, %s already does."] = "%s cannot override the portrait element %s, %s already does."
