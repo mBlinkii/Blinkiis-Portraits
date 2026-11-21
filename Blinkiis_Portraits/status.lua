@@ -15,14 +15,17 @@ local GetAddOnInfo = _G.C_AddOns and _G.C_AddOns.GetAddOnInfo or _G.GetAddOnInfo
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits", true)
 
-local MAIN_WIDTH, PLUGIN_WIDTH = 330, 220
-local ROW_HEIGHT, HEADING_HEIGHT, SECTION_GAP, PADDING = 15, 20, 6, 12
-local TOP_INSET, BOTTOM_INSET = 34, 40
-local HEADING_COLOR = "|cffff9d00"
+local MAIN_WIDTH, PLUGIN_WIDTH = 360, 260
+local ROW_HEIGHT, HEADING_HEIGHT, SECTION_GAP, PADDING = 25, 30, 6, 12
+local TOP_INSET, BOTTOM_INSET = 40, 44
+local ROW_FONT_SIZE, HEADING_FONT_SIZE = 14, 18
+-- ElvUI's default value color, used when ElvUI does not provide its own
+local DEFAULT_HEADING_COLOR = "|cfffe7b2c"
+local DIVIDER_TEXTURE = "Interface\\Tooltips\\UI-Tooltip-Border"
 
-local VALUE_COLOR = { r = 0.35, g = 0.9, b = 0.45 }
-local WARN_COLOR = { r = 1, g = 0.35, b = 0.35 }
-local MUTED_COLOR = { r = 0.55, g = 0.55, b = 0.55 }
+local VALUE_COLOR = { r = 0.29, g = 0.92, b = 0.17 }
+local WARN_COLOR = { r = 1, g = 0.2, b = 0.2 }
+local MUTED_COLOR = { r = 0.53, g = 0.53, b = 0.53 }
 
 local SINGLE_UNITS = { { "player", "Player" }, { "target", "Target" }, { "focus", "Focus" }, { "targettarget", "Target of Target" }, { "pet", "Pet" } }
 local GROUP_UNITS = { { "party", "Party" }, { "boss", "Boss" }, { "arena", "Arena" } }
@@ -217,43 +220,65 @@ end
 
 local window
 
+-- Expressway comes with ElvUI through LibSharedMedia, without it the game font is used
+local function GetFontPath()
+	local LSM = LibStub("LibSharedMedia-3.0", true)
+	return (LSM and LSM:Fetch("font", "Expressway", true)) or STANDARD_TEXT_FONT
+end
+
+local function GetHeadingColor()
+	local E = BLINKIISPORTRAITS.ELVUI and _G.ElvUI and _G.ElvUI[1]
+	return (E and E.media and E.media.hexvaluecolor) or DEFAULT_HEADING_COLOR
+end
+
+local function CreateDivider(panel)
+	local divider = panel:CreateTexture(nil, "ARTWORK")
+	divider:SetTexture(DIVIDER_TEXTURE)
+	divider:SetTexCoord(0.81, 0.94, 0.5, 1)
+	divider:SetHeight(8)
+	return divider
+end
+
 local function AcquireLine(panel, index)
 	local line = panel.lines[index]
 	if line then return line end
 
+	local font = GetFontPath()
+
 	line = {}
-	line.label = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-	line.value = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	line.label = panel:CreateFontString(nil, "OVERLAY")
+	line.label:SetFont(font, ROW_FONT_SIZE, "OUTLINE")
+	line.label:SetTextColor(1, 1, 1)
+	line.value = panel:CreateFontString(nil, "OVERLAY")
+	line.value:SetFont(font, ROW_FONT_SIZE, "OUTLINE")
 	line.value:SetJustifyH("LEFT")
 	line.value:SetWordWrap(false)
 
-	line.left = panel:CreateTexture(nil, "ARTWORK")
-	line.right = panel:CreateTexture(nil, "ARTWORK")
-	for _, divider in ipairs({ line.left, line.right }) do
-		divider:SetColorTexture(1, 1, 1, 0.2)
-		divider:SetHeight(1)
-	end
+	line.left = CreateDivider(panel)
+	line.right = CreateDivider(panel)
 
 	panel.lines[index] = line
 	return line
 end
 
 local function LayoutHeading(panel, line, title, offset)
+	line.label:SetFont(GetFontPath(), HEADING_FONT_SIZE, "OUTLINE")
 	line.label:SetJustifyH("CENTER")
-	line.label:SetText(HEADING_COLOR .. title .. "|r")
+	line.label:SetText(GetHeadingColor() .. title .. "|r")
 	line.label:ClearAllPoints()
 	line.label:SetPoint("TOP", panel, "TOP", 0, -offset)
 	line.label:Show()
 	line.value:Hide()
 
-	-- the lines run from the panel edges up to the title, like a fieldset legend
-	local y = -(offset + 6)
+	-- the dividers run from the panel edges up to the title, centered on it
 	line.left:ClearAllPoints()
-	line.left:SetPoint("TOPLEFT", panel, "TOPLEFT", PADDING, y)
-	line.left:SetPoint("RIGHT", line.label, "LEFT", -6, 0)
+	line.left:SetPoint("LEFT", panel, "LEFT", PADDING, 0)
+	line.left:SetPoint("RIGHT", line.label, "LEFT", -5, 0)
+	line.left:SetPoint("TOP", line.label, "CENTER", 0, 4)
 	line.right:ClearAllPoints()
-	line.right:SetPoint("TOPRIGHT", panel, "TOPRIGHT", -PADDING, y)
-	line.right:SetPoint("LEFT", line.label, "RIGHT", 6, 0)
+	line.right:SetPoint("RIGHT", panel, "RIGHT", -PADDING, 0)
+	line.right:SetPoint("LEFT", line.label, "RIGHT", 5, 0)
+	line.right:SetPoint("TOP", line.label, "CENTER", 0, 4)
 	line.left:Show()
 	line.right:Show()
 end
@@ -264,6 +289,7 @@ local function LayoutRow(panel, line, row, offset)
 	line.left:Hide()
 	line.right:Hide()
 
+	line.label:SetFont(GetFontPath(), ROW_FONT_SIZE, "OUTLINE")
 	line.label:SetJustifyH("LEFT")
 	line.label:SetText(row.label .. ":")
 	line.label:ClearAllPoints()
@@ -374,7 +400,8 @@ local function CreateStatusWindow()
 	frame:SetScript("OnDragStart", frame.StartMoving)
 	frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
 
-	local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	local title = frame:CreateFontString(nil, "OVERLAY")
+	title:SetFont(GetFontPath(), HEADING_FONT_SIZE, "OUTLINE")
 	title:SetPoint("TOP", 0, -12)
 	title:SetText(BLINKIISPORTRAITS.Name)
 
