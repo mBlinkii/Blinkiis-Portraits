@@ -136,15 +136,19 @@ local function UpdateRingHealth(portrait)
 	local ring = portrait.ring
 	if not (ring and portrait.unit and portrait.ringMode == "health") then return end
 
-	ring:SetMinMaxValues(0, UnitHealthMax(portrait.unit))
-
+	local maxValue = UnitHealthMax(portrait.unit)
+	local value
 	if portrait.db.ring.invert then
-		ring:SetValue(UnitHealthMissing(portrait.unit))
+		value = UnitHealthMissing(portrait.unit)
 	else
-		ring:SetValue(UnitHealth(portrait.unit))
+		value = UnitHealth(portrait.unit)
 	end
 
+	ring:SetMinMaxValues(0, maxValue)
+	ring:SetValue(value)
 	ring:Show()
+
+	return value, maxValue
 end
 
 -- the duration object renders itself, so there is no OnUpdate and no reading of cast times
@@ -161,9 +165,22 @@ local function UpdateRingCast(portrait)
 	ring:Show()
 end
 
-local function UpdateRing(portrait)
-	UpdateRingHealth(portrait)
-	UpdateRingCast(portrait)
+-- health events must not restart a running cast timer, cast events need no health read
+local ringHealthEvents = { UNIT_HEALTH = true, UNIT_MAXHEALTH = true }
+local ringCastEvents = { CastStart = true }
+
+BLINKIISPORTRAITS:DefineElement("Ring", {
+	Update = function(_, portrait, event)
+		local value, maxValue
+		if not ringCastEvents[event] then value, maxValue = UpdateRingHealth(portrait) end
+		if not ringHealthEvents[event] then UpdateRingCast(portrait) end
+
+		return value, maxValue, portrait.ringMode
+	end,
+})
+
+local function UpdateRing(portrait, event)
+	BLINKIISPORTRAITS:RunElement(portrait, "Ring", event or "Update", portrait.unit)
 end
 
 local Update
@@ -208,7 +225,7 @@ local function UpdatePortrait(portrait, unit, isNewUnit)
 		local castIcon = GetCastIcon(unit)
 		if castIcon then
 			portrait.portrait:SetTexture(castIcon)
-			return
+			return castIcon
 		else
 			portrait.isCasting = false
 		end
@@ -247,7 +264,15 @@ local function UpdatePortrait(portrait, unit, isNewUnit)
 	BLINKIISPORTRAITS:RunElement(portrait, "Desaturate", "Update", portraitUnit)
 
 	BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, texCoords)
+
+	return icon, texCoords
 end
+
+BLINKIISPORTRAITS:DefineElement("Portrait", {
+	Update = function(_, portrait, _, unit)
+		return UpdatePortrait(portrait, unit, portrait.pendingNewUnit)
+	end,
+})
 
 function Update(portrait, event, eventUnit)
 	if not portrait.unit then
@@ -295,7 +320,9 @@ function Update(portrait, event, eventUnit)
 
 		BLINKIISPORTRAITS:RunElement(portrait, "Color", event, unit)
 
-		UpdatePortrait(portrait, unit, isNewUnit)
+		portrait.pendingNewUnit = isNewUnit
+		BLINKIISPORTRAITS:RunElement(portrait, "Portrait", event, unit)
+		portrait.pendingNewUnit = nil
 		BLINKIISPORTRAITS:RunElement(portrait, "Extra", event, unit)
 
 		if portrait.clickable and not InCombatLockdown() and portrait:GetAttribute("unit") ~= unit then portrait:SetAttribute("unit", unit) end
@@ -309,8 +336,9 @@ function Update(portrait, event, eventUnit)
 	end
 end
 
-local function CastStart(portrait, _, unit)
-	UpdateRingCast(portrait)
+local castStartEvents = { UNIT_SPELLCAST_START = true, UNIT_SPELLCAST_CHANNEL_START = true, UNIT_SPELLCAST_EMPOWER_START = true }
+
+local function ShowCastIcon(portrait, unit)
 	if not portrait.db.cast then return end
 
 	-- without an icon nothing is replaced, so the casting state must stay unset
@@ -324,16 +352,35 @@ local function CastStart(portrait, _, unit)
 	if portrait.texCoords then BLINKIISPORTRAITS:Mirror(portrait.portrait, portrait.isPlayer and portrait.db.mirror, DEFAULT_COORDS) end
 
 	if BLINKIISPORTRAITS.DebugEnabled then BLINKIISPORTRAITS:Debug(format("  texture <- cast icon | unit: %s | icon: %s", tostring(unit), tostring(castIcon))) end
+
+	return castIcon
+end
+
+local function HideCastIcon(portrait, event, unit)
+	-- STOP and INTERRUPTED both fire for one cast, so the portrait is restored only once
+	if not portrait.isCasting then return end
+
+	portrait.isCasting = false
+	BLINKIISPORTRAITS:RunElement(portrait, "Portrait", event, unit)
+end
+
+BLINKIISPORTRAITS:DefineElement("Cast", {
+	Update = function(_, portrait, event, unit)
+		if castStartEvents[event] then return ShowCastIcon(portrait, unit) end
+
+		HideCastIcon(portrait, event, unit)
+	end,
+})
+
+local function CastStart(portrait, event, unit)
+	UpdateRing(portrait, "CastStart")
+	BLINKIISPORTRAITS:RunElement(portrait, "Cast", event, unit)
 end
 
 local function CastStop(portrait, event, unit)
 	if portrait.ring and portrait.ringMode == "cast" then portrait.ring:Hide() end
 
-	-- STOP and INTERRUPTED both fire for one cast, so the portrait is restored only once
-	if not portrait.isCasting then return end
-
-	portrait.isCasting = false
-	UpdatePortrait(portrait, unit)
+	BLINKIISPORTRAITS:RunElement(portrait, "Cast", event, unit)
 end
 
 local function ForceUpdate(portrait)
@@ -384,7 +431,7 @@ end
 
 -- dying and being revived keep the GUID, UNIT_HEALTH is the only event that sees it
 local function UnitHealthChanged(portrait, event)
-	UpdateRingHealth(portrait)
+	UpdateRing(portrait, event)
 
 	local isDead = not portrait.isSecret and SafeValue(UnitIsDeadOrGhost(portrait.unit)) or false
 	if portrait.isDead ~= isDead then Update(portrait, event, portrait.unit) end
@@ -402,7 +449,7 @@ local eventHandlers = {
 	UNIT_HEALTH = UnitHealthChanged,
 	INSPECT_READY = SpecChanged,
 	PLAYER_SPECIALIZATION_CHANGED = SpecChanged,
-	UNIT_MAXHEALTH = UpdateRingHealth,
+	UNIT_MAXHEALTH = UpdateRing,
 
 	UNIT_SPELLCAST_CHANNEL_START = CastStart,
 	UNIT_SPELLCAST_START = CastStart,
@@ -925,9 +972,18 @@ function BLINKIISPORTRAITS:EnsurePortrait(unit, name, parent)
 	return portrait
 end
 
+BLINKIISPORTRAITS:DefineElement("Frame", {
+	Update = function(_, portrait)
+		BLINKIISPORTRAITS:UpdateTextures(portrait)
+		UpdateZoom(portrait)
+
+		return portrait.textureFile, portrait.maskFile
+	end,
+})
+
 function BLINKIISPORTRAITS:InitPortrait(portrait, events)
 	if portrait then
-		BLINKIISPORTRAITS:UpdateTextures(portrait)
+		BLINKIISPORTRAITS:RunElement(portrait, "Frame", "Setup", portrait.unit)
 
 		portrait.eventList = events
 
@@ -940,8 +996,6 @@ function BLINKIISPORTRAITS:InitPortrait(portrait, events)
 		BLINKIISPORTRAITS:ApplyUnitEvents(portrait, true)
 		OnEvent(portrait, "ForceUpdate", portrait.unit)
 		UpdateRing(portrait)
-
-		UpdateZoom(portrait)
 	end
 end
 
