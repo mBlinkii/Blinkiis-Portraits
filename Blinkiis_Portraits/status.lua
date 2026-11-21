@@ -220,16 +220,45 @@ end
 
 local window
 
--- Expressway comes with ElvUI through LibSharedMedia, without it the game font is used
+-- with ElvUI the window copies its status window, without it the game's own frame look is used
+local function GetElvUI()
+	return BLINKIISPORTRAITS.ELVUI and _G.ElvUI and _G.ElvUI[1]
+end
+
+-- Expressway comes with ElvUI through LibSharedMedia
 local function GetFontPath()
 	local LSM = LibStub("LibSharedMedia-3.0", true)
 	return (LSM and LSM:Fetch("font", "Expressway", true)) or STANDARD_TEXT_FONT
 end
 
 local function GetHeadingColor()
-	local E = BLINKIISPORTRAITS.ELVUI and _G.ElvUI and _G.ElvUI[1]
+	local E = GetElvUI()
 	return (E and E.media and E.media.hexvaluecolor) or DEFAULT_HEADING_COLOR
 end
+
+local ELVUI_STYLE = { rowHeight = ROW_HEIGHT, headingHeight = HEADING_HEIGHT, topInset = TOP_INSET }
+
+function ELVUI_STYLE.Row(fontString)
+	fontString:SetFont(GetFontPath(), ROW_FONT_SIZE, "OUTLINE")
+end
+
+function ELVUI_STYLE.Heading(fontString, title)
+	fontString:SetFont(GetFontPath(), HEADING_FONT_SIZE, "OUTLINE")
+	fontString:SetText(GetHeadingColor() .. title .. "|r")
+end
+
+local WOW_STYLE = { rowHeight = 18, headingHeight = 26, topInset = 34, template = "BasicFrameTemplateWithInset" }
+
+function WOW_STYLE.Row(fontString)
+	fontString:SetFontObject(GameFontHighlight)
+end
+
+function WOW_STYLE.Heading(fontString, title)
+	fontString:SetFontObject(GameFontNormalLarge)
+	fontString:SetText(title)
+end
+
+local style
 
 local function CreateDivider(panel)
 	local divider = panel:CreateTexture(nil, "ARTWORK")
@@ -243,14 +272,10 @@ local function AcquireLine(panel, index)
 	local line = panel.lines[index]
 	if line then return line end
 
-	local font = GetFontPath()
-
 	line = {}
 	line.label = panel:CreateFontString(nil, "OVERLAY")
-	line.label:SetFont(font, ROW_FONT_SIZE, "OUTLINE")
-	line.label:SetTextColor(1, 1, 1)
 	line.value = panel:CreateFontString(nil, "OVERLAY")
-	line.value:SetFont(font, ROW_FONT_SIZE, "OUTLINE")
+	style.Row(line.value)
 	line.value:SetJustifyH("LEFT")
 	line.value:SetWordWrap(false)
 
@@ -262,9 +287,8 @@ local function AcquireLine(panel, index)
 end
 
 local function LayoutHeading(panel, line, title, offset)
-	line.label:SetFont(GetFontPath(), HEADING_FONT_SIZE, "OUTLINE")
+	style.Heading(line.label, title)
 	line.label:SetJustifyH("CENTER")
-	line.label:SetText(GetHeadingColor() .. title .. "|r")
 	line.label:ClearAllPoints()
 	line.label:SetPoint("TOP", panel, "TOP", 0, -offset)
 	line.label:Show()
@@ -289,7 +313,8 @@ local function LayoutRow(panel, line, row, offset)
 	line.left:Hide()
 	line.right:Hide()
 
-	line.label:SetFont(GetFontPath(), ROW_FONT_SIZE, "OUTLINE")
+	style.Row(line.label)
+	line.label:SetTextColor(1, 1, 1)
 	line.label:SetJustifyH("LEFT")
 	line.label:SetText(row.label .. ":")
 	line.label:ClearAllPoints()
@@ -308,20 +333,22 @@ local function LayoutPanel(panel, sections, startOffset)
 	local index, offset = 0, startOffset
 
 	for _, section in ipairs(sections) do
-		index = index + 1
-		LayoutHeading(panel, AcquireLine(panel, index), section.title, offset)
-		offset = offset + HEADING_HEIGHT
+		if section.title then
+			index = index + 1
+			LayoutHeading(panel, AcquireLine(panel, index), section.title, offset)
+			offset = offset + style.headingHeight
+		end
 
 		if not section.rows[1] then
 			index = index + 1
 			LayoutRow(panel, AcquireLine(panel, index), { label = "None", value = "", muted = true }, offset)
-			offset = offset + ROW_HEIGHT
+			offset = offset + style.rowHeight
 		end
 
 		for _, row in ipairs(section.rows) do
 			index = index + 1
 			LayoutRow(panel, AcquireLine(panel, index), row, offset)
-			offset = offset + ROW_HEIGHT
+			offset = offset + style.rowHeight
 		end
 
 		offset = offset + SECTION_GAP
@@ -340,11 +367,17 @@ local function LayoutPanel(panel, sections, startOffset)
 end
 
 local function CreatePanel(name, parent, width)
-	local panel = CreateFrame("Frame", name, parent, BackdropTemplateMixin and "BackdropTemplate" or nil)
+	local panel
+	if style.template then
+		panel = CreateFrame("Frame", name, parent, style.template)
+	else
+		panel = CreateFrame("Frame", name, parent, BackdropTemplateMixin and "BackdropTemplate" or nil)
+		panel:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1 })
+		panel:SetBackdropColor(0.06, 0.06, 0.07, 0.95)
+		panel:SetBackdropBorderColor(0, 0, 0, 1)
+	end
+
 	panel:SetWidth(width)
-	panel:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1 })
-	panel:SetBackdropColor(0.06, 0.06, 0.07, 0.95)
-	panel:SetBackdropBorderColor(0, 0, 0, 1)
 	panel.lines = {}
 	return panel
 end
@@ -369,9 +402,7 @@ end
 
 -- ElvUI only skins AceGUI windows, so its skin functions are run over these plain frames
 local function SkinWindow(frame)
-	if not BLINKIISPORTRAITS.ELVUI then return end
-
-	local E = _G.ElvUI and _G.ElvUI[1]
+	local E = GetElvUI()
 	if not (E and E.private and E.private.skins and E.private.skins.ace3Enable) then return end
 
 	local S = E.GetModule and E:GetModule("Skins", true)
@@ -389,6 +420,8 @@ local function SkinWindow(frame)
 end
 
 local function CreateStatusWindow()
+	style = GetElvUI() and ELVUI_STYLE or WOW_STYLE
+
 	local frame = CreatePanel("BP_StatusFrame", UIParent, MAIN_WIDTH)
 	frame:SetPoint("CENTER", -PLUGIN_WIDTH / 2, 0)
 	-- otherwise the window opens behind the AceGUI options window
@@ -400,16 +433,24 @@ local function CreateStatusWindow()
 	frame:SetScript("OnDragStart", frame.StartMoving)
 	frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
 
-	local title = frame:CreateFontString(nil, "OVERLAY")
-	title:SetFont(GetFontPath(), HEADING_FONT_SIZE, "OUTLINE")
-	title:SetPoint("TOP", 0, -12)
-	title:SetText(BLINKIISPORTRAITS.Name)
+	local close
+	if style.template then
+		frame.TitleText:SetText(BLINKIISPORTRAITS.Name)
+		close = frame.CloseButton
+	else
+		local title = frame:CreateFontString(nil, "OVERLAY")
+		title:SetFont(GetFontPath(), HEADING_FONT_SIZE, "OUTLINE")
+		title:SetPoint("TOP", 0, -12)
+		title:SetText(BLINKIISPORTRAITS.Name)
 
-	local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
-	close:SetPoint("TOPRIGHT", 2, 2)
+		close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
+		close:SetPoint("TOPRIGHT", 2, 2)
+	end
 
 	local plugins = CreatePanel("BP_StatusPlugins", frame, PLUGIN_WIDTH)
 	plugins:SetPoint("TOPLEFT", frame, "TOPRIGHT", 4, 0)
+	if plugins.CloseButton then plugins.CloseButton:Hide() end
+	if plugins.TitleText then plugins.TitleText:SetText(L["Plugins"]) end
 
 	local copy = CreateCopyBox(frame)
 
@@ -455,9 +496,12 @@ function BLINKIISPORTRAITS:ShowStatus()
 	window.button:SetText(L["Copy Text"])
 
 	local main, plugins = BLINKIISPORTRAITS:BuildStatus()
-	local mainHeight = LayoutPanel(window, main, TOP_INSET)
-	window:SetHeight(mainHeight + BOTTOM_INSET)
-	window.plugins:SetHeight(LayoutPanel(window.plugins, plugins, PADDING) + PADDING)
+	window:SetHeight(LayoutPanel(window, main, style.topInset) + BOTTOM_INSET)
+
+	-- the game frame look already names the plugin panel in its title bar
+	if style.template then plugins[1].title = nil end
+	local pluginTop = style.template and style.topInset or PADDING
+	window.plugins:SetHeight(LayoutPanel(window.plugins, plugins, pluginTop) + PADDING)
 
 	window:Show()
 	window:Raise()
