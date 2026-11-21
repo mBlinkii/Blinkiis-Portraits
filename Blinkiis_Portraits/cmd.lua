@@ -1,3 +1,4 @@
+local addonName = ...
 local _G = _G
 local ReloadUI = ReloadUI
 local format = format
@@ -53,6 +54,29 @@ local function ToggleDebugLog()
 	BLINKIISPORTRAITS:Print(BLINKIISPORTRAITS.DebugEnabled and "Debug log |cff40ff40ON|r - run /bp log again to stop." or "Debug log |cffff4040OFF|r.")
 end
 
+local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits", true)
+
+local function StartDebugMode()
+	BLINKIISPORTRAITS:EnableDebugMode(addonName)
+	ReloadUI()
+end
+
+local function ToggleDebugMode(turnOff)
+	if turnOff then
+		if not BLINKIISPORTRAITS:DisableDebugMode() then return BLINKIISPORTRAITS:Print(L["Debug mode is not active."]) end
+		return ReloadUI()
+	end
+
+	if BLINKIISPORTRAITS:IsDebugModeActive() then return BLINKIISPORTRAITS:Print(L["Debug mode is active, other addons are turned off. Type /bp debugmode off to restore them."]) end
+
+	StaticPopup_Show(
+		"BLINKIISPORTRAITS_CONFIRM",
+		L["Debug mode turns off every addon except Blinkiis Portraits, its supported unit frame addons, BugSack and BugGrabber for this character, then reloads the UI. Continue?"],
+		nil,
+		StartDebugMode
+	)
+end
+
 function BLINKIISPORTRAITS:CMD(msg)
 	local command = strlower(strtrim(msg or ""))
 
@@ -63,6 +87,8 @@ function BLINKIISPORTRAITS:CMD(msg)
 		PrintPortraitState()
 	elseif command == "log" then
 		ToggleDebugLog()
+	elseif command == "debugmode" or command == "debugmode off" then
+		ToggleDebugMode(command == "debugmode off")
 	else
 		LibStub("AceConfigDialog-3.0"):Open("BLINKIISPORTRAITS")
 	end

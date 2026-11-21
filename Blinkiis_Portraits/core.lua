@@ -252,9 +252,13 @@ local function CreatePartyWatcher()
 	BLINKIISPORTRAITS.PartyWatcher = watcher
 end
 
-function BLINKIISPORTRAITS:PLAYER_ENTERING_WORLD()
+function BLINKIISPORTRAITS:PLAYER_ENTERING_WORLD(_, isInitialLogin, isReloadingUi)
 	-- JiberishIcons builds its style packs on its own ADDON_LOADED, which can run after ours
 	if BLINKIISPORTRAITS.JI then BLINKIISPORTRAITS:SetupJiberishIcons() end
+
+	if (isInitialLogin or isReloadingUi) and BLINKIISPORTRAITS:IsDebugModeActive() then
+		BLINKIISPORTRAITS:Print(L["Debug mode is active, other addons are turned off. Type /bp debugmode off to restore them."])
+	end
 
 	C_Timer_After(0.5, BLINKIISPORTRAITS.LoadPortraits)
 end

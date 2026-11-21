@@ -323,3 +323,8 @@ L["Skipped settings of plugins that are not loaded: %s"] = "Skipped settings of 
 
 -- portraits/elements.lua
 L["%s cannot override the portrait element %s, %s already does."] = "%s cannot override the portrait element %s, %s already does."
+
+-- debugmode.lua
+L["Debug mode turns off every addon except Blinkiis Portraits, its supported unit frame addons, BugSack and BugGrabber for this character, then reloads the UI. Continue?"] = "Debug mode turns off every addon except Blinkiis Portraits, its supported unit frame addons, BugSack and BugGrabber for this character, then reloads the UI. Continue?"
+L["Debug mode is active, other addons are turned off. Type /bp debugmode off to restore them."] = "Debug mode is active, other addons are turned off. Type /bp debugmode off to restore them."
+L["Debug mode is not active."] = "Debug mode is not active."
