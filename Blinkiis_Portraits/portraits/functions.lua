@@ -98,6 +98,10 @@ local function GetRingColor(mode)
 	return (mode == "cast") and colors.cast or colors.health
 end
 
+local function KeepRingMirrored(ring)
+	ring.mirrorFill:SetTexCoord(1, 0, 0, 1)
+end
+
 -- the bar owns its fill texture, so it has to be read again after every SetStatusBarTexture
 local function UpdateRingTexture(portrait)
 	local ring = portrait.ring
@@ -118,6 +122,10 @@ local function UpdateRingTexture(portrait)
 	-- the option is in degrees, the API takes a fraction of a full turn
 	fill:SetRadialProgressBarStartOffset(db.start / 360)
 	BLINKIISPORTRAITS:Mirror(fill, portrait.db.mirror)
+
+	-- the radial bar rewrites the coords of its fill on every frame, so a mirrored ring is flipped again each frame
+	ring.mirrorFill = fill
+	ring:SetScript("OnUpdate", portrait.db.mirror and KeepRingMirrored or nil)
 end
 
 local function UpdateRingSize(portrait)

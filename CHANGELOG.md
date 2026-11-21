@@ -3,10 +3,12 @@
 ## [ver. 1.64] - 21.11.2026
 ### 🐛 FIX
 - FIX - [Profiles]: Importing a profile over the one you are using applies it right away.
+- FIX - [Ring]: The ring is mirrored together with mirrored portraits.
 ### ✨ NEW
 - NEW - [Plugins]: Added a plugin API: other addons can bring their own unit frames, styles, class and spec icon sets and portrait parts, or change how portraits are drawn.
 - NEW - [Plugins]: Plugin settings get their own tab under Plugins in the options.
 - NEW - [Profiles]: Exported profiles carry the settings of loaded plugins.
+- NEW - [System]: Added /bp debugmode, which turns off every addon except Blinkiis Portraits, its supported unit frame addons, BugSack and BugGrabber, and /bp debugmode off to restore them.
 
 ## [ver. 1.63] - 18.11.2026
 ### 🐛 FIX

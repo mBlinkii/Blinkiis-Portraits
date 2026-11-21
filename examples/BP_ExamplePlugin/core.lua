@@ -24,20 +24,44 @@ local function BuildOptions()
 					if API.Refresh then API:Refresh() end
 				end,
 			},
+			testFrame = {
+				order = 2,
+				type = "toggle",
+				name = "Show test unit frame",
+				desc = "Shows the frame the example registers as unit frame provider \"BP Example\" for the player.",
+				get = function()
+					return ns.plugin.db.profile.testFrame
+				end,
+				set = function(_, value)
+					ns.plugin.db.profile.testFrame = value
+					ns.UpdateTestFrame()
+				end,
+			},
 		},
 	}
 end
 
-local plugin = API:NewPlugin("BP_ExamplePlugin", { apiVersion = 1, defaults = { profile = { enabled = true } }, options = BuildOptions })
+local plugin = API:NewPlugin("BP_ExamplePlugin", { apiVersion = 1, defaults = { profile = { enabled = true, testFrame = false } }, options = BuildOptions })
 Check("NewPlugin returns plugin", plugin ~= nil)
 ns.plugin = plugin
 
+-- the frame stays registered as provider even while hidden, a hidden parent just hides its portrait
 local playerFrame = CreateFrame("Frame", "BPEX_PlayerFrame", UIParent, "BackdropTemplate")
 playerFrame:SetSize(100, 40)
 playerFrame:SetPoint("CENTER", UIParent, "CENTER", 0, -200)
 playerFrame:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8" })
 playerFrame:SetBackdropColor(0, 0, 0, 0.5)
 playerFrame.unit = "player"
+
+local label = playerFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+label:SetPoint("CENTER")
+label:SetText("BP Example")
+
+function ns.UpdateTestFrame()
+	playerFrame:SetShown(plugin.db.profile.testFrame)
+end
+ns.UpdateTestFrame()
+API.RegisterCallback(playerFrame, "ProfileChanged", ns.UpdateTestFrame)
 
 local registered = API:RegisterFrameProvider("bpex", { label = "BP Example", addons = { "BP_ExamplePlugin" }, units = { player = "BPEX_PlayerFrame" } })
 Check("provider registered", registered == true)
