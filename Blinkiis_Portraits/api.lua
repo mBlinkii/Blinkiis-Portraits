@@ -4,7 +4,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Blinkiis_Portraits", true)
 
 local format = format
 local pairs = pairs
-local select = select
 local type = type
 local tostring = tostring
 local xpcall = xpcall
@@ -18,6 +17,29 @@ BLINKIISPORTRAITS.API = API
 
 local plugins = {}
 local pluginOrder = {}
+
+-- CallbackHandler returns early while an event has no subscriber, so firing in hot paths stays cheap
+local callbacks = LibStub("CallbackHandler-1.0"):New(API)
+
+function BLINKIISPORTRAITS:Fire(event, ...)
+	callbacks:Fire(event, ...)
+end
+
+function API:IsSecretValue(value)
+	return BLINKIISPORTRAITS:IsSecretValue(value)
+end
+
+function API:SafeValue(value)
+	return BLINKIISPORTRAITS:SafeValue(value)
+end
+
+function API:GetUnitColor(unit, isDead, isPlayer, class, isSecret)
+	return BLINKIISPORTRAITS:GetUnitColor(unit, isDead, isPlayer, class, isSecret)
+end
+
+function API:GetPortraits()
+	return pairs(BLINKIISPORTRAITS.Portraits)
+end
 
 local function PackResults(ok, ...)
 	if ok then return ... end

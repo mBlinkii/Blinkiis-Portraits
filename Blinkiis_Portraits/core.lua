@@ -211,6 +211,8 @@ function BLINKIISPORTRAITS:LoadPortraits()
 	BLINKIISPORTRAITS:InitializePlayerPortrait()
 	BLINKIISPORTRAITS:InitializeTargetPortrait()
 	BLINKIISPORTRAITS:InitializeTargetTargetPortrait()
+
+	BLINKIISPORTRAITS:Fire("PortraitsLoaded")
 end
 
 function BLINKIISPORTRAITS:DelayedUpdate()
@@ -305,6 +307,13 @@ function BLINKIISPORTRAITS:OnInitialize()
 	BLINKIISPORTRAITS.CachedBossIDs = BLINKIISPORTRAITS.db.global.BossIDs or {}
 
 	self.db.RegisterCallback(self, "OnProfileChanged", BLINKIISPORTRAITS.LoadPortraits)
+
+	local function FireProfileChanged()
+		BLINKIISPORTRAITS:Fire("ProfileChanged")
+	end
+	self.db.RegisterCallback(BLINKIISPORTRAITS.API, "OnProfileChanged", FireProfileChanged)
+	self.db.RegisterCallback(BLINKIISPORTRAITS.API, "OnProfileCopied", FireProfileChanged)
+	self.db.RegisterCallback(BLINKIISPORTRAITS.API, "OnProfileReset", FireProfileChanged)
 
 	if BLINKIISPORTRAITS.SUF and IsSUFParent() and ShadowUF then
 		if not BLINKIISPORTRAITS.SUF_Hook then

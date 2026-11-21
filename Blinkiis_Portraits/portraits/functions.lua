@@ -302,6 +302,13 @@ function Update(portrait, event, eventUnit)
 		BLINKIISPORTRAITS:UpdateExtraTexture(portrait, portrait.db.unitcolor and color, portrait.db.forceExtra)
 
 		if portrait.clickable and not InCombatLockdown() and portrait:GetAttribute("unit") ~= unit then portrait:SetAttribute("unit", unit) end
+
+		if portrait.reportedUnit ~= unit then
+			portrait.reportedUnit = unit
+			BLINKIISPORTRAITS:Fire("PortraitUnitChanged", portrait, unit)
+		end
+
+		BLINKIISPORTRAITS:Fire("PortraitUpdated", portrait, event)
 	end
 end
 
@@ -861,6 +868,7 @@ function BLINKIISPORTRAITS:ApplyUnitEvents(portrait, force)
 end
 
 function BLINKIISPORTRAITS:RemovePortrait(frame)
+	BLINKIISPORTRAITS:Fire("PortraitRemoved", frame)
 	if frame._delayedUpdateTimer then
 		frame._delayedUpdateTimer:Cancel()
 		frame._delayedUpdateTimer = nil
@@ -883,6 +891,7 @@ function BLINKIISPORTRAITS:RemovePortrait(frame)
 	frame.cast = nil
 	frame.eventList = nil
 	frame.registeredUnit = nil
+	frame.reportedUnit = nil
 	frame.portraitSet = nil
 	frame.portraitTries = nil
 	frame:Hide()
@@ -932,6 +941,9 @@ function BLINKIISPORTRAITS:CreatePortrait(name, parent)
 			portrait.bg:SetAllPoints(portrait.texture)
 			portrait.bg:AddMaskTexture(portrait.mask)
 			portrait.bg:SetVertexColor(0, 0, 0, 1)
+
+			portrait.plugins = {}
+			BLINKIISPORTRAITS:Fire("PortraitCreated", portrait)
 		else
 			portrait:SetParent(parent)
 		end
@@ -1091,6 +1103,7 @@ function BLINKIISPORTRAITS:SetupUnitPortrait(opts)
 	portrait.useClassIcon = db.misc.class_icon ~= "none" and mediaClass[db.misc.class_icon] ~= nil
 	portrait.useSpecIcon = BLINKIISPORTRAITS.SpecIconsSupported and mediaSpec[db.misc.spec_icon] ~= nil
 	portrait.realUnit = opts.type
+	portrait.key = opts.key
 
 	if opts.isGroup then
 		if opts.demo then
@@ -1116,6 +1129,7 @@ function BLINKIISPORTRAITS:SetupUnitPortrait(opts)
 	end
 
 	BLINKIISPORTRAITS:InitPortrait(portrait, opts.events)
+	BLINKIISPORTRAITS:Fire("PortraitSetup", portrait)
 
 	return portrait
 end
