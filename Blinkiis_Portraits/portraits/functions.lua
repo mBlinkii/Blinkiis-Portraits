@@ -287,16 +287,16 @@ function Update(portrait, event, eventUnit)
 		portrait.isSecret = isSecret
 		portrait.isPlayer = isPlayer
 		portrait.unitClass = SafeValue(class)
+		portrait.rawClass = class
 		portrait.lastGUID = guid
 		portrait.state = isAvailable
 		portrait.unit = unit
 		portrait.isDead = isDead
 
-		local color = BLINKIISPORTRAITS:GetUnitColor(unit, portrait.isDead, isPlayer, class, isSecret)
-		SetColor(portrait.texture, color)
+		BLINKIISPORTRAITS:RunElement(portrait, "Color", event, unit)
 
 		UpdatePortrait(portrait, unit, isNewUnit)
-		BLINKIISPORTRAITS:UpdateExtraTexture(portrait, portrait.db.unitcolor and color, portrait.db.forceExtra)
+		BLINKIISPORTRAITS:RunElement(portrait, "Extra", event, unit)
 
 		if portrait.clickable and not InCombatLockdown() and portrait:GetAttribute("unit") ~= unit then portrait:SetAttribute("unit", unit) end
 
@@ -586,12 +586,24 @@ function BLINKIISPORTRAITS:GetExtraClassification(portrait)
 	return extraTypes[classification] and classification or nil
 end
 
-function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, force)
+BLINKIISPORTRAITS:DefineElement("Color", {
+	Update = function(_, portrait, _, unit)
+		local color = BLINKIISPORTRAITS:GetUnitColor(unit or portrait.unit, portrait.isDead, portrait.isPlayer, portrait.rawClass, portrait.isSecret)
+		SetColor(portrait.texture, color)
+
+		return color
+	end,
+})
+
+-- the frame color comes from the Color element, so an override there colors the extra texture too
+local function UpdateExtraTexture(portrait)
 	if not (portrait.extra and portrait.db.extra) then
 		if portrait.extra then portrait.extra:Hide() end
 		return
 	end
 
+	local force = portrait.db.forceExtra
+	local color = portrait.db.unitcolor and portrait.elements and portrait.elements.Color and portrait.elements.Color.result or nil
 	local c = BLINKIISPORTRAITS:GetExtraClassification(portrait)
 	local isExtraUnit = c ~= nil
 
@@ -613,10 +625,17 @@ function BLINKIISPORTRAITS:UpdateExtraTexture(portrait, color, force)
 		portrait.extra:SetTexture(portrait[extraFileKeys[c] or (c .. "File")], "CLAMP", "CLAMP", "TRILINEAR")
 		SetColor(portrait.extra, color)
 		portrait.extra:Show()
-	else
-		portrait.extra:Hide()
+		return c
 	end
+
+	portrait.extra:Hide()
 end
+
+BLINKIISPORTRAITS:DefineElement("Extra", {
+	Update = function(_, portrait)
+		return UpdateExtraTexture(portrait)
+	end,
+})
 
 -- a secret class token must not be nil checked or used as a table key, the game API answers it with a secret color
 local function GetClassColor(class)

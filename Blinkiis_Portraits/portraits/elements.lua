@@ -35,7 +35,14 @@ local function GetState(portrait, name)
 	return state
 end
 
+-- elements return at most four values; the first one stays readable for other elements as element.result
+local function Keep(state, a, b, c, d)
+	state.result = a
+	return a, b, c, d
+end
+
 local function RunPost(list, state, portrait, unit, ...)
+	state.result = ...
 	for i = 1, #list do
 		BLINKIISPORTRAITS:SafeCall(list[i], state, portrait, unit, ...)
 	end
@@ -49,7 +56,7 @@ function BLINKIISPORTRAITS:RunElement(portrait, name, event, unit)
 
 	local state = GetState(portrait, name)
 	local hook = hooks[name]
-	if not hook then return def.Update(state, portrait, event, unit) end
+	if not hook then return Keep(state, def.Update(state, portrait, event, unit)) end
 
 	local pre = hook.pre
 	for i = 1, #pre do

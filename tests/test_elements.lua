@@ -74,3 +74,25 @@ BP:DefineElement("Plain", {
 })
 eq(BP:RunElement({}, "Missing", "Test"), nil, "running an unknown element is a no-op")
 eq(BP:RunElement({}, "Plain", "Test"), true, "elements without hooks stay independent")
+
+local BP2 = newBP({ "api.lua", "portraits/elements.lua" })
+BP2:DefineElement("Color", {
+	Update = function()
+		return { r = 0 }
+	end,
+})
+BP2:DefineElement("Extra", {
+	Update = function(_, portrait)
+		return portrait.elements.Color.result
+	end,
+})
+local p2 = {}
+BP2:RunElement(p2, "Color", "Test", "target")
+eq(p2.elements.Color.result.r, 0, "first result kept as element.result")
+BP2:HookElementInternal("Red", "Color", {
+	Override = function()
+		return { r = 1 }
+	end,
+})
+BP2:RunElement(p2, "Color", "Test", "target")
+eq(BP2:RunElement(p2, "Extra", "Test", "target").r, 1, "a later element sees the overridden result")
