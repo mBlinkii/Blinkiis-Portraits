@@ -69,7 +69,7 @@ jobs:
           # real version is stamped in here, in the build only, so no .toc
           # ever has to be bumped by hand before tagging.
           STAMPED=0
-          for TOC in "$ADDON"/"$ADDON"_*.toc; do
+          for TOC in "$ADDON"/"$ADDON"*.toc; do
             [ -e "$TOC" ] || continue
             # A .toc without a "## Version:" line would ship an empty version
             # to the client, so a silent no-op sed must fail the build.
@@ -84,7 +84,7 @@ jobs:
             echo "::error::No .toc files found under ${ADDON}/ - nothing to stamp." >&2
             exit 1
           fi
-          grep -H '^## Version:' "$ADDON"/"$ADDON"_*.toc
+          grep -H '^## Version:' "$ADDON"/"$ADDON"*.toc
 
           # Convert every flavor's "## Interface:" (5 or 6 digit WoW
           # interface number, e.g. 120007 or 38001) into a dotted CurseForge/
@@ -96,10 +96,7 @@ jobs:
           # Wago's upload API wants the version split into one
           # "supported_<flavor>_patch" field per flavor rather than a single
           # combined list, so each .toc's version is also kept per-flavor
-          # here. Mapping is the same one Wago itself uses to read a
-          # project's .toc filename suffix (see /api/data/game
-          # "toc_suffixes"): _Mainline->retail, _Mists->mop, _Cata->cata,
-          # _TBC->bc, _Vanilla->classic, _Wrath->wotlk, _Camelot->forever.
+          # here, read from the interface number of each entry.
           VERSIONS=""
           RETAIL_PATCH=""
           MOP_PATCH=""
@@ -108,7 +105,7 @@ jobs:
           CLASSIC_PATCH=""
           WOTLK_PATCH=""
           FOREVER_PATCH=""
-          for TOC in "$ADDON"/"$ADDON"_*.toc; do
+          for TOC in "$ADDON"/"$ADDON"*.toc; do
             IFACE=$(grep -oP '^## Interface:\s*\K.+' "$TOC" | tr -d '\r ')
             IFS=',' read -ra ARR <<< "$IFACE"
             for I in "${ARR[@]}"; do
@@ -117,14 +114,18 @@ jobs:
                 *"$V"*) ;;
                 *) VERSIONS="${VERSIONS:+$VERSIONS,}$V" ;;
               esac
-              case "$TOC" in
-                *_Mainline.toc) RETAIL_PATCH="$V" ;;
-                *_Mists.toc) MOP_PATCH="$V" ;;
-                *_Cata.toc) CATA_PATCH="$V" ;;
-                *_TBC.toc) BC_PATCH="$V" ;;
-                *_Vanilla.toc) CLASSIC_PATCH="$V" ;;
-                *_Wrath.toc) WOTLK_PATCH="$V" ;;
-                *_Camelot.toc) FOREVER_PATCH="$V" ;;
+              # one .toc lists every flavor, so the flavor comes from the
+              # interface number itself (16001 = Forever 1.60.x, 11509 =
+              # Classic Era 1.15.x)
+              MAJOR=$((10#$I / 10000))
+              MINOR=$(((10#$I % 10000) / 100))
+              case "$MAJOR" in
+                5) MOP_PATCH="$V" ;;
+                4) CATA_PATCH="$V" ;;
+                3) WOTLK_PATCH="$V" ;;
+                2) BC_PATCH="$V" ;;
+                1) if [ "$MINOR" -ge 60 ]; then FOREVER_PATCH="$V"; else CLASSIC_PATCH="$V"; fi ;;
+                *) [ "$MAJOR" -ge 10 ] && RETAIL_PATCH="$V" ;;
               esac
             done
           done

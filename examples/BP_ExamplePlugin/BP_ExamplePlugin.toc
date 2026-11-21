@@ -4,6 +4,7 @@
 ## Author: Blinkii
 ## Version: 1.0
 ## Dependencies: Blinkiis_Portraits
+## Group: Blinkiis_Portraits
 
 checks.lua
 core.lua

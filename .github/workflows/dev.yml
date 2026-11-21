@@ -47,8 +47,8 @@ jobs:
         id: meta
         run: |
           set -e
-          # ADAPT 3: addon folder name; the .toc files are expected as
-          # <ADDON>/<ADDON>_<Flavor>.toc.
+          # ADAPT 3: addon folder name; one <ADDON>/<ADDON>.toc lists every
+          # flavor in its "## Interface:" line.
           ADDON="Blinkiis_Portraits"
 
           # The committed .toc files carry the placeholder "git-build", so the
@@ -71,7 +71,7 @@ jobs:
           # not a release build. Stamping happens in the build only, the repo
           # keeps the placeholder.
           STAMPED=0
-          for TOC in "$ADDON"/"$ADDON"_*.toc; do
+          for TOC in "$ADDON"/"$ADDON"*.toc; do
             [ -e "$TOC" ] || continue
             # A .toc without a "## Version:" line would ship an empty version
             # to the client, so a silent no-op sed must fail the build.
@@ -86,7 +86,7 @@ jobs:
             echo "::error::No .toc files found under ${ADDON}/ - nothing to stamp." >&2
             exit 1
           fi
-          grep -H '^## Version:' "$ADDON"/"$ADDON"_*.toc
+          grep -H '^## Version:' "$ADDON"/"$ADDON"*.toc
 
       - name: Install Subversion
         run: sudo apt-get update -qq && sudo apt-get install -y -qq subversion

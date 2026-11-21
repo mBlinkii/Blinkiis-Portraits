@@ -1,4 +1,4 @@
-## Interface: 120105
+## Interface: 120105, 50504, 38001, 20506, 11509, 16001
 ## Version: git-build
 ## Title: |CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Portraits
 ## Title-deDE: |CFF00A3FFB|r|CFF00B4FFl|r|CFF00C6FFi|r|CFF00D8FFn|r|CFF00EAFFk|r|CFF00F6FFi|r|CFF00F6FFi|r Porträts
@@ -12,6 +12,7 @@
 ## AddonCompartmentFuncOnEnter: BLINKIISPORTRAITS_OnAddonCompartmentOnEnter
 ## AddonCompartmentFuncOnLeave: BLINKIISPORTRAITS_OnAddonCompartmentOnLeave
 ## SavedVariables: BlinkiisPortraitsDB
+## Category: Blinkiis Portraits
 ## X-Wago-ID: j6jzo56R
 ## OptionalDeps: Cell, Cell_UnitFrames, ElvUI, PitBull4, ShadowedUnitFrames, UnhaltedUnitFrames, NDui, EnhanceQoL, BetterBlizzFrames, EllesmereUI, Stuf, DandersFrames, JiberishIcons, ElvUI_JiberishIcons
 

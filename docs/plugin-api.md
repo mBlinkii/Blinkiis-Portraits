@@ -10,7 +10,10 @@ A complete example that uses every function is in [`examples/BP_ExamplePlugin`](
 
 ```toc
 ## Dependencies: Blinkiis_Portraits
+## Group: Blinkiis_Portraits
 ```
+
+`Group` lists the plugin under Blinkiis Portraits, inside its "Blinkiis Portraits" category in the game's addon list.
 
 ```lua
 local API = BLINKIISPORTRAITS.API
