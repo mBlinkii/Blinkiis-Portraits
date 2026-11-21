@@ -118,6 +118,15 @@ Blinkiis Portraits includes built-in profile management features:
 This makes it easy to keep personal presets, share layouts with friends, or bundle recommended
 profiles for specific UI setups.
 
+## Plugins
+
+Other addons can extend Blinkiis Portraits through its plugin API: bring their own unit frames,
+styles and class icon sets, add their own parts to a portrait, or change how a portrait is drawn.
+Plugin settings get their own tab and travel with exported profiles.
+
+See [docs/plugin-api.md](./docs/plugin-api.md) for the reference and
+[examples/BP_ExamplePlugin](./examples/BP_ExamplePlugin) for a working example.
+
 ## Recent Changes
 
 For the full history, see [CHANGELOG.md](./CHANGELOG.md).
@@ -130,6 +139,18 @@ Feedback, bug reports, and feature ideas are welcome:
 - Share feedback on [Discord](https://discord.gg/ZScRCUyqjY)
 
 If you enjoy the addon, starring the repository helps a lot.
+
+### Tests
+
+The logic of the plugin API has offline tests that run on plain Lua 5.1, without the game. Fetch
+the libraries into `Blinkiis_Portraits/libs` first (see its README), then run from the repository root:
+
+```
+lua5.1 tests/run.lua
+```
+
+Drawing, events, secret values and combat behaviour can only be checked in the game; the example
+plugin's `/bpex test` covers those.
 
 ## License
 
