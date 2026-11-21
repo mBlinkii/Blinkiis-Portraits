@@ -179,3 +179,17 @@ function env.isAddOnEnabled(name)
 	local addon = FindAddOn(name)
 	return addon and addon.enabled or false
 end
+
+local addonMetadata = {}
+
+function env.setAddOnMetadata(name, field, value)
+	addonMetadata[name .. "|" .. field] = value
+end
+
+env.C_AddOns.GetAddOnMetadata = function(name, field)
+	return addonMetadata[name .. "|" .. field]
+end
+
+function env.GetBuildInfo()
+	return "12.1.5", "70961", "Nov 1 2026", 120105
+end

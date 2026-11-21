@@ -31,6 +31,6 @@ cmd.lua
 debugmode.lua
 defaults.lua
 popup.lua
-report.lua
+status.lua
 media\media.lua
 portraits\load_portraits.xml

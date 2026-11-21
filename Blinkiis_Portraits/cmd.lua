@@ -80,8 +80,8 @@ end
 function BLINKIISPORTRAITS:CMD(msg)
 	local command = strlower(strtrim(msg or ""))
 
-	if command == "report" then
-		BLINKIISPORTRAITS:ShowReport()
+	if command == "status" then
+		BLINKIISPORTRAITS:ShowStatus()
 	elseif command == "debug" then
 		PrintResolvedUnitFrames()
 		PrintPortraitState()

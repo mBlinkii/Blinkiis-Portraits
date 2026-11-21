@@ -3620,14 +3620,14 @@ BLINKIISPORTRAITS.options = {
 							order = 1,
 							type = "description",
 							fontSize = "medium",
-							name = L["Opens a snapshot of your settings to attach to a bug report, ready to copy or screenshot. The same window is shown by /bp report."],
+							name = L["Opens a snapshot of your settings to attach to a bug report, ready to copy or screenshot. The same window is shown by /bp status."],
 						},
 						show = {
 							order = 2,
 							type = "execute",
-							name = L["Show Report"],
+							name = L["Show Status"],
 							func = function()
-								BLINKIISPORTRAITS:ShowReport()
+								BLINKIISPORTRAITS:ShowStatus()
 							end,
 						},
 					},

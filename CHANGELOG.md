@@ -6,6 +6,7 @@
 - FIX - [Ring]: The ring is mirrored together with mirrored portraits.
 ### 🔧 UPDATE
 - UPDATE - [System]: The addon ships one TOC file for every game version.
+- UPDATE - [Status]: /bp report is now /bp status with a smaller window that shows only the essentials and the loaded plugins.
 ### ✨ NEW
 - NEW - [Plugins]: Added a plugin API: other addons can bring their own unit frames, styles, class and spec icon sets and portrait parts, or change how portraits are drawn.
 - NEW - [Plugins]: Plugin settings get their own tab under Plugins in the options.

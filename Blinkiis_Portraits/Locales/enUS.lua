@@ -143,9 +143,9 @@ L["Profile Name"] = "Profile Name"
 L["Profile Version"] = "Profile Version"
 L["About"] = "About"
 L["Diagnostics"] = "Diagnostics"
-L["Opens a snapshot of your settings to attach to a bug report, ready to copy or screenshot. The same window is shown by /bp report."] =
-	"Opens a snapshot of your settings to attach to a bug report, ready to copy or screenshot. The same window is shown by /bp report."
-L["Show Report"] = "Show Report"
+L["Opens a snapshot of your settings to attach to a bug report, ready to copy or screenshot. The same window is shown by /bp status."] =
+	"Opens a snapshot of your settings to attach to a bug report, ready to copy or screenshot. The same window is shown by /bp status."
+L["Show Status"] = "Show Status"
 L["Select the text and press Ctrl+C to copy it."] = "Select the text and press Ctrl+C to copy it."
 L["Copy Text"] = "Copy Text"
 L["Back"] = "Back"
