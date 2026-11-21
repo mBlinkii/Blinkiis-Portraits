@@ -96,3 +96,46 @@ BP2:HookElementInternal("Red", "Color", {
 })
 BP2:RunElement(p2, "Color", "Test", "target")
 eq(BP2:RunElement(p2, "Extra", "Test", "target").r, 1, "a later element sees the overridden result")
+
+local BP3 = newBP({ "api.lua", "portraits/elements.lua" })
+BP3:DefineElement("Color", { Update = noop })
+BP3:DefineElement("Ring", { Update = noop })
+local plugin = BP3.API:NewPlugin("P", { apiVersion = 1 })
+local always = function()
+	return true
+end
+
+truthy(BP3.API:RegisterElement(plugin, "X", { events = { "UNIT_HEALTH" }, Enable = always, Update = noop }), "element registered")
+eq(BP3.API:RegisterElement(plugin, "Ring", { Enable = always, Update = noop }), false, "builtin name rejected")
+eq(BP3.API:RegisterElement(plugin, "X", { Enable = always, Update = noop }), false, "duplicate name rejected")
+eq(BP3.API:RegisterElement(plugin, "NoEnable", { Update = noop }), false, "element without Enable rejected")
+eq(BP3.API:RegisterElement({ name = "Fake" }, "Y", { Enable = always, Update = noop }), false, "unregistered plugin rejected")
+truthy(BP3.API:HookElement(plugin, "Color", { events = { "UNIT_HEALTH", "UNIT_POWER_UPDATE" }, PostUpdate = noop }), "hook with events accepted")
+eq(BP3.API:HookElement({ name = "Fake" }, "Color", { PostUpdate = noop }), false, "hook from an unregistered plugin rejected")
+
+local p3 = { unit = "player" }
+BP3:BuildElementRouting(p3)
+eq(table.concat(p3.elementEvents.UNIT_HEALTH, ","), "Color,X", "UNIT_HEALTH routes to both elements, sorted by name")
+eq(#p3.elementEvents.UNIT_POWER_UPDATE, 1, "hook events routed")
+eq(#p3.elementEventList, 2, "each routed event listed once for registration")
+
+local enabled = true
+local disabledCalls = 0
+BP3.API:RegisterElement(plugin, "Z", {
+	events = { "UNIT_AURA" },
+	Enable = function()
+		return enabled
+	end,
+	Disable = function()
+		disabledCalls = disabledCalls + 1
+	end,
+	Update = noop,
+})
+BP3:BuildElementRouting(p3)
+truthy(p3.elementEvents.UNIT_AURA, "enabled element routes its events")
+enabled = false
+BP3:BuildElementRouting(p3)
+eq(p3.elementEvents.UNIT_AURA, nil, "disabled element routes nothing")
+eq(disabledCalls, 1, "Disable runs when an element turns off")
+BP3:BuildElementRouting(p3)
+eq(disabledCalls, 1, "Disable runs only on the change")

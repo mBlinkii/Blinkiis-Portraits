@@ -85,3 +85,57 @@ ns.Later(function()
 	end
 	Check("GetPortraits iterates", count > 0)
 end)
+
+local results = {}
+local function Capture(name)
+	return function(_, _, _, ...)
+		results[name] = { n = select("#", ...), ... }
+	end
+end
+
+for _, name in ipairs({ "Desaturate", "Color", "Extra", "Portrait", "Frame", "Cast", "Ring" }) do
+	Check("hook " .. name, API:HookElement(plugin, name, { PostUpdate = Capture(name) }) == true)
+end
+Check("hook from a fake plugin rejected", API:HookElement({ name = "Fake" }, "Color", { PostUpdate = Capture("Fake") }) == false)
+
+local healthHits = 0
+Check("element registered", API:RegisterElement(plugin, "BPEX_Counter", {
+	events = { "UNIT_HEALTH" },
+	Enable = function()
+		return plugin.db.profile.enabled
+	end,
+	Update = function()
+		healthHits = healthHits + 1
+	end,
+}) == true)
+Check("builtin element name rejected", API:RegisterElement(plugin, "Ring", { Enable = function() end, Update = function() end }) == false)
+
+ns.Later(function()
+	Check("Desaturate PostUpdate result", results.Desaturate ~= nil and type(results.Desaturate[1]) == "boolean")
+	Check("Color PostUpdate gets table", results.Color ~= nil and type(results.Color[1]) == "table")
+	Check("Portrait PostUpdate ran", results.Portrait ~= nil)
+	Check("Frame PostUpdate gets texture", results.Frame ~= nil and results.Frame[1] ~= nil)
+	Check("Ring PostUpdate ran", results.Ring ~= nil)
+	print(format("BP_ExamplePlugin: UNIT_HEALTH reached the counter element %d times, last cast icon: %s", healthHits, tostring(results.Cast and results.Cast[1])))
+end)
+
+ns.commands.red = function()
+	local ok = API:HookElement(plugin, "Color", {
+		Override = function(_, portrait)
+			local color = { r = 1, g = 0, b = 0, a = 1 }
+			portrait.texture:SetVertexColor(1, 0, 0, 1)
+			return color
+		end,
+	})
+	print("BP_ExamplePlugin: red frame override " .. (ok and "active, /reload to undo" or "rejected"))
+	API:Refresh()
+end
+
+ns.commands.boom = function()
+	API:HookElement(plugin, "Desaturate", {
+		PostUpdate = function()
+			error("BP_ExamplePlugin: intentional hook error")
+		end,
+	})
+	print("BP_ExamplePlugin: failing Desaturate hook active, change target and check BugSack, /reload to undo")
+end

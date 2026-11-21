@@ -510,7 +510,8 @@ local function OnEvent(portrait, event, eventUnit, arg)
 		BLINKIISPORTRAITS:Debug(format("event %s | %s | eventUnit: %s | handler: %s", tostring(event), tostring(portrait:GetName()), tostring(eventUnit), tostring(handler ~= nil)))
 	end
 
-	if not handler then return end
+	local routed = portrait.elementEvents and portrait.elementEvents[event]
+	if not (handler or routed) then return end
 
 	-- only group frames hand out new unit tokens at all
 	if not keepUnitLookup[event] and (portrait.isDynamicUnit or not portrait.unit) then
@@ -518,7 +519,13 @@ local function OnEvent(portrait, event, eventUnit, arg)
 		BLINKIISPORTRAITS:ApplyUnitEvents(portrait)
 	end
 
-	handler(portrait, event, eventUnit, arg)
+	if handler then handler(portrait, event, eventUnit, arg) end
+
+	if routed then
+		for i = 1, #routed do
+			BLINKIISPORTRAITS:RunElement(portrait, routed[i], event, portrait.unit)
+		end
+	end
 end
 
 -- events are ignored while hidden, so a portrait that becomes visible has to catch up
@@ -853,6 +860,19 @@ function BLINKIISPORTRAITS:ApplyUnitEvents(portrait, force)
 
 	BLINKIISPORTRAITS:UpdateHealthEvents(portrait)
 	BLINKIISPORTRAITS:UpdateSpecEvents(portrait)
+
+	if portrait.elementEventList then BLINKIISPORTRAITS:RegisterEvents(portrait, portrait.elementEventList) end
+end
+
+-- an event a plugin element no longer needs is dropped unless BP itself handles it
+local function UpdateElementRouting(portrait)
+	local previous = portrait.elementEventList
+	BLINKIISPORTRAITS:BuildElementRouting(portrait)
+
+	if not previous then return end
+	for _, event in ipairs(previous) do
+		if not portrait.elementEvents[event] and not eventHandlers[event] then portrait:UnregisterEvent(event) end
+	end
 end
 
 function BLINKIISPORTRAITS:RemovePortrait(frame)
@@ -1123,6 +1143,7 @@ function BLINKIISPORTRAITS:SetupUnitPortrait(opts)
 		BLINKIISPORTRAITS:Debug(format("setup %s | addon: %s | parent: %s | unit: %s", tostring(opts.key), tostring(opts.parentFrame), tostring(parent:GetName() or "unnamed"), tostring(portrait.unit)))
 	end
 
+	UpdateElementRouting(portrait)
 	BLINKIISPORTRAITS:InitPortrait(portrait, opts.events)
 	BLINKIISPORTRAITS:Fire("PortraitSetup", portrait)
 

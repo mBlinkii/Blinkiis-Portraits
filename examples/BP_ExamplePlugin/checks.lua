@@ -37,7 +37,10 @@ local function RunChecks()
 	end
 end
 
+ns.commands = { test = RunChecks }
+
 SLASH_BPEXAMPLE1 = "/bpex"
 SlashCmdList.BPEXAMPLE = function(msg)
-	if strtrim(msg or "") == "test" then RunChecks() end
+	local command = ns.commands[strtrim(msg or "")]
+	if command then command() end
 end
