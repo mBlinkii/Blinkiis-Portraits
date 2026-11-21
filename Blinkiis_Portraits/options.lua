@@ -15,7 +15,7 @@ local credits = {
 	"Cbogolin",
 }
 
-local form = {
+local builtinForms = {
 	antik = L["Antik"],
 	blizz = L["Blizz"],
 	blizz_up = L["Blizz Up"],
@@ -49,6 +49,18 @@ local form = {
 	rectangular = L["Rectangular"],
 	moon = L["Moon"],
 }
+
+-- plugins can register styles after this file loaded
+local function form()
+	local values = {}
+	for id, name in pairs(builtinForms) do
+		values[id] = name
+	end
+	for id, style in pairs(BLINKIISPORTRAITS:GetRegisteredStyles()) do
+		values[id] = style.name
+	end
+	return values
+end
 local extra = {
 	extra_a = L["Extra A"],
 	extra_b = L["Extra B"],

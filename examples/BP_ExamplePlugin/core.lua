@@ -51,6 +51,15 @@ ns.Later(function()
 	print("BP_ExamplePlugin: player portrait parent is " .. tostring(portrait and portrait.parentFrame and portrait.parentFrame:GetName()))
 end)
 
+local MEDIA = "Interface\\Addons\\Blinkiis_Portraits\\media\\"
+Check("style registered", API:RegisterStyle("bpex_round", { name = "BPEX Round", texture = MEDIA .. "circle.tga", mask = MEDIA .. "circle_mask.tga" }) == true)
+Check("builtin style id rejected", API:RegisterStyle("antik", { name = "x", texture = "x", mask = "x" }) == false)
+Check("class icon set registered", API:RegisterClassIconSet("bpex_icons", {
+	name = "BPEX Icons",
+	texture = "Interface\\WorldStateFrame\\Icons-Classes",
+	texCoords = CLASS_ICON_TCOORDS,
+}) == true)
+
 local seen = {}
 local function Remember(event, portrait)
 	seen[event] = portrait or true

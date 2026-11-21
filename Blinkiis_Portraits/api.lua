@@ -9,6 +9,7 @@ local tostring = tostring
 local xpcall = xpcall
 local geterrorhandler = geterrorhandler
 local securecallfunction = securecallfunction
+local C_Timer = C_Timer
 
 local API_VERSION = 1
 
@@ -108,6 +109,78 @@ function API:IteratePlugins()
 		local name = pluginOrder[index]
 		if name then return name, plugins[name] end
 	end
+end
+
+function API:Refresh()
+	BLINKIISPORTRAITS:LoadPortraits()
+	NotifyOptions()
+end
+
+local registeredStyles = {}
+local hasLoaded = false
+local isRefreshScheduled = false
+
+API.RegisterCallback(registeredStyles, "PortraitsLoaded", function()
+	hasLoaded = true
+end)
+
+local function RunScheduledRefresh()
+	isRefreshScheduled = false
+	API:Refresh()
+end
+
+-- several registrations in one frame share a single reload
+local function ScheduleRefresh()
+	if not hasLoaded or isRefreshScheduled then return end
+
+	isRefreshScheduled = true
+	C_Timer.After(0, RunScheduledRefresh)
+end
+
+local function AddMedia(kind, id, def)
+	local list = BLINKIISPORTRAITS.media[kind]
+	if type(id) ~= "string" or list[id] ~= nil then return false end
+
+	list[id] = def
+	ScheduleRefresh()
+	return true
+end
+
+local function HasTextureAndName(def)
+	return type(def) == "table" and type(def.name) == "string" and def.texture ~= nil
+end
+
+function API:RegisterStyle(id, def)
+	if not HasTextureAndName(def) or def.mask == nil then return false end
+	if not AddMedia("portraits", id, def) then return false end
+
+	registeredStyles[id] = def
+	return true
+end
+
+function API:RegisterClassIconSet(id, def)
+	if not HasTextureAndName(def) or type(def.texCoords) ~= "table" then return false end
+
+	return AddMedia("class", id, def)
+end
+
+function API:RegisterSpecIconSet(id, def)
+	if not BLINKIISPORTRAITS.SpecIconsSupported then return false end
+	if not HasTextureAndName(def) or type(def.texCoords) ~= "table" then return false end
+
+	return AddMedia("spec", id, def)
+end
+
+function BLINKIISPORTRAITS:GetRegisteredStyles()
+	return registeredStyles
+end
+
+-- a style can vanish when the plugin that registered it is disabled
+function BLINKIISPORTRAITS:ResolveStyle(id, defaultId)
+	local styles = BLINKIISPORTRAITS.media.portraits
+	if styles[id] then return styles[id], id end
+
+	return styles[defaultId], defaultId
 end
 
 local pluginsGroup = GetPluginsGroup()

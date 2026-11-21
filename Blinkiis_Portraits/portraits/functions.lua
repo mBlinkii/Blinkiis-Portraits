@@ -41,7 +41,6 @@ local RADIAL_RENDER_MODE = BLINKIISPORTRAITS.RadialRenderMode
 local StatusBarInterpolation = _G.Enum and _G.Enum.StatusBarInterpolation
 local StatusBarTimerDirection = _G.Enum and _G.Enum.StatusBarTimerDirection
 
-local mediaPortraits = BLINKIISPORTRAITS.media.portraits
 local mediaExtra = BLINKIISPORTRAITS.media.extra
 local mediaClass = BLINKIISPORTRAITS.media.class
 local mediaSpec = BLINKIISPORTRAITS.media.spec
@@ -710,7 +709,7 @@ function BLINKIISPORTRAITS:UpdateTexturesFiles(portrait, settings)
 	local profile = BLINKIISPORTRAITS.db.profile
 	local dbMisc = profile.misc
 	local dbCustom = profile.custom
-	local media = mediaPortraits[settings.texture]
+	local media = BLINKIISPORTRAITS:ResolveStyle(settings.texture, BLINKIISPORTRAITS.defaults.profile[portrait.type].texture)
 
 	portrait.bgFile = "Interface\\Addons\\Blinkiis_Portraits\\media\\blank.tga"
 
