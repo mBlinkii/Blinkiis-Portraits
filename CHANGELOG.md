@@ -3,8 +3,6 @@
 ## [ver. 1.64] - 21.11.2026
 ### 🐛 FIX
 - FIX - [Profiles]: Importing a profile over the one you are using applies it right away.
-### 🔧 UPDATE
-- UPDATE - [EllesmereUI]: The settings are added to the EllesmereUI options at login, so plugin settings show up there too.
 ### ✨ NEW
 - NEW - [Plugins]: Added a plugin API: other addons can bring their own unit frames, styles, class and spec icon sets and portrait parts, or change how portraits are drawn.
 - NEW - [Plugins]: Plugin settings get their own tab under Plugins in the options.

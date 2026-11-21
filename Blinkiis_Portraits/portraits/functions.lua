@@ -364,11 +364,16 @@ local function HideCastIcon(portrait, event, unit)
 	BLINKIISPORTRAITS:RunElement(portrait, "Portrait", event, unit)
 end
 
+local castStopEvents = { UNIT_SPELLCAST_STOP = true, UNIT_SPELLCAST_CHANNEL_STOP = true, UNIT_SPELLCAST_INTERRUPTED = true, UNIT_SPELLCAST_EMPOWER_STOP = true }
+
+-- any other trigger, like a plugin calling the element directly, follows the cast that is really running
 BLINKIISPORTRAITS:DefineElement("Cast", {
 	Update = function(_, portrait, event, unit)
+		unit = unit or portrait.unit
 		if castStartEvents[event] then return ShowCastIcon(portrait, unit) end
+		if castStopEvents[event] or not (unit and GetCastIcon(unit)) then return HideCastIcon(portrait, event, unit) end
 
-		HideCastIcon(portrait, event, unit)
+		return ShowCastIcon(portrait, unit)
 	end,
 })
 
@@ -521,7 +526,8 @@ local function OnEvent(portrait, event, eventUnit, arg)
 
 	if handler then handler(portrait, event, eventUnit, arg) end
 
-	if routed then
+	-- without a resolved unit the events arrive unfiltered for every unit, elements have nothing to draw
+	if routed and portrait.unit then
 		for i = 1, #routed do
 			BLINKIISPORTRAITS:RunElement(portrait, routed[i], event, portrait.unit)
 		end

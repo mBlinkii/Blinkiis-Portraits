@@ -469,7 +469,9 @@ end
 local function BuildPluginSpec()
 	local entries, units = {}, {}
 	for _, entry in ipairs(SortedArgs(BLINKIISPORTRAITS.options)) do
-		if entry.option.type == "group" then
+		-- the snapshot is taken once, a group hidden now (Plugins without plugins) would stay an empty page
+		local isHidden = IsHidden(entry.option, BuildInfo(NewContext(RootContext(), entry.key, entry.option), entry.option))
+		if entry.option.type == "group" and not isHidden then
 			if UNIT_GROUPS[entry.key] then
 				if #units == 0 then entries[#entries + 1] = { key = UNITS_MODULE_KEY } end
 				units[#units + 1] = entry

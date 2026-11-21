@@ -27,7 +27,7 @@ local plugin = API:NewPlugin("MyPlugin", {
 - `API.version` is the current API version (`1`). Additions keep the version; breaking changes raise it. To use a function added later, check it exists: `if API.RegisterSomething then`.
 - `NewPlugin(name, opts)` returns the plugin handle, or `nil, reason` when the name is taken, `apiVersion` does not match, or BP is not initialized yet. Register from your addon's main chunk or later.
 - `plugin.db` is an AceDB namespace: it follows the BP profile and is copied with it. `plugin.name` is the name you passed.
-- `opts.options` builds an AceConfig group that appears as a tab under **Plugins** in `/bp`, in the ElvUI options and in the EllesmereUI options. EllesmereUI only draws the option types `group`, `header`, `description`, `toggle`, `range`, `select`, `color`, `execute` and `input`. EllesmereUI reads the options once at login, so a plugin loaded on demand later does not appear there.
+- `opts.options` builds an AceConfig group that appears as a tab under **Plugins** in `/bp` and in the ElvUI options. The EllesmereUI options take their snapshot before plugins load, so plugin tabs do not appear there; `/bp` always shows them.
 - `API:GetPlugin(name)` and `API:IteratePlugins()` return registered plugins.
 
 ## Profiles
@@ -123,7 +123,7 @@ API:HookElement(plugin, "Color", {
 
 - Order: every `PreUpdate`, then `Override` or the built-in update, then every `PostUpdate` with the results.
 - Only one plugin can override an element. A second override is refused, and the warning names both plugins.
-- `events` run this element on these events too, outside BP's own triggers.
+- `events` run this element on these events too, outside BP's own triggers. This re-runs the whole built-in update each time: hooking `Portrait` with `UNIT_HEALTH` repaints the unit image on every health tick. For your own frequent updates, register your own element instead.
 - `API:UpdateElement(portrait, name)` runs one element right now.
 - A hook that errors is reported and does not stop BP or the other hooks.
 

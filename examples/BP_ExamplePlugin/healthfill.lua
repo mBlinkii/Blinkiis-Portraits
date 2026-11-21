@@ -53,9 +53,16 @@ local function UpdateFill(portrait)
 	bar:Show()
 end
 
-API:HookElement(plugin, "Portrait", {
+-- an own element keeps health ticks away from BP's Portrait element, hooking it with events would repaint the whole portrait each tick
+API:RegisterElement(plugin, "BPEX_HealthFill", {
 	events = { "UNIT_HEALTH", "UNIT_MAXHEALTH" },
-	PostUpdate = function(_, portrait)
+	Enable = function()
+		return plugin.db.profile.enabled
+	end,
+	Disable = function(_, portrait)
+		GetFill(portrait):Hide()
+	end,
+	Update = function(_, portrait)
 		UpdateFill(portrait)
 	end,
 })

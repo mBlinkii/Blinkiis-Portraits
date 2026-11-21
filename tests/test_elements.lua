@@ -139,3 +139,18 @@ eq(p3.elementEvents.UNIT_AURA, nil, "disabled element routes nothing")
 eq(disabledCalls, 1, "Disable runs when an element turns off")
 BP3:BuildElementRouting(p3)
 eq(disabledCalls, 1, "Disable runs only on the change")
+
+local BP4 = newBP({ "api.lua", "portraits/elements.lua" })
+local plugin4 = BP4.API:NewPlugin("P4", { apiVersion = 1 })
+BP4.API:RegisterElement(plugin4, "Broken", {
+	Enable = function()
+		return true
+	end,
+	Update = function()
+		error("plugin element boom")
+	end,
+})
+local before4 = #reportedErrors
+local ok4 = pcall(BP4.RunElement, BP4, {}, "Broken", "UNIT_HEALTH", "player")
+truthy(ok4, "a failing plugin element does not raise into the event loop")
+eq(#reportedErrors, before4 + 1, "a failing plugin element is reported")

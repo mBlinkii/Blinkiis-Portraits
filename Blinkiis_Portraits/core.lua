@@ -259,11 +259,6 @@ function BLINKIISPORTRAITS:PLAYER_ENTERING_WORLD()
 	C_Timer_After(0.5, BLINKIISPORTRAITS.LoadPortraits)
 end
 
-function BLINKIISPORTRAITS:PLAYER_LOGIN()
-	BLINKIISPORTRAITS:UnregisterEvent("PLAYER_LOGIN")
-	BLINKIISPORTRAITS:SetupEllesmereUIOptions()
-end
-
 local function UpdateGroupPortraits(_, typ)
 	if typ == "arena" then
 		BLINKIISPORTRAITS:InitializeArenaPortrait(true)
@@ -322,8 +317,7 @@ function BLINKIISPORTRAITS:OnInitialize()
 	end
 
 	BLINKIISPORTRAITS:SetupElvUIOptions()
-	-- plugins load after this point, so the EllesmereUI snapshot waits for PLAYER_LOGIN
-	BLINKIISPORTRAITS:RegisterEvent("PLAYER_LOGIN")
+	BLINKIISPORTRAITS:SetupEllesmereUIOptions()
 
 	if BLINKIISPORTRAITS.ELVUI and ElvUI then
 		local UF = ElvUI[1]:GetModule("UnitFrames")

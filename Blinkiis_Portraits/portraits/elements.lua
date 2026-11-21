@@ -9,6 +9,7 @@ local type = type
 
 local definitions = {}
 local hooks = {}
+local pluginElements = {}
 
 function BLINKIISPORTRAITS:DefineElement(name, def)
 	definitions[name] = def
@@ -58,14 +59,21 @@ function BLINKIISPORTRAITS:RunElement(portrait, name, event, unit)
 
 	local state = GetState(portrait, name)
 	local hook = hooks[name]
-	if not hook then return Keep(state, def.Update(state, portrait, event, unit)) end
+	local isPlugin = pluginElements[name] ~= nil
+
+	if not hook then
+		if isPlugin then return Keep(state, BLINKIISPORTRAITS:SafeCall(def.Update, state, portrait, event, unit)) end
+		return Keep(state, def.Update(state, portrait, event, unit))
+	end
 
 	local pre = hook.pre
 	for i = 1, #pre do
 		BLINKIISPORTRAITS:SafeCall(pre[i], state, portrait, unit)
 	end
 
-	if hook.override then return RunPost(hook.post, state, portrait, unit, BLINKIISPORTRAITS:SafeCall(hook.override, state, portrait, event, unit)) end
+	-- plugin code is isolated, a failing plugin must not stop the elements after it
+	local update = hook.override or (isPlugin and def.Update)
+	if update then return RunPost(hook.post, state, portrait, unit, BLINKIISPORTRAITS:SafeCall(update, state, portrait, event, unit)) end
 
 	return RunPost(hook.post, state, portrait, unit, def.Update(state, portrait, event, unit))
 end
@@ -100,7 +108,6 @@ function BLINKIISPORTRAITS:HookElementInternal(pluginName, name, spec)
 	return true
 end
 
-local pluginElements = {}
 local pluginElementNames = {}
 
 local function IsRegisteredPlugin(plugin)
