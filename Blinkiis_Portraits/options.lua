@@ -191,19 +191,7 @@ local function GetPopupButton(frame, index)
 	return frame["button" .. index] or frame["Button" .. index] or (frame.Buttons and frame.Buttons[index])
 end
 
-local function copyTable(src, dest)
-	if type(dest) ~= "table" then dest = {} end
-	if type(src) == "table" then
-		for k, v in pairs(src) do
-			if type(v) == "table" then
-				-- index the key first so the metatable creates the defaults
-				v = copyTable(v, dest[k])
-			end
-			dest[k] = v
-		end
-	end
-	return dest
-end
+local copyTable = BLINKIISPORTRAITS.CopyProfileTable
 
 local function EncodeProfile(data)
 	if not C_EncodingUtil then return end
@@ -240,11 +228,9 @@ local function DecodeProfile(import)
 	return profile
 end
 
-local function ImportProfile(name, profileData)
-	local profile = copyTable(BLINKIISPORTRAITS.defaults.profile)
-	copyTable(profileData, profile)
-	BLINKIISPORTRAITS.db.profiles[name] = profile
-	BLINKIISPORTRAITS.db:SetProfile(name)
+local function ImportProfile(name, infos)
+	local skipped = BLINKIISPORTRAITS:ApplyImport(name, { profile = infos.profile, plugins = infos.plugins })
+	if skipped[1] then BLINKIISPORTRAITS:Print(format(L["Skipped settings of plugins that are not loaded: %s"], table.concat(skipped, ", "))) end
 end
 
 -- an emptied input field hands over "", not nil
@@ -297,6 +283,7 @@ local function ReadImportString(import)
 				importInfos.version = outputDB.version
 				importInfos.bp_version = outputDB.bp_version
 				importInfos.profile = outputDB.profile
+				importInfos.plugins = outputDB.plugins
 				importInfos.exists = ProfileExists(outputDB.name)
 			end
 		end
@@ -338,7 +325,7 @@ StaticPopupDialogs["BLINKIISPORTRAITS_PROFILE_EXISTS"] = {
 	maxLetters = 127,
 	OnAccept = function(frame, data)
 		if importInfos and importInfos.success then
-			ImportProfile(importInfos.name, importInfos.profile)
+			ImportProfile(importInfos.name, importInfos)
 
 			importInfos = {}
 		end
@@ -3450,7 +3437,7 @@ BLINKIISPORTRAITS.options = {
 									if importInfos.exists then
 										StaticPopup_Show("BLINKIISPORTRAITS_PROFILE_EXISTS", "", nil, importInfos.name)
 									else
-										ImportProfile(importInfos.name, importInfos.profile)
+										ImportProfile(importInfos.name, importInfos)
 
 										importInfos = {}
 									end
@@ -3497,14 +3484,13 @@ BLINKIISPORTRAITS.options = {
 								return not C_EncodingUtil
 							end,
 							func = function()
-								exportProfile.author = ExportValue(exportProfile.author, UnitName("player"))
-								exportProfile.name = ExportValue(exportProfile.name, BLINKIISPORTRAITS.db:GetCurrentProfile())
-								exportProfile.version = ExportValue(exportProfile.version, "1.0")
-								exportProfile.bp_version = BLINKIISPORTRAITS.Version
+								local data = BLINKIISPORTRAITS:BuildExportData({
+									author = ExportValue(exportProfile.author, UnitName("player")),
+									name = ExportValue(exportProfile.name, BLINKIISPORTRAITS.db:GetCurrentProfile()),
+									version = ExportValue(exportProfile.version, "1.0"),
+								})
 
-								exportProfile.profile = BLINKIISPORTRAITS.db.profile
-
-								exportString = EncodeProfile(exportProfile)
+								exportString = EncodeProfile(data)
 
 								exportProfile = {}
 							end,

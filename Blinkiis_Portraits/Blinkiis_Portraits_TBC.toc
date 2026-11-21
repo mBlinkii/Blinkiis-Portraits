@@ -21,6 +21,7 @@ libs\embeds.xml
 locales\load_localization.xml
 
 core.lua
+profile_io.lua
 options.lua
 api.lua
 elvui.lua
