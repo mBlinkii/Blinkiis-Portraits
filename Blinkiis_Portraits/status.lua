@@ -260,56 +260,13 @@ function WOW_STYLE.Heading(fontString, title)
 	fontString:SetText(title)
 end
 
-local function GetEllesmereUI()
-	return BLINKIISPORTRAITS.EUI and _G.EllesmereUI
-end
-
-local EUI_BACKGROUND = { 0.077, 0.068, 0.058 }
-local EUI_STYLE = { rowHeight = 20, headingHeight = 28, topInset = 38, flatDivider = true, labelAlpha = 0.9 }
-
-local function GetEllesmereFont()
-	local EUI = GetEllesmereUI()
-	return (EUI and (EUI.EXPRESSWAY or (EUI.GetFontPath and EUI.GetFontPath()))) or STANDARD_TEXT_FONT
-end
-
-function EUI_STYLE.Row(fontString)
-	fontString:SetFont(GetEllesmereFont(), 13, "")
-end
-
--- headings take the accent of the player's EllesmereUI theme
-function EUI_STYLE.Heading(fontString, title)
-	local EUI = GetEllesmereUI()
-	local r, g, b = 0.05, 0.82, 0.62
-	if EUI and EUI.GetAccentColor then
-		r, g, b = EUI.GetAccentColor()
-	end
-	fontString:SetFont(GetEllesmereFont(), 15, "")
-	fontString:SetText(title)
-	fontString:SetTextColor(r, g, b)
-end
-
-function EUI_STYLE.Skin(panel)
-	local bg = panel:CreateTexture(nil, "BACKGROUND")
-	bg:SetAllPoints()
-	bg:SetColorTexture(EUI_BACKGROUND[1], EUI_BACKGROUND[2], EUI_BACKGROUND[3], 1)
-
-	local EUI = GetEllesmereUI()
-	-- the border is an EllesmereUI helper, a failure there must not keep the window from opening
-	if EUI and EUI.MakeRoundedBorder then BLINKIISPORTRAITS:SafeCall(EUI.MakeRoundedBorder, panel, 1, 1, 1, 0.15, bg) end
-end
-
 local style
 
 local function CreateDivider(panel)
 	local divider = panel:CreateTexture(nil, "ARTWORK")
-	if style.flatDivider then
-		divider:SetColorTexture(1, 1, 1, 0.15)
-		divider:SetHeight(1)
-	else
-		divider:SetTexture(DIVIDER_TEXTURE)
-		divider:SetTexCoord(0.81, 0.94, 0.5, 1)
-		divider:SetHeight(8)
-	end
+	divider:SetTexture(DIVIDER_TEXTURE)
+	divider:SetTexCoord(0.81, 0.94, 0.5, 1)
+	divider:SetHeight(8)
 	return divider
 end
 
@@ -359,7 +316,7 @@ local function LayoutRow(panel, line, row, offset)
 	line.right:Hide()
 
 	style.Row(line.label)
-	line.label:SetTextColor(1, 1, 1, style.labelAlpha or 1)
+	line.label:SetTextColor(1, 1, 1)
 	line.label:SetJustifyH("LEFT")
 	line.label:SetText(row.label .. ":")
 	line.label:ClearAllPoints()
@@ -415,9 +372,6 @@ local function CreatePanel(name, parent, width)
 	local panel
 	if style.template then
 		panel = CreateFrame("Frame", name, parent, style.template)
-	elseif style.Skin then
-		panel = CreateFrame("Frame", name, parent)
-		style.Skin(panel)
 	else
 		panel = CreateFrame("Frame", name, parent, BackdropTemplateMixin and "BackdropTemplate" or nil)
 		panel:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1 })
@@ -468,7 +422,7 @@ local function SkinWindow(frame)
 end
 
 local function CreateStatusWindow()
-	style = (GetElvUI() and ELVUI_STYLE) or (GetEllesmereUI() and EUI_STYLE) or WOW_STYLE
+	style = GetElvUI() and ELVUI_STYLE or WOW_STYLE
 
 	local frame = CreatePanel("BP_StatusFrame", UIParent, MAIN_WIDTH)
 	frame:SetPoint("CENTER", -PLUGIN_WIDTH / 2, 0)
