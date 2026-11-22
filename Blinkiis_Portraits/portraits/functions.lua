@@ -636,6 +636,8 @@ function BLINKIISPORTRAITS:GetExtraClassification(portrait)
 
 	-- a secret unit can be a hostile NPC, so only a proven player skips the NPC checks
 	local isKnownPlayer = portrait.isPlayer and not portrait.isSecret
+	-- party followers are elite NPCs, but are shown like players; isPlayer only holds a readable answer, so secret ones count too
+	if portrait.isPlayer and portrait.type ~= "boss" then return nil end
 	local npcID = GetNpcID(portrait.lastGUID)
 	local classification = SafeValue(UnitClassification(unit))
 	if classification == "worldboss" then classification = "boss" end
@@ -735,7 +737,8 @@ function BLINKIISPORTRAITS:GetUnitColor(unit, isDead, isPlayer, class, isSecret)
 
 	if profile.misc.force_default then return colors.misc.default, isPlayer end
 
-	if isSecret then return (profile.misc.force_reaction and GetReactionColor(unit, colors) or GetSecretColor(unit, colors, class)), isPlayer end
+	-- a readable isPlayer also covers party followers, which UnitIsPlayer inside GetSecretColor would miss
+	if isSecret and (not isPlayer or profile.misc.force_reaction) then return (profile.misc.force_reaction and GetReactionColor(unit, colors) or GetSecretColor(unit, colors, class)), isPlayer end
 
 	if isPlayer then
 		if profile.misc.force_reaction then

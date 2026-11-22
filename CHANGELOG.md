@@ -4,6 +4,7 @@
 ### 🐛 FIX
 - FIX - [Profiles]: Importing a profile over the one you are using applies it right away.
 - FIX - [Ring]: The ring is mirrored together with mirrored portraits.
+- FIX - [Portraits]: Party followers like delve companions got the reaction color and an elite extra texture in combat, for example on the target of target, instead of their class color.
 ### 🔧 UPDATE
 - UPDATE - [System]: The addon ships one TOC file for every game version.
 - UPDATE - [Status]: /bp report is now /bp status with a smaller window that shows only the essentials and the loaded plugins.
