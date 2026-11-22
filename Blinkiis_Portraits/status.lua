@@ -384,31 +384,6 @@ local function CreatePanel(name, parent, width)
 	return panel
 end
 
-local SIMPLE_CORNER_ATLAS = "UI-Frame-TopCornerRightSimple"
-
--- the frame corner has a slot for the close button, a panel without one gets the plain corner Blizzard uses for that
-local function RemoveCloseSlot(panel)
-	if not panel.CloseButton then return end
-	panel.CloseButton:Hide()
-
-	local corner = panel.TopRightCorner
-	if not corner then return end
-
-	if C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo(SIMPLE_CORNER_ATLAS) then
-		corner:SetAtlas(SIMPLE_CORNER_ATLAS, true)
-	else
-		corner:SetTexture("Interface\\FrameGeneral\\UI-Frame")
-		corner:SetTexCoord(0.1328125, 0.21875, 0.984375, 0.8984375)
-		corner:SetSize(11, 11)
-	end
-
-	if panel.TitleBg then
-		panel.TitleBg:ClearAllPoints()
-		panel.TitleBg:SetPoint("TOPLEFT", 2, -1)
-		panel.TitleBg:SetPoint("TOPRIGHT", -2, -1)
-	end
-end
-
 local function CreateCopyBox(parent)
 	local scroll = CreateFrame("ScrollFrame", "BP_StatusCopyScroll", parent, "UIPanelScrollFrameTemplate")
 	scroll:SetPoint("TOPLEFT", PADDING, -TOP_INSET)
@@ -475,7 +450,10 @@ local function CreateStatusWindow()
 
 	local plugins = CreatePanel("BP_StatusPlugins", frame, PLUGIN_WIDTH)
 	plugins:SetPoint("TOPLEFT", frame, "TOPRIGHT", 4, 0)
-	RemoveCloseSlot(plugins)
+	-- the frame art keeps a slot for its close button, so the plugin panel keeps it and closes the whole window
+	if plugins.CloseButton then plugins.CloseButton:SetScript("OnClick", function()
+		frame:Hide()
+	end) end
 	if plugins.TitleText then plugins.TitleText:SetText(L["Plugins"]) end
 
 	local copy = CreateCopyBox(frame)
