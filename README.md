@@ -63,7 +63,7 @@ arena frames, while others only expose single-unit frames.
 
 ## Supported Game Clients
 
-The repository includes separate TOC files for Retail and multiple Classic client variants.
+One TOC file covers Retail, WoW Forever and the Classic clients (Mists, Wrath, Burning Crusade and Classic Era).
 
 ## Customization Features
 
@@ -107,6 +107,10 @@ You can access the addon settings in two ways:
 If you use more than one compatible unit frame addon at the same time, select the desired parent
 frame per unit inside the addon options.
 
+For bug reports, `/bp status` shows a short status window ready to copy, and `/bp debugmode`
+turns off every addon except Blinkiis Portraits, its supported unit frame addons, BugSack and
+BugGrabber (`/bp debugmode off` restores them).
+
 ## Profiles and Sharing
 
 Blinkiis Portraits includes built-in profile management features:
@@ -139,18 +143,6 @@ Feedback, bug reports, and feature ideas are welcome:
 - Share feedback on [Discord](https://discord.gg/ZScRCUyqjY)
 
 If you enjoy the addon, starring the repository helps a lot.
-
-### Tests
-
-The logic of the plugin API has offline tests that run on plain Lua 5.1, without the game. Fetch
-the libraries into `Blinkiis_Portraits/libs` first (see its README), then run from the repository root:
-
-```
-lua5.1 tests/run.lua
-```
-
-Drawing, events, secret values and combat behaviour can only be checked in the game; the example
-plugin's `/bpex test` covers those.
 
 ## License
 
